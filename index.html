@@ -105,7 +105,7 @@
     .tab{padding:5px 13px;border-radius:6px;font-size:12px;cursor:pointer;background:var(--tag);color:var(--muted);border:none;font-family:inherit;transition:all .15s}
     .tab.on{background:var(--green-dim);color:var(--green)}
     .list-wrap{display:flex;flex-direction:column;gap:6px}
-    .list-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:9px;transition:background .1s}
+    .list-item{display:flex;align-items:center;gap:9px;padding:10px 12px;background:rgba(255,255,255,0.04);border-radius:9px;transition:background .1s;border:1px solid var(--border)}
     .list-item:hover{background:rgba(255,255,255,0.07)}
     .chk{width:18px;height:18px;border:1.5px solid var(--dim);border-radius:5px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .15s;font-size:10px}
     .chk.done{background:var(--green);border-color:var(--green);color:#000}
@@ -184,6 +184,31 @@
 
     /* Divider */
     .divider{height:1px;background:var(--border);margin:14px 0}
+
+    /* Status badges */
+    .badge-orange{background:rgba(251,146,60,0.13);color:var(--orange)}
+    .badge-green{background:var(--green-dim);color:var(--green)}
+    .badge-blue{background:rgba(96,165,250,0.13);color:var(--blue)}
+    .badge-red{background:rgba(248,113,113,0.12);color:var(--red)}
+    .badge-dim{background:var(--tag);color:var(--dim)}
+
+    /* Modal header icon alignment */
+    .modal-hd h2{display:flex;align-items:center;gap:7px}
+
+    /* SEO output */
+    .seo-out-box{display:none;margin-top:16px;white-space:pre-wrap;font-size:12.5px;color:var(--muted);line-height:1.75;background:rgba(255,255,255,0.04);border-radius:10px;padding:14px}
+    .seo-out-box.visible{display:block}
+
+    /* Calendar date selected */
+    .cal-day.selected{background:rgba(96,165,250,0.15);color:var(--blue)}
+    .cal-add-form{background:rgba(255,255,255,0.04);border-radius:10px;padding:13px;margin-top:10px}
+
+    /* Repo cards for cloud modal */
+    .repo-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+    .repo-card-icon{width:36px;height:36px;border-radius:9px;background:var(--tag);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+    .repo-card-info{flex:1}
+    .repo-card-name{font-size:13px;font-weight:600;margin-bottom:3px}
+    .repo-card-desc{font-size:11.5px;color:var(--muted)}
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px}
@@ -296,7 +321,7 @@
       <div class="feat-title">쓰레드 자동화</div>
       <div class="feat-desc">Threads 게시글 기획·작성·예약, 콘텐츠미디어 템플릿 내장.</div>
       <div class="tags"><span class="tag">쓰레드관리</span><span class="tag">예약발행</span><span class="tag">템플릿</span></div>
-      <div class="feat-status">hadam-thread 저장소 연동</div>
+      <div class="feat-status" id="fc-thread">전체 <span class="cnt">0건</span> 예약 <span class="cnt">0</span></div>
     </div>
     <div class="feat-card" onclick="open_('insta')">
       <div class="feat-top"><div class="feat-icon">📸</div><div class="arr-btn">↗</div></div>
@@ -426,8 +451,27 @@
   <div class="modal">
     <div class="modal-hd"><h2>☁️ 파일 클라우드</h2><button class="close-btn" onclick="close_('cloud')">✕</button></div>
     <div class="modal-bd">
-      <div class="empty"><div class="ei">☁️</div><div style="font-weight:600;margin-bottom:6px">hadam-cloud 저장소 연동</div><div style="font-size:11.5px">각 기능 레포가 추가될 때마다 여기서 관리됩니다</div></div>
-      <a href="https://github.com/designhadam-commits/hadam-cloud" target="_blank" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:12px">GitHub 저장소 보기 →</a>
+      <div class="info-box">연결된 hadam 저장소 현황입니다. 각 저장소를 클릭해 GitHub에서 확인할 수 있습니다.</div>
+      <div class="repo-card">
+        <div class="repo-card-icon">☁️</div>
+        <div class="repo-card-info"><div class="repo-card-name">hadam-cloud</div><div class="repo-card-desc">데이터 동기화 저장소 — 프로젝트, 고객-상담, 프로세스, 업무일지</div></div>
+        <a href="https://github.com/designhadam-commits/hadam-cloud" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
+      </div>
+      <div class="repo-card">
+        <div class="repo-card-icon">📝</div>
+        <div class="repo-card-info"><div class="repo-card-name">hadam-notes</div><div class="repo-card-desc">팀 업무보고 허브 — Obsidian 업무일지 자동 파싱</div></div>
+        <a href="https://github.com/designhadam-commits/hadam-notes" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
+      </div>
+      <div class="repo-card">
+        <div class="repo-card-icon">🧵</div>
+        <div class="repo-card-info"><div class="repo-card-name">hadam-thread</div><div class="repo-card-desc">Threads 게시글 자동화</div></div>
+        <a href="https://github.com/designhadam-commits/hadam-thread" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
+      </div>
+      <div class="repo-card">
+        <div class="repo-card-icon">🏠</div>
+        <div class="repo-card-info"><div class="repo-card-name">hadam-app</div><div class="repo-card-desc">인터널 포털 — 이 앱</div></div>
+        <a href="https://github.com/designhadam-commits/hadam-app" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
+      </div>
     </div>
   </div>
 </div>
@@ -454,7 +498,7 @@
       </select>
       <input class="inp" id="seo-loc" placeholder="지역 (예: 부산 해운대구)" style="width:100%;margin-bottom:8px">
       <button class="btn btn-g btn-full" onclick="genSEO()">블로그 초안 생성</button>
-      <div id="seo-out" style="margin-top:16px;white-space:pre-wrap;font-size:12.5px;color:var(--muted);line-height:1.75"></div>
+      <div id="seo-out" class="seo-out-box"></div>
     </div>
   </div>
 </div>
@@ -465,9 +509,11 @@
     <div class="modal-hd"><h2>📦 발주관리</h2><button class="close-btn" onclick="close_('order')">✕</button></div>
     <div class="modal-bd">
       <div class="row">
+        <input class="inp" id="ord-site" placeholder="현장명" style="width:120px">
         <input class="inp" id="ord-item" placeholder="품목명">
-        <input class="inp" id="ord-qty" placeholder="수량" style="width:72px">
-        <input class="inp" id="ord-price" placeholder="단가" style="width:90px">
+        <input class="inp" id="ord-qty" placeholder="수량" style="width:60px">
+        <input class="inp" id="ord-price" placeholder="단가" style="width:80px">
+        <select class="inp" id="ord-pay" style="width:100px"><option>회사카드</option><option>계좌이체</option><option>현금</option></select>
         <button class="btn btn-g" onclick="addOrd()">추가</button>
       </div>
       <div id="ord-list"></div>
@@ -496,8 +542,12 @@
   <div class="modal">
     <div class="modal-hd"><h2>🧵 쓰레드 자동화</h2><button class="close-btn" onclick="close_('thread')">✕</button></div>
     <div class="modal-bd">
-      <div class="empty"><div class="ei">🧵</div><div style="font-weight:600;margin-bottom:6px">hadam-thread 저장소 연동</div><div style="font-size:11.5px">매일 아침·저녁 자동 게시글 생성 중</div></div>
-      <a href="https://github.com/designhadam-commits/hadam-thread" target="_blank" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:12px">GitHub에서 보기 →</a>
+      <div class="row">
+        <input class="inp" id="thr-title" placeholder="쓰레드 글 주제">
+        <select class="inp" id="thr-cat" style="width:100px"><option>일상</option><option>인테리어</option><option>홍보</option><option>정보</option></select>
+        <button class="btn btn-g" onclick="addThread()">추가</button>
+      </div>
+      <div id="thr-list"></div>
     </div>
   </div>
 </div>
@@ -595,7 +645,7 @@ class CloudSync {
     // load per-member journal keys in addition to other keys
     const members = getMembers();
     const jnlKeys = members.map(m => 'jnl_' + m);
-    await Promise.all(['chk','ins','ord','inv','cal-events','sites', ...jnlKeys].map(k=>this.load(k)));
+    await Promise.all(['chk','ins','ord','inv','cal-events','sites','thread', ...jnlKeys].map(k=>this.load(k)));
     // Also load cloud jnl.json for read-only cloud entries
     await loadCloudJnl();
     setSyncStatus('ok');
@@ -649,6 +699,7 @@ function open_(id) {
   else if(id==='calendar') renderCal();
   else if(id==='construction') renderCon();
   else if(id==='settings') renderSettings();
+  else if(id==='thread') renderThread();
 }
 function close_(id) { document.getElementById('m-'+id).classList.remove('open'); }
 document.querySelectorAll('.overlay').forEach(el =>
@@ -691,7 +742,7 @@ function clearPAT() {
   if(!confirm('모든 로컨 데이터를 삭제할까요?')) return;
   const members = getMembers();
   const jnlKeys = members.map(m => 'jnl_' + m);
-  ['__pat','chk','ins','ord','inv','cal-events','sites','hadamMembers','__cloudJnl', ...jnlKeys].forEach(k=>localStorage.removeItem(k));
+  ['__pat','chk','ins','ord','inv','cal-events','sites','thread','hadamMembers','__cloudJnl', ...jnlKeys].forEach(k=>localStorage.removeItem(k));
   cloud.token = ''; cloud.shas = {};
   setSyncStatus('off');
   allStats();
@@ -1026,21 +1077,27 @@ function statIns() {
 
 // ── Order
 async function addOrd() {
-  const item=document.getElementById('ord-item').value.trim(),qty=document.getElementById('ord-qty').value.trim(),price=document.getElementById('ord-price').value.trim();
+  const site=document.getElementById('ord-site').value.trim(),item=document.getElementById('ord-item').value.trim(),qty=document.getElementById('ord-qty').value.trim(),price=document.getElementById('ord-price').value.trim(),pay=document.getElementById('ord-pay').value;
   if(!item) return;
-  const a=G('ord'); a.unshift({id:Date.now(),item,qty:qty||'1',price:price||'—',status:'입고대기',date:td()});
-  await S('ord',a); document.getElementById('ord-item').value=''; document.getElementById('ord-qty').value=''; document.getElementById('ord-price').value=''; renderOrd(); statOrd();
+  const a=G('ord'); a.unshift({id:Date.now(),site:site||'—',item,qty:qty||'1',price:price||'—',pay,status:'입고대기',date:td()});
+  await S('ord',a);
+  document.getElementById('ord-site').value='';document.getElementById('ord-item').value='';document.getElementById('ord-qty').value='';document.getElementById('ord-price').value='';
+  renderOrd(); statOrd();
 }
 async function updOrdStatus(id,s) { const a=G('ord'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ord',a);statOrd(); }
 async function delOrd(id) { await S('ord',G('ord').filter(x=>x.id!==id)); renderOrd(); statOrd(); }
 function renderOrd() {
   const a=G('ord'),el=document.getElementById('ord-list');
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📦</div>발주 내역이 없습니다</div>';return;}
+  const ORD_C={'입고대기':'badge-orange','입고완료':'badge-green','반품':'badge-red'};
   el.innerHTML='<div class="list-wrap">'+a.map(x=>
-    `<div class="list-item"><span class="item-txt">${x.item}</span>
-    <span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span>
-    <span style="font-size:11.5px;color:var(--muted);margin:0 6px">${x.price}원</span>
-    <select class="badge" onchange="updOrdStatus(${x.id},this.value)" style="background:var(--tag);color:var(--muted)">${['입고대기','입고완료','반품'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    `<div class="list-item">
+    ${x.site&&x.site!=='—'?`<span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted);flex-shrink:0">${x.site}</span>`:''}
+    <span class="item-txt">${x.item}</span>
+    <span style="font-size:11.5px;color:var(--muted);flex-shrink:0">${x.qty}개</span>
+    <span style="font-size:11.5px;color:var(--muted);flex-shrink:0">${x.price}원</span>
+    <span style="font-size:10.5px;color:var(--dim);flex-shrink:0">${x.pay||''}</span>
+    <select class="badge ${ORD_C[x.status]||'badge-dim'}" onchange="updOrdStatus(${x.id},this.value)">${['입고대기','입고완료','반품'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
     <button class="del" onclick="delOrd(${x.id})">×</button></div>`
   ).join('')+'</div>';
 }
@@ -1074,6 +1131,18 @@ function statInv() {
 
 // ── Calendar
 let calY,calM;
+let calSelectedDate = null;
+function calSelectDate(date) {
+  calSelectedDate = calSelectedDate === date ? null : date;
+  renderCal();
+}
+async function saveCalEv() {
+  const title = document.getElementById('cal-ev-inp')?.value.trim();
+  if(!title || !calSelectedDate) return;
+  const a=G('cal-events'); a.push({id:Date.now(),date:calSelectedDate,title}); await S('cal-events',a);
+  calSelectedDate = null;
+  renderCal();
+}
 function renderCal() {
   const now=new Date(); if(!calY){calY=now.getFullYear();calM=now.getMonth();}
   const events=G('cal-events'),first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate();
@@ -1088,18 +1157,22 @@ function renderCal() {
     const day=i+1,isToday=isThis&&day===today;
     const evKey=`${calY}-${String(calM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
     const hasEv=events.some(e=>e.date===evKey);
-    return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''}" onclick="addCalEv('${evKey}')">${day}</div>`;
+    const isSelected=evKey===calSelectedDate;
+    return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''} ${isSelected?'selected':''}" onclick="calSelectDate('${evKey}')">${day}</div>`;
   }).join('')}</div>`;
+  if(calSelectedDate) {
+    html += `<div class="cal-add-form"><div class="row" style="margin-bottom:0">
+      <input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()">
+      <button class="btn btn-g" onclick="saveCalEv()">추가</button>
+      <button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button>
+    </div></div>`;
+  }
   const thisEvs=events.filter(e=>e.date.startsWith(ym));
   if(thisEvs.length) html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${e.title}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`).join('')}</div></div>`;
   document.getElementById('cal-bd').innerHTML=html;
   document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;
 }
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--;}else if(calM>11){calM=0;calY++;}renderCal();}
-async function addCalEv(date) {
-  const title=prompt(`${date} 일정 제목`); if(!title) return;
-  const a=G('cal-events'); a.push({id:Date.now(),date,title}); await S('cal-events',a); renderCal();
-}
 async function delCalEv(id) { await S('cal-events',G('cal-events').filter(x=>x.id!==id)); renderCal(); }
 
 // ── Construction
@@ -1133,16 +1206,40 @@ function statCon() {
 function genSEO() {
   const kw=document.getElementById('seo-kw').value.trim(),tone=document.getElementById('seo-tone').value,loc=document.getElementById('seo-loc').value.trim()||'부산';
   if(!kw) return;
-  const el=document.getElementById('seo-out'); el.style.color='var(--muted)'; el.textContent='생성 중...';
+  const el=document.getElementById('seo-out'); el.classList.add('visible'); el.textContent='생성 중...';
   const tm={'전문가':'전문적이고 신뢰감 있는','고객':'실제 고객 경험 기반','친근':'친근하고 공감가는'};
   setTimeout(()=>{
-    el.style.color='var(--text)';
     el.textContent=`[${tm[tone]} 화자 · ${kw} · ${loc}]\n\n안녕하세요, 디자인하담입니다 😊\n\n「${kw}」에 대해 꼼꼼하게 알려드릴게요.\n\n✅ 포인트 1\n${kw}에서 가장 중요한 것은 전체적인 밸런스입니다.\n\n✅ 포인트 2\n예산 설정부터 시작하세요. ${loc} 기준 평균 단가를 더 사전에 파악하세요.\n\n✅ 포인트 3\n시공 전 3D 시뮬레이션으로 후회 없는 결과를 만들어보세요.\n\n디자인하담에서 더 자세한 상담을 받아보세요 🏡\n\n#${kw.replace(/ /g,'')} #${loc}인테리어 #인테리어디자인 #홈인테리어 #디자인하담 #부산인테리어`;
   },400);
 }
 
+// ── Thread
+async function addThread() {
+  const v=document.getElementById('thr-title').value.trim(),cat=document.getElementById('thr-cat').value;
+  if(!v) return;
+  const a=G('thread'); a.unshift({id:Date.now(),title:v,cat,status:'기획중',date:td()});
+  await S('thread',a); document.getElementById('thr-title').value=''; renderThread(); statThread();
+}
+async function updThreadStatus(id,s) { const a=G('thread'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('thread',a);renderThread();statThread(); }
+async function delThread(id) { await S('thread',G('thread').filter(x=>x.id!==id)); renderThread(); statThread(); }
+const THR_C={'기획중':'badge-orange','작성중':'badge-blue','예약':'badge-green','발행':'badge-dim'};
+function renderThread() {
+  const a=G('thread'),el=document.getElementById('thr-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🧵</div>등록된 쓰레드가 없습니다</div>';return;}
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>
+    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span>
+    <span class="item-txt">${x.title}</span>
+    <select class="badge ${THR_C[x.status]||'badge-dim'}" onchange="updThreadStatus(${x.id},this.value)">${['기획중','작성중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    <button class="del" onclick="delThread(${x.id})">×</button></div>`
+  ).join('')+'</div>';
+}
+function statThread() {
+  const a=G('thread');
+  document.getElementById('fc-thread').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${a.filter(x=>x.status==='예약').length}</span>`;
+}
+
 // ── All stats
-function allStats() { statChk(); statJnl(); statIns(); statOrd(); statInv(); statCon(); }
+function allStats() { statChk(); statJnl(); statIns(); statOrd(); statInv(); statCon(); statThread(); }
 
 // ── Init
 (async function init() {
