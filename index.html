@@ -199,53 +199,49 @@
     .seo-out-box{display:none;margin-top:16px;white-space:pre-wrap;font-size:12.5px;color:var(--muted);line-height:1.75;background:rgba(255,255,255,0.04);border-radius:10px;padding:14px}
     .seo-out-box.visible{display:block}
 
-    /* Calendar date selected */
-    .cal-day.selected{background:rgba(96,165,250,0.15);color:var(--blue)}
-    .cal-add-form{background:rgba(255,255,255,0.04);border-radius:10px;padding:13px;margin-top:10px}
+    /* Inspection styles */
+    .ins-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px}
+    .ins-hd{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;gap:8px}
+    .ins-title{font-size:13px;font-weight:600;flex:1}
+    .ins-meta{font-size:11.5px;color:var(--muted);margin-bottom:6px}
+    .ins-status{display:inline-flex;align-items:center;padding:3px 8px;border-radius:5px;font-size:11px;font-weight:600}
+    .ins-status.pending{background:rgba(251,146,60,0.13);color:var(--orange)}
+    .ins-status.passed{background:var(--green-dim);color:var(--green)}
+    .ins-status.failed{background:rgba(248,113,113,0.12);color:var(--red)}
 
-    /* Repo cards for cloud modal */
-    .repo-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
-    .repo-card-icon{width:36px;height:36px;border-radius:9px;background:var(--tag);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-    .repo-card-info{flex:1}
-    .repo-card-name{font-size:13px;font-weight:600;margin-bottom:3px}
-    .repo-card-desc{font-size:11.5px;color:var(--muted)}
+    /* Thread / Discussion */
+    .thread-item{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px}
+    .thread-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+    .thread-title{font-size:13px;font-weight:600}
+    .thread-meta{font-size:11px;color:var(--muted)}
+    .thread-body{font-size:12.5px;color:var(--muted);white-space:pre-wrap;line-height:1.6}
 
-    ::-webkit-scrollbar{width:4px}
-    ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px}
-
-    /* Project overview */
+    /* Projects */
     .proj-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-    .proj-col-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-    .proj-col-title{font-size:11px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase}
-    .proj-col-count{font-size:11px;font-weight:700;padding:2px 8px;border-radius:12px}
-    .proj-col.active .proj-col-title{color:var(--green)}
-    .proj-col.active .proj-col-count{background:var(--green-dim);color:var(--green)}
-    .proj-col.upcoming .proj-col-title{color:var(--blue)}
-    .proj-col.upcoming .proj-col-count{background:rgba(96,165,250,0.13);color:var(--blue)}
-    .proj-col.done .proj-col-title{color:var(--dim)}
-    .proj-col.done .proj-col-count{background:var(--tag);color:var(--dim)}
-    .proj-card{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:11px;padding:13px 14px;margin-bottom:7px;cursor:pointer;transition:background .15s}
-    .proj-card:hover{background:rgba(255,255,255,0.07)}
-    .proj-card-name{font-size:13px;font-weight:600;margin-bottom:4px}
-    .proj-card-meta{font-size:11px;color:var(--muted);margin-bottom:7px;line-height:1.5}
-    .proj-card-foot{display:flex;align-items:center;gap:6px}
-    .proj-status-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .proj-col-hd{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+    .proj-col-cnt{background:var(--tag);border-radius:4px;padding:1px 6px;font-size:11px;color:var(--dim);font-weight:600}
+    .proj-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px;cursor:pointer;transition:background .15s;border:1px solid transparent}
+    .proj-card:hover{background:rgba(255,255,255,0.07);border-color:var(--border)}
+    .proj-card-name{font-size:13px;font-weight:600;margin-bottom:5px}
+    .proj-card-meta{font-size:11.5px;color:var(--muted);margin-bottom:4px}
+    .proj-card-foot{display:flex;align-items:center;gap:6px;margin-top:8px}
+    .proj-status-dot{width:7px;height:7px;border-radius:50%}
     .proj-status-dot.active{background:var(--green)}
-    .proj-status-dot.upcoming{background:var(--blue)}
+    .proj-status-dot.upcoming{background:var(--orange)}
     .proj-status-dot.done{background:var(--dim)}
     .proj-status-label{font-size:11px;color:var(--muted)}
-    .proj-add-form{background:rgba(255,255,255,0.04);border:1px dashed rgba(255,255,255,0.1);border-radius:11px;padding:13px 14px;margin-top:4px}
-    .proj-add-form .form-title{font-size:11px;color:var(--muted);margin-bottom:8px;font-weight:600}
+
     /* Project detail overlay */
-    .proj-detail{position:fixed;inset:0;background:var(--modal-bg);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(5px)}
+    .proj-detail{display:none;position:fixed;inset:0;background:var(--modal-bg);z-index:200;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px}
     .proj-detail.open{display:flex}
     .proj-detail-box{background:#1c1c1e;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:520px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
     .proj-detail-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
     .proj-detail-hd h3{font-size:14px;font-weight:700}
-    .proj-detail-bd{padding:18px 22px;overflow-y:auto;flex:1}
+    .proj-detail-bd{padding:20px 22px;overflow-y:auto;flex:1}
 
-    @media(max-width:900px){.feat-grid{grid-template-columns:repeat(2,1fr)}.status-row{grid-template-columns:repeat(2,1fr)}.qlinks{grid-template-columns:repeat(2,1fr)}main{padding:20px 16px}header{padding:14px 16px}.proj-cols{grid-template-columns:1fr}}
-    @media(max-width:580px){.feat-grid{grid-template-columns:1fr}}
+    /* Calendar selected day */
+    .cal-day.selected{background:rgba(96,165,250,0.25);color:var(--blue)}
+    .cal-add-form{margin-top:14px;background:rgba(96,165,250,0.07);border:1px solid rgba(96,165,250,0.15);border-radius:10px;padding:12px}
   </style>
 </head>
 <body>
@@ -259,204 +255,118 @@
     </div>
   </div>
   <div class="hd-right">
-    <div class="sync-badge" onclick="open_('settings')" id="sync-badge" title="클라우드 동기화 설정">
-      <div class="sync-dot off" id="sync-dot"></div>
-      <span id="sync-text">연결 안됨</span>
-    </div>
     <div class="header-date">
-      <div class="dm" id="dateMain"></div>
-      <div class="ds" id="dateSub"></div>
+      <div class="dm" id="hd-date">--</div>
+      <div class="ds" id="hd-day">--</div>
+    </div>
+    <div class="sync-badge" onclick="open_('settings')" id="sync-badge">
+      <div class="sync-dot off" id="sync-dot"></div>
+      <span id="sync-label">동기화 설정</span>
     </div>
   </div>
 </header>
 
 <main>
-  <div class="sec-title">오늘 현황</div>
+  <div class="sec-title">현황 요약</div>
   <div class="status-row">
     <div class="stat-card" onclick="open_('checklist')">
-      <div class="stat-top"><div class="stat-label">✅ 업무 체크리스트</div><div class="stat-arr">↗</div></div>
+      <div class="stat-top"><div class="stat-label">✅ 오늘 할 일</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-chk">0<span class="unit">개</span></div>
-      <div class="prog-bar"><div class="prog-fill" id="sv-prog" style="width:0%"></div></div>
-      <div class="stat-sub" id="sv-chk-sub">항목이 없습니다</div>
+      <div class="prog-bar"><div class="prog-fill" id="pf-chk" style="width:0%"></div></div>
+      <div class="stat-sub" id="ss-chk">완료 0 / 전체 0</div>
     </div>
     <div class="stat-card" onclick="open_('journal')">
-      <div class="stat-top"><div class="stat-label">📋 업무일지</div><div class="stat-arr">↗</div></div>
-      <div class="stat-val" id="sv-jnl">—</div>
-      <div class="stat-sub" id="sv-jnl-sub">오늘 작성된 일지 없음</div>
-    </div>
-    <div class="stat-card" onclick="open_('insta')">
-      <div class="stat-top"><div class="stat-label">📸 인스타 콘텐츠</div><div class="stat-arr">↗</div></div>
-      <div class="stat-val" id="sv-insta">0<span class="unit">건</span></div>
-      <div class="stat-sub">예약된 콘텐츠</div>
-    </div>
-    <div class="stat-card" onclick="open_('order')">
-      <div class="stat-top"><div class="stat-label">📦 발주관리</div><div class="stat-arr">↗</div></div>
-      <div class="stat-val" id="sv-order">0<span class="unit">건</span></div>
-      <div class="stat-sub">입고 대기 중</div>
+      <div class="stat-top"><div class="stat-label">📓 업무일지</div><div class="stat-arr">↗</div></div>
+      <div class="stat-val" id="sv-jnl">0<span class="unit">건</span></div>
+      <div class="stat-sub" id="ss-jnl">이번 주 0건</div>
     </div>
     <div class="stat-card" onclick="open_('projects')">
       <div class="stat-top"><div class="stat-label">🏢 프로젝트</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-proj">0<span class="unit">개</span></div>
-      <div class="stat-sub" id="sv-proj-sub">진행중 프로젝트</div>
+      <div class="stat-sub" id="sv-proj-sub">진행중 프로젝트 없음</div>
+    </div>
+    <div class="stat-card" onclick="open_('inventory')">
+      <div class="stat-top"><div class="stat-label">📦 재고</div><div class="stat-arr">↗</div></div>
+      <div class="stat-val" id="sv-inv">0<span class="unit">종</span></div>
+      <div class="stat-sub">입고 대기 중</div>
     </div>
   </div>
 
-  <div class="sec-title">업무 노드</div>
+  <div class="sec-title" style="margin-top:24px">주요 기능</div>
   <div class="feat-grid">
-    <div class="feat-card" onclick="open_('cloud')">
-      <div class="feat-top"><div class="feat-icon">☁️</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">파일 클라우드</div>
-      <div class="feat-desc">파일 업로드·다운로드·공유, 실시간 동기화, 이미지 미리보기, 빠른 검색 지원.</div>
-      <div class="tags"><span class="tag">파일관리</span><span class="tag">이미지</span><span class="tag">공유</span></div>
-      <div class="feat-status">hadam-cloud 저장소 연동</div>
-    </div>
-    <div class="feat-card" onclick="open_('checklist')">
-      <div class="feat-top"><div class="feat-icon" style="background:var(--green-dim)">✅</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">업무 체크리스트</div>
-      <div class="feat-desc">매일·주간 업무 체크리스트, 신규 현황 체크, 성과 기록 및 카테고리 설정.</div>
-      <div class="tags"><span class="tag">오늘업무</span><span class="tag">주간</span><span class="tag">카테고리</span></div>
-      <div class="feat-status" id="fc-chk">전체 <span class="cnt">0건</span> · 완료 <span class="gcnt">0</span></div>
-    </div>
-    <div class="feat-card" onclick="open_('inventory')">
-      <div class="feat-top"><div class="feat-icon">🗂️</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">당비실 재고관리</div>
-      <div class="feat-desc">물품·견적·스포츠 재고 현황 및 구매 일정 관리, 긴급 구매 알림.</div>
-      <div class="tags"><span class="tag">재고현황</span><span class="tag">구매일정</span><span class="tag">긴급알림</span></div>
-      <div class="feat-status" id="fc-inv">전체 <span class="cnt">0건</span></div>
+    <div class="feat-card" onclick="open_('journal')">
+      <div class="feat-top"><div class="feat-icon">📓</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">업무일지</div>
+      <div class="feat-desc">팀원별 업무 기록 및 현장 일지 관리</div>
+      <div class="tags"><span class="tag">일지작성</span><span class="tag">팀원관리</span><span class="tag">클라우드동기화</span></div>
+      <div class="feat-status" id="fc-jnl">이번 주 <span class="cnt">0건</span></div>
     </div>
     <div class="feat-card" onclick="open_('calendar')">
       <div class="feat-top"><div class="feat-icon">📅</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">캘린더</div>
-      <div class="feat-desc">일정·현장·마케팅 관리, 월·주·일 보기, 카테고리별 다가오는 일정 표시.</div>
-      <div class="tags"><span class="tag">일정관리</span><span class="tag">현장</span><span class="tag">마케팅</span></div>
+      <div class="feat-desc">공사 일정 및 중요 이벤트 관리</div>
+      <div class="tags"><span class="tag">일정관리</span><span class="tag">월별보기</span></div>
       <div class="feat-status" id="fc-cal">이번 달 일정 <span class="cnt">0건</span></div>
     </div>
-    <div class="feat-card" onclick="open_('journal')">
-      <div class="feat-top"><div class="feat-icon">📝</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">업무일지</div>
-      <div class="feat-desc">팀원별 업무 기록, 날짜별 현장 연결, 태그 검색, Ctrl+S로 빠른 저장.</div>
-      <div class="tags"><span class="tag">팀원별기록</span><span class="tag">현장</span><span class="tag">태그검색</span></div>
-      <div class="feat-status" id="fc-jnl">작성된 일지 없음</div>
-    </div>
-    <div class="feat-card" onclick="open_('seo')">
-      <div class="feat-top"><div class="feat-icon">🔍</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">SEO 블로그 자동화</div>
-      <div class="feat-desc">네이버 블로그 글 자동 생성, 고객·컨텍스트 화자 선택, 키워드 최적화.</div>
-      <div class="tags"><span class="tag">블로그자동화</span><span class="tag">키워드</span><span class="tag">자동생성</span></div>
-      <div class="feat-status">—</div>
+    <div class="feat-card" onclick="open_('checklist')">
+      <div class="feat-top"><div class="feat-icon">✅</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">체크리스트</div>
+      <div class="feat-desc">오늘의 업무 및 할 일 목록 관리</div>
+      <div class="tags"><span class="tag">할일목록</span><span class="tag">진행상황</span></div>
+      <div class="feat-status" id="fc-chk">완료 <span class="cnt">0</span> / 전체 <span class="cnt">0</span></div>
     </div>
     <div class="feat-card" onclick="open_('order')">
-      <div class="feat-top"><div class="feat-icon">📦</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">발주관리</div>
-      <div class="feat-desc">자재·파품 발주 이력 관리, 품목별 수량·단가·납기 추적.</div>
-      <div class="tags"><span class="tag">발주이력</span><span class="tag">수량관리</span><span class="tag">납기추적</span></div>
-      <div class="feat-status" id="fc-ord">전체 <span class="cnt">0건</span> 입고대기 <span class="cnt">0</span></div>
+      <div class="feat-top"><div class="feat-icon">🛒</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">발주 관리</div>
+      <div class="feat-desc">자재 발주 현황 및 납품 일정 관리</div>
+      <div class="tags"><span class="tag">발주서</span><span class="tag">납품현황</span></div>
+      <div class="feat-status" id="fc-ord">전체 <span class="cnt">0건</span> 미납 <span class="cnt">0</span></div>
     </div>
-    <div class="feat-card" onclick="open_('thread')">
-      <div class="feat-top"><div class="feat-icon">🧵</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">쓰레드 자동화</div>
-      <div class="feat-desc">Threads 게시글 기획·작성·예약, 콘텐츠미디어 템플릿 내장.</div>
-      <div class="tags"><span class="tag">쓰레드관리</span><span class="tag">예약발행</span><span class="tag">템플릿</span></div>
-      <div class="feat-status" id="fc-thread">전체 <span class="cnt">0건</span> 예약 <span class="cnt">0</span></div>
-    </div>
-    <div class="feat-card" onclick="open_('insta')">
-      <div class="feat-top"><div class="feat-icon">📸</div><div class="arr-btn">↗</div></div>
-      <div class="feat-title">인스타 콘텐츠</div>
-      <div class="feat-desc">게시물 기획·컨셉·해시태그·예약·성과 등록 관리.</div>
-      <div class="tags"><span class="tag">인스타관리</span><span class="tag">카드뉴스</span><span class="tag">릴스</span></div>
+    <div class="feat-card" onclick="open_('inspection')">
+      <div class="feat-top"><div class="feat-icon" style="background:rgba(96,165,250,0.1)">🔍</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">현장 점검</div>
+      <div class="feat-desc">공사 현장 품질 점검 및 이슈 관리</div>
+      <div class="tags"><span class="tag">품질관리</span><span class="tag">이슈트래킹</span></div>
       <div class="feat-status" id="fc-ins">전체 <span class="cnt">0건</span> 예약 <span class="cnt">0</span></div>
     </div>
     <div class="feat-card" onclick="open_('construction')">
       <div class="feat-top"><div class="feat-icon">🏗️</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">공정관리</div>
-      <div class="feat-desc">현장별 공정 단계 추적, 진행률·일정·메모·사진 편의.</div>
-      <div class="tags"><span class="tag">현장관리</span><span class="tag">진행률</span><span class="tag">사진메모</span></div>
+      <div class="feat-desc">현장별 공사 단계 및 진행률 관리</div>
+      <div class="tags"><span class="tag">공정현황</span><span class="tag">단계관리</span></div>
       <div class="feat-status" id="fc-con">현장 <span class="cnt">0개</span> 진행중 <span class="cnt">0</span></div>
     </div>
     <div class="feat-card" onclick="open_('projects')">
       <div class="feat-top"><div class="feat-icon" style="background:rgba(251,146,60,0.1)">🏢</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">프로젝트 현황</div>
-      <div class="feat-desc">진행중·예정·완료 프로젝트를 한눈에 파악, 담당자·일정·메모 등록.</div>
-      <div class="tags"><span class="tag">진행중</span><span class="tag">예정</span><span class="tag">완료</span></div>
-      <div class="feat-status" id="fc-proj">진행중 <span class="cnt">0건</span> · 예정 <span class="cnt">0</span></div>
+      <div class="feat-desc">인테리어 프로젝트 현황 및 일정 관리</div>
+      <div class="tags"><span class="tag">프로젝트</span><span class="tag">고객관리</span><span class="tag">일정</span></div>
+      <div class="feat-status" id="fc-proj">진행중 <span class="cnt">0건</span></div>
+    </div>
+    <div class="feat-card" onclick="open_('inventory')">
+      <div class="feat-top"><div class="feat-icon">📦</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">재고 관리</div>
+      <div class="feat-desc">자재 및 소모품 재고 현황 관리</div>
+      <div class="tags"><span class="tag">재고현황</span><span class="tag">입출고</span></div>
+      <div class="feat-status" id="fc-inv">전체 <span class="cnt">0건</span></div>
+    </div>
+    <div class="feat-card" onclick="open_('thread')">
+      <div class="feat-top"><div class="feat-icon" style="background:rgba(167,139,250,0.1)">💬</div><div class="arr-btn">↗</div></div>
+      <div class="feat-title">팀 소통</div>
+      <div class="feat-desc">팀 공지 및 내부 커뮤니케이션</div>
+      <div class="tags"><span class="tag">공지</span><span class="tag">팀채팅</span></div>
+      <div class="feat-status" id="fc-thread">공지 <span class="cnt">0건</span></div>
     </div>
   </div>
 
-  <div class="sec-title">바로 가기</div>
+  <div class="sec-title" style="margin-top:24px">바로가기</div>
   <div class="qlinks">
-    <a class="qlink" href="https://blog.naver.com" target="_blank">✏️ 네이버 블로그</a>
-    <a class="qlink" href="https://talk.naver.com" target="_blank">💬 네이버 톡톡</a>
-    <a class="qlink" href="https://place.naver.com" target="_blank">📍 네이버 플레이스</a>
-    <a class="qlink" href="mailto:gesignhadam@gmail.com">✉️ 이메일</a>
+    <a class="qlink" onclick="open_('seo')">🔍 SEO 블로그</a>
+    <a class="qlink" onclick="open_('settings')">⚙️ 클라우드 설정</a>
+    <a class="qlink" href="https://naver.com" target="_blank">🌐 네이버</a>
+    <a class="qlink" href="https://smartstore.naver.com" target="_blank">🛍️ 스마트스토어</a>
   </div>
 </main>
-
-<!-- ======== MODALS ======== -->
-
-<!-- 프로젝트 현황 -->
-<div class="overlay" id="m-projects">
-  <div class="modal" style="width:960px;max-width:100%">
-    <div class="modal-hd">
-      <h2>🏢 프로젝트 현황</h2>
-      <div style="display:flex;align-items:center;gap:8px">
-        <button class="btn btn-g" onclick="openNewProj()" style="font-size:12px;padding:6px 12px">+ 프로젝트 추가</button>
-        <button class="close-btn" onclick="close_('projects')">✕</button>
-      </div>
-    </div>
-    <div class="modal-bd">
-      <div id="proj-new-form" style="display:none;margin-bottom:16px">
-        <div class="proj-add-form">
-          <div class="form-title">새 프로젝트</div>
-          <div class="row">
-            <input class="inp" id="pnf-name" placeholder="프로젝트명 (예: 해운대 아파트 32평)" style="flex:2">
-            <select class="inp" id="pnf-status" style="flex:1">
-              <option value="진행중">진행중</option>
-              <option value="예정">예정</option>
-              <option value="완료">완료</option>
-            </select>
-          </div>
-          <div class="row">
-            <input class="inp" id="pnf-client" placeholder="고객명">
-            <input class="inp" id="pnf-manager" placeholder="담당자">
-            <input class="inp" id="pnf-start" type="date" style="flex:0.8">
-            <input class="inp" id="pnf-end" type="date" style="flex:0.8">
-          </div>
-          <div class="row">
-            <textarea class="inp" id="pnf-memo" placeholder="메모 (평형, 예산, 특이사항...)" style="min-height:60px;resize:none"></textarea>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-g" onclick="saveNewProj()">저장</button>
-            <button class="btn" onclick="document.getElementById('proj-new-form').style.display='none'">취소</button>
-          </div>
-        </div>
-      </div>
-
-      <div class="proj-cols">
-        <div class="proj-col active">
-          <div class="proj-col-hd">
-            <span class="proj-col-title">진행중</span>
-            <span class="proj-col-count" id="pcnt-active">0</span>
-          </div>
-          <div id="proj-list-active"></div>
-        </div>
-        <div class="proj-col upcoming">
-          <div class="proj-col-hd">
-            <span class="proj-col-title">예정</span>
-            <span class="proj-col-count" id="pcnt-upcoming">0</span>
-          </div>
-          <div id="proj-list-upcoming"></div>
-        </div>
-        <div class="proj-col done">
-          <div class="proj-col-hd">
-            <span class="proj-col-title">완료</span>
-            <span class="proj-col-count" id="pcnt-done">0</span>
-          </div>
-          <div id="proj-list-done"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 
 <!-- 프로젝트 상세/편집 -->
 <div class="proj-detail" id="proj-detail-overlay">
@@ -488,7 +398,9 @@
       <div style="display:flex;gap:8px;margin-top:4px">
         <button class="btn btn-g btn-full" onclick="saveProjDetail()" style="flex:1">저장</button>
         <button class="btn btn-r" onclick="deleteProjDetail()" style="flex:0;white-space:nowrap">삭제</button>
+        <button class="btn" onclick="projAddSite()" style="flex:0;white-space:nowrap">🏗️ 현장 추가</button>
       </div>
+      <div id="pd-linked-events" style="margin-top:14px"></div>
     </div>
   </div>
 </div>
@@ -518,14 +430,15 @@
 
       <div id="settings-status"></div>
 
-      <div style="margin-bottom:6px;font-size:12px;color:var(--muted);font-weight:600">저장 위치</div>
-      <div style="background:var(--tag);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--muted);font-family:monospace">
-        designhadam-commits / hadam-cloud / data/*.json
+      <div style="margin-top:16px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px">동기화 데이터</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px" id="sync-keys-list"></div>
       </div>
 
-      <div class="divider"></div>
-
-      <button class="btn btn-r" style="width:100%" onclick="clearPAT()">토큰 삭제 및 로컬 저장소 초기화</button>
+      <div style="margin-top:16px;display:flex;gap:8px">
+        <button class="btn btn-g" onclick="manualSync()" style="flex:1">지금 동기화</button>
+        <button class="btn" onclick="close_('settings')" style="flex:0">닫기</button>
+      </div>
     </div>
   </div>
 </div>
@@ -533,19 +446,13 @@
 <!-- 체크리스트 -->
 <div class="overlay" id="m-checklist">
   <div class="modal">
-    <div class="modal-hd"><h2>✅ 업무 체크리스트</h2><button class="close-btn" onclick="close_('checklist')">✕</button></div>
+    <div class="modal-hd"><h2>✅ 체크리스트</h2><button class="close-btn" onclick="close_('checklist')">✕</button></div>
     <div class="modal-bd">
-      <div class="tabs">
-        <button class="tab on" onclick="chkTab('오늘',this)">오늘</button>
-        <button class="tab" onclick="chkTab('주간',this)">주간</button>
-        <button class="tab" onclick="chkTab('전체',this)">전체</button>
-      </div>
       <div class="row">
-        <input class="inp" id="chk-inp" placeholder="새 업무 입력 후 Enter" onkeydown="if(event.key==='Enter')addChk()">
-        <select class="inp" id="chk-cat" style="max-width:110px"><option>일반</option><option>현장</option><option>마케팅</option><option>행정</option></select>
+        <input class="inp" id="chk-inp" placeholder="할 일 추가" onkeydown="if(event.key==='Enter')addChk()">
         <button class="btn btn-g" onclick="addChk()">추가</button>
       </div>
-      <div class="list-wrap" id="chk-list"></div>
+      <div id="chk-list"></div>
     </div>
   </div>
 </div>
@@ -553,110 +460,46 @@
 <!-- 업무일지 -->
 <div class="overlay" id="m-journal">
   <div class="modal wide">
-    <div class="modal-hd"><h2>📝 업무일지</h2><button class="close-btn" onclick="close_('journal')">✕</button></div>
+    <div class="modal-hd"><h2>📓 업무일지</h2><button class="close-btn" onclick="close_('journal')">✕</button></div>
     <div class="modal-bd">
-
-      <!-- 팀원 탭 바 -->
-      <div class="jnl-member-bar" id="jnl-member-bar">
-        <!-- rendered by renderJnlMemberBar() -->
-        <button class="jnl-manage-btn" onclick="toggleMemberMgmt()" title="팀원 관리">👥 팀원 관리</button>
-      </div>
-
-      <!-- 팀원 관리 패널 -->
-      <div class="member-mgmt" id="member-mgmt-panel">
-        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">팀원 목록</div>
-        <div class="member-list-row" id="member-chip-list"></div>
+      <!-- Member tab bar -->
+      <div class="jnl-member-bar" id="jnl-member-bar"></div>
+      <!-- Member management panel -->
+      <div class="member-mgmt" id="member-mgmt">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px">팀원 관리</div>
+        <div class="member-list-row" id="member-list-chips"></div>
         <div class="row" style="margin-bottom:0">
-          <input class="inp" id="member-add-inp" placeholder="새 팀원 이름" style="flex:1" onkeydown="if(event.key==='Enter')addMember()">
-          <button class="btn btn-g" onclick="addMember()">+ 추가</button>
+          <input class="inp" id="member-add-inp" placeholder="팀원 이름 입력" onkeydown="if(event.key==='Enter')addMember()">
+          <button class="btn btn-g" onclick="addMember()">추가</button>
         </div>
       </div>
-
-      <!-- 작성 폼 -->
-      <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-bottom:14px">
+      <!-- Write form -->
+      <div id="jnl-write-area">
         <div class="row">
-          <select class="inp" id="jnl-member-sel" style="max-width:130px"></select>
-          <input class="inp" id="jnl-title" placeholder="제목 / 현장명" style="flex:1">
-          <input class="inp" id="jnl-date" type="date" style="width:145px">
+          <input class="inp" id="jnl-title" placeholder="제목 (예: 해운대 현장 오전 작업)">
+          <input class="inp" id="jnl-date" type="date" style="flex:0;min-width:130px">
         </div>
-        <textarea class="inp" id="jnl-body" placeholder="오늘의 업무 내용... (Ctrl+S 저장)" style="width:100%;margin-bottom:8px"></textarea>
-        <button class="btn btn-g btn-full" onclick="saveJnl()">저장</button>
+        <div class="row" style="margin-bottom:10px">
+          <textarea class="inp" id="jnl-body" placeholder="업무 내용을 입력하세요..." style="min-height:100px;resize:none"></textarea>
+        </div>
+        <div class="row" style="margin-bottom:14px">
+          <button class="btn btn-g" onclick="saveJnl()" style="flex:1">저장</button>
+        </div>
       </div>
-
-      <!-- 일지 목록 -->
       <div id="jnl-list"></div>
-    </div>
-  </div>
-</div>
-
-<!-- 파일 클라우드 -->
-<div class="overlay" id="m-cloud">
-  <div class="modal">
-    <div class="modal-hd"><h2>☁️ 파일 클라우드</h2><button class="close-btn" onclick="close_('cloud')">✕</button></div>
-    <div class="modal-bd">
-      <div class="info-box">연결된 hadam 저장소 현황입니다. 각 저장소를 클릭해 GitHub에서 확인할 수 있습니다.</div>
-      <div class="repo-card">
-        <div class="repo-card-icon">☁️</div>
-        <div class="repo-card-info"><div class="repo-card-name">hadam-cloud</div><div class="repo-card-desc">데이터 동기화 저장소 — 프로젝트, 고객-상담, 프로세스, 업무일지</div></div>
-        <a href="https://github.com/designhadam-commits/hadam-cloud" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
-      </div>
-      <div class="repo-card">
-        <div class="repo-card-icon">📝</div>
-        <div class="repo-card-info"><div class="repo-card-name">hadam-notes</div><div class="repo-card-desc">팀 업무보고 허브 — Obsidian 업무일지 자동 파싱</div></div>
-        <a href="https://github.com/designhadam-commits/hadam-notes" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
-      </div>
-      <div class="repo-card">
-        <div class="repo-card-icon">🧵</div>
-        <div class="repo-card-info"><div class="repo-card-name">hadam-thread</div><div class="repo-card-desc">Threads 게시글 자동화</div></div>
-        <a href="https://github.com/designhadam-commits/hadam-thread" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
-      </div>
-      <div class="repo-card">
-        <div class="repo-card-icon">🏠</div>
-        <div class="repo-card-info"><div class="repo-card-name">hadam-app</div><div class="repo-card-desc">인터널 포털 — 이 앱</div></div>
-        <a href="https://github.com/designhadam-commits/hadam-app" target="_blank" class="btn" style="flex-shrink:0">보기 →</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- 캘린더 -->
-<div class="overlay" id="m-calendar">
-  <div class="modal wide">
-    <div class="modal-hd"><h2>📅 캘린더</h2><button class="close-btn" onclick="close_('calendar')">✕</button></div>
-    <div class="modal-bd" id="cal-bd"></div>
-  </div>
-</div>
-
-<!-- SEO -->
-<div class="overlay" id="m-seo">
-  <div class="modal">
-    <div class="modal-hd"><h2>🔍 SEO 블로그 자동화</h2><button class="close-btn" onclick="close_('seo')">✕</button></div>
-    <div class="modal-bd">
-      <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px">키워드와 화자를 선택하면 네이버 블로그용 초안을 생성합니다</div>
-      <input class="inp" id="seo-kw" placeholder="예: 부산 거실 인테리어 시공" style="width:100%;margin-bottom:8px">
-      <select class="inp" id="seo-tone" style="width:100%;margin-bottom:8px">
-        <option value="전문가">전문가 화자 — 전문적이고 신뢰감 있는 톤</option>
-        <option value="고객">고객 경험 화자 — 실제 시공 후기 스타일</option>
-        <option value="친근">친근한 이웃 화자 — 편안하고 공감가는 톤</option>
-      </select>
-      <input class="inp" id="seo-loc" placeholder="지역 (예: 부산 해운대구)" style="width:100%;margin-bottom:8px">
-      <button class="btn btn-g btn-full" onclick="genSEO()">블로그 초안 생성</button>
-      <div id="seo-out" class="seo-out-box"></div>
     </div>
   </div>
 </div>
 
 <!-- 발주관리 -->
 <div class="overlay" id="m-order">
-  <div class="modal">
-    <div class="modal-hd"><h2>📦 발주관리</h2><button class="close-btn" onclick="close_('order')">✕</button></div>
+  <div class="modal wide">
+    <div class="modal-hd"><h2>🛒 발주 관리</h2><button class="close-btn" onclick="close_('order')">✕</button></div>
     <div class="modal-bd">
       <div class="row">
-        <input class="inp" id="ord-site" placeholder="현장명" style="width:120px">
         <input class="inp" id="ord-item" placeholder="품목명">
-        <input class="inp" id="ord-qty" placeholder="수량" style="width:60px">
-        <input class="inp" id="ord-price" placeholder="단가" style="width:80px">
-        <select class="inp" id="ord-pay" style="width:100px"><option>회사카드</option><option>계좌이체</option><option>현금</option></select>
+        <input class="inp" id="ord-qty" placeholder="수량" style="flex:0;width:80px">
+        <input class="inp" id="ord-date" type="date" style="flex:0;min-width:130px">
         <button class="btn btn-g" onclick="addOrd()">추가</button>
       </div>
       <div id="ord-list"></div>
@@ -667,12 +510,11 @@
 <!-- 재고관리 -->
 <div class="overlay" id="m-inventory">
   <div class="modal">
-    <div class="modal-hd"><h2>🗂️ 당비실 재고관리</h2><button class="close-btn" onclick="close_('inventory')">✕</button></div>
+    <div class="modal-hd"><h2>📦 재고 관리</h2><button class="close-btn" onclick="close_('inventory')">✕</button></div>
     <div class="modal-bd">
       <div class="row">
-        <input class="inp" id="inv-name" placeholder="품목명">
-        <input class="inp" id="inv-qty" placeholder="수량" style="width:72px">
-        <select class="inp" id="inv-cat" style="width:100px"><option>물품</option><option>견적</option><option>스포츠</option></select>
+        <input class="inp" id="inv-item" placeholder="품목명">
+        <input class="inp" id="inv-qty" placeholder="수량" style="flex:0;width:80px">
         <button class="btn btn-g" onclick="addInv()">추가</button>
       </div>
       <div id="inv-list"></div>
@@ -680,32 +522,85 @@
   </div>
 </div>
 
-<!-- 쓰레드 -->
-<div class="overlay" id="m-thread">
-  <div class="modal">
-    <div class="modal-hd"><h2>🧵 쓰레드 자동화</h2><button class="close-btn" onclick="close_('thread')">✕</button></div>
+<!-- 캘린더 -->
+<div class="overlay" id="m-calendar">
+  <div class="modal wide">
+    <div class="modal-hd"><h2>📅 캘린더</h2><button class="close-btn" onclick="close_('calendar')">✕</button></div>
     <div class="modal-bd">
-      <div class="row">
-        <input class="inp" id="thr-title" placeholder="쓰레드 글 주제">
-        <select class="inp" id="thr-cat" style="width:100px"><option>일상</option><option>인테리어</option><option>홍보</option><option>정보</option></select>
-        <button class="btn btn-g" onclick="addThread()">추가</button>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:8px">✍️ 자연어 일정 입력</div>
+        <div class="row" style="margin-bottom:0">
+          <input class="inp" id="nl-cal-inp" placeholder="예) 센텀비치 타일공사 다음주 화요일" style="flex:1" oninput="nlCalPreview()" onkeydown="if(event.key==='Enter')nlCalSave()">
+          <button class="btn btn-g" onclick="nlCalSave()">추가</button>
+        </div>
+        <div id="nl-cal-preview" style="font-size:12px;color:var(--accent);margin-top:6px;min-height:18px"></div>
       </div>
-      <div id="thr-list"></div>
+    <div id="cal-bd"></div>
     </div>
   </div>
 </div>
 
-<!-- 인스타 콘텐츠 -->
-<div class="overlay" id="m-insta">
+<!-- SEO -->
+<div class="overlay" id="m-seo">
   <div class="modal">
-    <div class="modal-hd"><h2>📸 인스타 콘텐츠</h2><button class="close-btn" onclick="close_('insta')">✕</button></div>
+    <div class="modal-hd"><h2>🔍 SEO 블로그 자동화</h2><button class="close-btn" onclick="close_('seo')">✕</button></div>
+    <div class="modal-bd">
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:12px">키워드와 화자를 선택하면 네이버 블로그용 초안을 생성합니다</div>
+      <input class="inp" id="seo-kw" placeholder="예: 부산 거실 인테리어 시공" style="width:100%;margin-bottom:8px">
+      <div class="row" style="margin-bottom:12px">
+        <select class="inp" id="seo-tone">
+          <option value="전문가">전문가 톤</option>
+          <option value="친근한">친근한 톤</option>
+          <option value="정보형">정보형</option>
+        </select>
+        <select class="inp" id="seo-length">
+          <option value="짧게">짧게 (500자)</option>
+          <option value="보통">보통 (1000자)</option>
+          <option value="길게">길게 (1500자)</option>
+        </select>
+      </div>
+      <button class="btn btn-g" onclick="genSeo()" style="width:100%;margin-bottom:8px">✨ 초안 생성</button>
+      <div class="seo-out-box" id="seo-out"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 현장 점검 -->
+<div class="overlay" id="m-inspection">
+  <div class="modal wide">
+    <div class="modal-hd"><h2>🔍 현장 점검</h2><button class="close-btn" onclick="close_('inspection')">✕</button></div>
     <div class="modal-bd">
       <div class="row">
-        <input class="inp" id="ins-title" placeholder="콘텐츠 주제 / 제목">
-        <select class="inp" id="ins-type" style="width:90px"><option>카드뉴스</option><option>릴스</option><option>피드</option></select>
+        <input class="inp" id="ins-title" placeholder="점검 현장명">
+        <input class="inp" id="ins-date" type="date" style="flex:0;min-width:130px">
+        <select class="inp" id="ins-status" style="flex:0;min-width:90px">
+          <option value="예약">예약</option>
+          <option value="진행중">진행중</option>
+          <option value="완료">완료</option>
+          <option value="불합격">불합격</option>
+        </select>
         <button class="btn btn-g" onclick="addIns()">추가</button>
       </div>
       <div id="ins-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 팀 소통 -->
+<div class="overlay" id="m-thread">
+  <div class="modal wide">
+    <div class="modal-hd"><h2>💬 팀 소통</h2><button class="close-btn" onclick="close_('thread')">✕</button></div>
+    <div class="modal-bd">
+      <div class="row">
+        <input class="inp" id="thread-title" placeholder="제목">
+      </div>
+      <div class="row" style="margin-bottom:10px">
+        <textarea class="inp" id="thread-body" placeholder="내용을 입력하세요..." style="min-height:80px;resize:none"></textarea>
+      </div>
+      <div class="row" style="margin-bottom:14px">
+        <button class="btn btn-g" onclick="addThread()" style="flex:1">등록</button>
+      </div>
+      <div id="thread-list"></div>
     </div>
   </div>
 </div>
@@ -717,9 +612,65 @@
     <div class="modal-bd">
       <div class="row" style="margin-bottom:14px">
         <input class="inp" id="con-name" placeholder="현장명 (예: 해운대 아파트 32평)">
+        <select class="inp" id="con-proj-link" style="flex:0;min-width:100px">
+          <option value="">프로젝트 연결 없음</option>
+        </select>
         <button class="btn btn-g" onclick="addSite()">현장 추가</button>
       </div>
       <div id="con-list"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 프로젝트 현황 -->
+<div class="overlay" id="m-projects">
+  <div class="modal wide">
+    <div class="modal-hd"><h2>🏢 프로젝트 현황</h2><button class="close-btn" onclick="close_('projects')">✕</button></div>
+    <div class="modal-bd">
+      <!-- New project form -->
+      <div id="proj-new-form" style="display:none;background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:10px">새 프로젝트 등록</div>
+        <div class="row">
+          <input class="inp" id="pnf-name" placeholder="프로젝트명 *">
+          <select class="inp" id="pnf-status" style="flex:0;min-width:90px">
+            <option value="진행중">진행중</option>
+            <option value="예정">예정</option>
+            <option value="완료">완료</option>
+          </select>
+        </div>
+        <div class="row">
+          <input class="inp" id="pnf-client" placeholder="고객명">
+          <input class="inp" id="pnf-manager" placeholder="담당자">
+        </div>
+        <div class="row">
+          <input class="inp" id="pnf-start" type="date" placeholder="착공일">
+          <input class="inp" id="pnf-end" type="date" placeholder="준공(예정)일">
+        </div>
+        <div class="row">
+          <textarea class="inp" id="pnf-memo" placeholder="메모" style="min-height:60px;resize:none"></textarea>
+        </div>
+        <div class="row" style="margin-bottom:0">
+          <button class="btn btn-g" onclick="saveNewProj()" style="flex:1">저장</button>
+          <button class="btn" onclick="document.getElementById('proj-new-form').style.display='none'">취소</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-bottom:12px">
+        <button class="btn btn-g" onclick="document.getElementById('proj-new-form').style.display='block';document.getElementById('pnf-name').focus()">+ 새 프로젝트</button>
+      </div>
+      <div class="proj-cols">
+        <div>
+          <div class="proj-col-hd">진행중 <span class="proj-col-cnt" id="pcnt-active">0</span></div>
+          <div id="proj-list-active"></div>
+        </div>
+        <div>
+          <div class="proj-col-hd">예정 <span class="proj-col-cnt" id="pcnt-upcoming">0</span></div>
+          <div id="proj-list-upcoming"></div>
+        </div>
+        <div>
+          <div class="proj-col-hd">완료 <span class="proj-col-cnt" id="pcnt-done">0</span></div>
+          <div id="proj-list-done"></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -743,100 +694,90 @@ class CloudSync {
       'Content-Type': 'application/json'
     };
   }
-  url(key) {
-    return `https://api.github.com/repos/${this.owner}/${this.repo}/contents/data/${key}.json`;
-  }
-  async load(key) {
+  async getFile(key) {
     try {
-      const r = await fetch(this.url(key), { headers: this.hdrs() });
-      if (r.status === 404) return;
-      if (!r.ok) throw r.status;
+      const r = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/${key}.json`, { headers: this.hdrs() });
+      if (!r.ok) return null;
       const d = await r.json();
       this.shas[key] = d.sha;
-      const val = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-      localStorage.setItem(key, JSON.stringify(val));
-    } catch(e) { console.warn('cloud.load', key, e); }
+      return JSON.parse(atob(d.content.replace(/\n/g,'')));
+    } catch { return null; }
   }
-  async save(key, val) {
-    if (!this.on) return;
-    setSyncStatus('syncing');
-    try {
-      const content = btoa(unescape(encodeURIComponent(JSON.stringify(val, null, 2))));
-      const body = {
-        message: `[portal] ${key} 저장 ${new Date().toISOString().slice(0,10)}`,
-        content
-      };
-      if (this.shas[key]) body.sha = this.shas[key];
-      const r = await fetch(this.url(key), {
-        method: 'PUT', headers: this.hdrs(), body: JSON.stringify(body)
-      });
-      if (r.ok) {
-        const d = await r.json();
-        this.shas[key] = d.content.sha;
-        setSyncStatus('ok');
-      } else if (r.status === 409) {
-        await this.load(key);
-        await this.save(key, val);
-      } else {
-        setSyncStatus('err');
-      }
-    } catch(e) { console.warn('cloud.save', key, e); setSyncStatus('err'); }
+  async setFile(key, val) {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(val))));
+    const body = { message: `update ${key}`, content };
+    if (this.shas[key]) body.sha = this.shas[key];
+    const r = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}/contents/${key}.json`, {
+      method: 'PUT', headers: this.hdrs(), body: JSON.stringify(body)
+    });
+    if (r.ok) { const d = await r.json(); this.shas[key] = d.content.sha; }
+    return r.ok;
   }
   async loadAll() {
-    if (!this.on) return;
-    setSyncStatus('syncing');
-    // load per-member journal keys in addition to other keys
-    const members = getMembers();
-    const jnlKeys = members.map(m => 'jnl_' + m);
-    await Promise.all(['chk','ins','ord','inv','cal-events','sites','thread', ...jnlKeys].map(k=>this.load(k)));
-    // Also load cloud jnl.json for read-only cloud entries
-    await loadCloudJnl();
-    setSyncStatus('ok');
-  }
-  async testToken() {
-    try {
-      const r = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}`, { headers: this.hdrs() });
-      return r.ok;
-    } catch { return false; }
+    const keys = ['checklist','journal','cal-events','orders','inv','sites','inspections','threads','projects','jnl-members'];
+    for (const k of keys) {
+      const v = await this.getFile(k);
+      if (v !== null) localStorage.setItem(k, JSON.stringify(v));
+    }
   }
 }
 const cloud = new CloudSync();
 
-// ── Sync status indicator
-function setSyncStatus(s) {
+// ── Helpers
+function G(k) { try { return JSON.parse(localStorage.getItem(k)) || []; } catch { return []; } }
+async function S(k, v) {
+  localStorage.setItem(k, JSON.stringify(v));
+  if (cloud.on) {
+    setSyncStatus('syncing');
+    const ok = await cloud.setFile(k, v);
+    setSyncStatus(ok ? 'ok' : 'err');
+  }
+}
+function td() { const d=new Date(),p=n=>String(n).padStart(2,'0'); return`${d.getFullYear()}-${p(d.getMonth()+1)}-${p(d.getDate())}`; }
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── Sync status UI
+function setSyncStatus(state) {
   const dot = document.getElementById('sync-dot');
-  const txt = document.getElementById('sync-text');
-  dot.className = 'sync-dot ' + s;
-  txt.textContent = {ok:'동기화 완료', syncing:'동기화 중...', err:'동기화 오류', off:'연결 안됨'}[s] || s;
+  const label = document.getElementById('sync-label');
+  if (!dot || !label) return;
+  dot.className = 'sync-dot ' + state;
+  label.textContent = state === 'ok' ? '동기화됨' : state === 'syncing' ? '동기화 중...' : state === 'err' ? '오류' : '동기화 설정';
 }
 
-// ── LocalStorage wrapper
-const G = k => JSON.parse(localStorage.getItem(k) || '[]');
-const S = async (k, v) => { localStorage.setItem(k, JSON.stringify(v)); await cloud.save(k, v); };
-
-// ── Date
-const DAYS=['일','월','화','수','목','금','토'];
-function updateDate() {
-  const n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
-  document.getElementById('dateMain').textContent=`${y}년 ${m}월 ${d}일 (${DAYS[n.getDay()]})`;
-  document.getElementById('dateSub').textContent=n.toLocaleDateString('en-US',{month:'long',year:'numeric'});
+// ── Settings / PAT
+function savePAT() {
+  const v = document.getElementById('pat-input').value.trim();
+  if (!v) return;
+  cloud.token = v;
+  localStorage.setItem('__pat', v);
+  document.getElementById('settings-status').innerHTML = '<div class="ok-box">토큰이 저장되었습니다. 지금 동기화를 눌러주세요.</div>';
 }
-updateDate();
+async function manualSync() {
+  if (!cloud.on) { alert('먼저 토큰을 저장하세요'); return; }
+  setSyncStatus('syncing');
+  await cloud.loadAll();
+  allStats();
+  setSyncStatus('ok');
+  document.getElementById('settings-status').innerHTML = '<div class="ok-box">동기화 완료!</div>';
+  renderSettings();
+}
+function renderSettings() {
+  const keys = ['checklist','journal','cal-events','orders','inv','sites','inspections','threads','projects','jnl-members'];
+  const el = document.getElementById('sync-keys-list');
+  if (!el) return;
+  el.innerHTML = keys.map(k => {
+    const d = G(k);
+    const cnt = Array.isArray(d) ? d.length : 0;
+    return `<span style="background:var(--tag);padding:3px 8px;border-radius:5px;font-size:11px;color:var(--muted)">${k} <strong style="color:var(--text)">${cnt}</strong></span>`;
+  }).join('');
+}
 
-const td  = () => new Date().toISOString().slice(0,10);
-const tds = () => new Date().toDateString();
-
-// ── Modal
+// ── Modal open/close
 function open_(id) {
   document.getElementById('m-'+id).classList.add('open');
   if(id==='checklist') renderChk();
-  else if(id==='journal') {
-    document.getElementById('jnl-date').value = td();
-    renderJnlMemberBar();
-    renderJnlMemberSel();
-    renderJnl();
-  }
-  else if(id==='insta') renderIns();
+  else if(id==='journal') renderJnl();
   else if(id==='order') renderOrd();
   else if(id==='inventory') renderInv();
   else if(id==='calendar') renderCal();
@@ -846,431 +787,268 @@ function open_(id) {
   else if(id==='projects') renderProjects();
 }
 function close_(id) { document.getElementById('m-'+id).classList.remove('open'); }
-document.querySelectorAll('.overlay').forEach(el =>
-  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
-);
-document.addEventListener('keydown', e => {
-  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));
-  if(e.ctrlKey && e.key==='s') { e.preventDefault(); saveJnl(); }
-});
 
-// ── Settings
-function renderSettings() {
-  const el = document.getElementById('settings-status');
-  if(cloud.on) {
-    el.innerHTML = `<div class="ok-box">✅ 토큰이 등록되어 있습니다. 클라우드 동기화가 활성화되어 있습니다.</div>`;
-  } else {
-    el.innerHTML = `<div class="warn-box">⚠️ 토큰이 없습니다. 데이터가 이 브라우저에만 저장됩니다.</div>`;
-  }
+// ── Date/time header
+function updateHeader() {
+  const now = new Date();
+  const days = ['일','월','화','수','목','금','토'];
+  document.getElementById('hd-date').textContent = `${now.getMonth()+1}월 ${now.getDate()}일`;
+  document.getElementById('hd-day').textContent = `${now.getFullYear()} · ${days[now.getDay()]}요일`;
 }
-async function savePAT() {
-  const v = document.getElementById('pat-input').value.trim();
-  if(!v) return;
-  cloud.token = v;
-  localStorage.setItem('__pat', v);
-  const ok = await cloud.testToken();
-  const el = document.getElementById('settings-status');
-  if(ok) {
-    el.innerHTML = `<div class="ok-box">✅ 연결 성공! 클라우드 동기화를 시작합니다...</div>`;
-    setSyncStatus('syncing');
-    await cloud.loadAll();
-    allStats();
-  } else {
-    el.innerHTML = `<div class="warn-box">❌ 연결 실패. 토큰 권한을 확인해주세요 (repo 에 대한 read/write 필요).</div>`;
-    cloud.token = '';
-    localStorage.removeItem('__pat');
-  }
-  document.getElementById('pat-input').value = '';
-}
-function clearPAT() {
-  if(!confirm('모든 로컨 데이터를 삭제할까요?')) return;
-  const members = getMembers();
-  const jnlKeys = members.map(m => 'jnl_' + m);
-  ['__pat','chk','ins','ord','inv','cal-events','sites','thread','hadamMembers','__cloudJnl', ...jnlKeys].forEach(k=>localStorage.removeItem(k));
-  cloud.token = ''; cloud.shas = {};
-  setSyncStatus('off');
-  allStats();
-  renderSettings();
-}
-
-// ════════════════════════════════════════
-// Journal — member management
-// ════════════════════════════════════════
-function getMembers() {
-  const raw = localStorage.getItem('hadamMembers');
-  if(raw) {
-    try { return JSON.parse(raw); } catch{}
-  }
-  return ['나'];
-}
-function saveMembers(arr) {
-  localStorage.setItem('hadamMembers', JSON.stringify(arr));
-}
-
-// Current selected member tab: stored in memory
-let jnlActiveMember = null; // null means '전체보기'
-function getJnlActiveMember() {
-  if(jnlActiveMember === null) {
-    const members = getMembers();
-    jnlActiveMember = members[0] || '나';
-  }
-  return jnlActiveMember;
-}
-
-function renderJnlMemberBar() {
-  const members = getMembers();
-  const active = getJnlActiveMember();
-  const bar = document.getElementById('jnl-member-bar');
-  let html = members.map(m =>
-    `<button class="jnl-mtab ${active===m?'on':''}" onclick="selectJnlMember('${escH(m)}')">${escH(m)}</button>`
-  ).join('');
-  html += `<button class="jnl-mtab all ${active==='__all__'?'on':''}" onclick="selectJnlMember('__all__')">전체보기</button>`;
-  // keep manage button at end
-  html += `<button class="jnl-manage-btn" onclick="toggleMemberMgmt()" title="팀원 관리">👥 팀원 관리</button>`;
-  bar.innerHTML = html;
-}
-
-function selectJnlMember(m) {
-  jnlActiveMember = m;
-  renderJnlMemberBar();
-  renderJnl();
-}
-
-let memberMgmtOpen = false;
-function toggleMemberMgmt() {
-  memberMgmtOpen = !memberMgmtOpen;
-  const panel = document.getElementById('member-mgmt-panel');
-  panel.classList.toggle('open', memberMgmtOpen);
-  renderMemberChips();
-}
-
-function renderMemberChips() {
-  const members = getMembers();
-  const el = document.getElementById('member-chip-list');
-  if(!members.length) { el.innerHTML = '<span style="font-size:12px;color:var(--dim)">팀원이 없습니다</span>'; return; }
-  el.innerHTML = members.map((m,i) =>
-    `<div class="member-chip">${escH(m)}<button class="chip-del" onclick="deleteMember(${i})" title="삭제">×</button></div>`
-  ).join('');
-}
-
-function addMember() {
-  const inp = document.getElementById('member-add-inp');
-  const name = inp.value.trim();
-  if(!name) return;
-  const members = getMembers();
-  if(members.includes(name)) { inp.value=''; return; }
-  members.push(name);
-  saveMembers(members);
-  inp.value = '';
-  renderMemberChips();
-  renderJnlMemberBar();
-  renderJnlMemberSel();
-}
-
-function deleteMember(idx) {
-  const members = getMembers();
-  const name = members[idx];
-  if(!confirm(`"${name}" 팀원을 삭제할까요? 해당 팀원의 일지 데이터는 로컬에 남습니다.`)) return;
-  members.splice(idx, 1);
-  saveMembers(members);
-  // If the deleted member was selected, switch to first or all
-  if(jnlActiveMember === name) {
-    jnlActiveMember = members.length ? members[0] : '__all__';
-  }
-  renderMemberChips();
-  renderJnlMemberBar();
-  renderJnlMemberSel();
-  renderJnl();
-}
-
-function renderJnlMemberSel() {
-  const members = getMembers();
-  const sel = document.getElementById('jnl-member-sel');
-  const current = sel.value;
-  sel.innerHTML = members.map(m =>
-    `<option value="${escH(m)}" ${m===current?'selected':''}>${escH(m)}</option>`
-  ).join('');
-  // default to first member if current is not in list
-  if(!members.includes(current) && members.length) sel.value = members[0];
-}
-
-// ── Cloud jnl.json loading
-// Format: array of {member, date, 완료:[], 진행중:[], 발주:[], 이슈:[], 내일계획:[]}
-let cloudJnlEntries = []; // cached parsed entries from jnl.json
-
-async function loadCloudJnl() {
-  if(!cloud.on) return;
-  try {
-    const r = await fetch(cloud.url('jnl'), { headers: cloud.hdrs() });
-    if(r.status === 404) { cloudJnlEntries = []; return; }
-    if(!r.ok) return;
-    const d = await r.json();
-    const raw = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
-    if(Array.isArray(raw)) {
-      cloudJnlEntries = raw;
-      localStorage.setItem('__cloudJnl', JSON.stringify(raw));
-    }
-  } catch(e) {
-    // try from local cache
-    const cached = localStorage.getItem('__cloudJnl');
-    if(cached) { try { cloudJnlEntries = JSON.parse(cached); } catch{} }
-    console.warn('loadCloudJnl', e);
-  }
-}
-
-function getCloudJnlEntries() {
-  if(cloudJnlEntries.length) return cloudJnlEntries;
-  const cached = localStorage.getItem('__cloudJnl');
-  if(cached) { try { return JSON.parse(cached); } catch{} }
-  return [];
-}
-
-// ── Journal save / render
-async function saveJnl() {
-  const member = document.getElementById('jnl-member-sel').value || getMembers()[0] || '나';
-  const title = document.getElementById('jnl-title').value.trim();
-  const body  = document.getElementById('jnl-body').value.trim();
-  const date  = document.getElementById('jnl-date').value || td();
-  if(!body) return;
-  const key = 'jnl_' + member;
-  const a = G(key);
-  a.unshift({id:Date.now(), title:title||'업무일지', body, date, member});
-  await S(key, a);
-  document.getElementById('jnl-title').value = '';
-  document.getElementById('jnl-body').value  = '';
-  renderJnl();
-  statJnl();
-}
-
-async function delJnl(member, id) {
-  const key = 'jnl_' + member;
-  await S(key, G(key).filter(x => x.id !== id));
-  renderJnl();
-  statJnl();
-}
-
-function renderJnl() {
-  const activeMember = getJnlActiveMember();
-  const members = getMembers();
-  const el = document.getElementById('jnl-list');
-
-  // Build entry list
-  let entries = [];
-
-  if(activeMember === '__all__') {
-    // Merge all members
-    members.forEach(m => {
-      const local = G('jnl_' + m).map(e => ({...e, member:m, _cloud:false}));
-      entries.push(...local);
-    });
-    // Cloud entries
-    getCloudJnlEntries().forEach(e => entries.push({...e, _cloud:true}));
-  } else {
-    const local = G('jnl_' + activeMember).map(e => ({...e, member:activeMember, _cloud:false}));
-    entries.push(...local);
-    // Cloud entries for this member
-    getCloudJnlEntries().filter(e => e.member === activeMember).forEach(e => entries.push({...e, _cloud:true}));
-  }
-
-  // Sort by date descending, then id descending
-  entries.sort((a,b) => {
-    const dc = (b.date||'').localeCompare(a.date||'');
-    if(dc !== 0) return dc;
-    return (b.id||0) - (a.id||0);
-  });
-
-  if(!entries.length) {
-    el.innerHTML = '<div class="empty"><div class="ei">📝</div>작성된 일지가 없습니다</div>';
-    return;
-  }
-
-  el.innerHTML = entries.map(x => {
-    if(x._cloud) return renderCloudJnlCard(x);
-    return renderLocalJnlCard(x, activeMember === '__all__');
-  }).join('');
-}
-
-function renderLocalJnlCard(x, showMember) {
-  const memberBadge = showMember
-    ? `<span class="j-member-badge">${escH(x.member||'나')}</span>`
-    : '';
-  return `<div class="j-entry">
-    <div class="j-hd">
-      <span class="j-title">${escH(x.title)}</span>
-      <div class="j-meta">${memberBadge}<span class="j-date">${x.date}</span><button class="del" onclick="delJnl('${escH(x.member||'나')}',${x.id})">×</button></div>
-    </div>
-    <div class="j-body">${escH(x.body)}</div>
-  </div>`;
-}
-
-function renderCloudJnlCard(x) {
-  const cats = [
-    {label:'완료', items: x['완료']||[]},
-    {label:'진행중', items: x['진행중']||[]},
-    {label:'발주', items: x['발주']||[]},
-    {label:'이슈', items: x['이슈']||[]},
-    {label:'내일계획', items: x['내일계획']||[]}
-  ].filter(c => c.items.length > 0);
-
-  const sectionsHtml = cats.map(c =>
-    `<div class="j-section">
-      <div class="j-section-label">${escH(c.label)}</div>
-      <div class="j-section-items">${c.items.map(item => `<div class="j-section-item">${escH(String(item))}</div>`).join('')}</div>
-    </div>`
-  ).join('');
-
-  return `<div class="j-cloud-card">
-    <div class="j-cloud-hd">
-      <span class="j-cloud-title">${escH(x.member||'')} 업무일지</span>
-      <span class="j-member-badge">${escH(x.member||'')}</span>
-      <span class="j-date">${x.date||''}</span>
-      <span class="j-cloud-badge">☁ 클라우드</span>
-    </div>
-    ${sectionsHtml || '<div style="font-size:12px;color:var(--dim)">내용 없음</div>'}
-  </div>`;
-}
-
-function escH(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-function statJnl() {
-  const members = getMembers();
-  let total = 0;
-  let todayCount = 0;
-  members.forEach(m => {
-    const a = G('jnl_' + m);
-    total += a.length;
-    todayCount += a.filter(x => x.date === td()).length;
-  });
-  // add cloud entries count
-  const cloudCount = getCloudJnlEntries().length;
-  document.getElementById('sv-jnl').textContent = todayCount || '—';
-  document.getElementById('sv-jnl-sub').textContent = todayCount ? `오늘 ${todayCount}건 작성됨` : '오늘 작성된 일지 없음';
-  document.getElementById('fc-jnl').textContent = `전체 ${total}건` + (cloudCount ? ` · 클라우드 ${cloudCount}건` : '');
-}
+updateHeader();
+setInterval(updateHeader, 60000);
 
 // ── Checklist
-let chkTabSel='오늘';
-function chkTab(t,btn) {
-  chkTabSel=t;
-  btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  renderChk();
-}
 async function addChk() {
   const v=document.getElementById('chk-inp').value.trim(); if(!v) return;
-  const cat=document.getElementById('chk-cat').value;
-  const a=G('chk');
-  a.push({id:Date.now(),text:v,done:false,tab:chkTabSel,cat,date:tds()});
-  await S('chk',a);
-  document.getElementById('chk-inp').value='';
-  renderChk(); statChk();
+  const a=G('checklist'); a.push({id:Date.now(),text:v,done:false}); await S('checklist',a);
+  document.getElementById('chk-inp').value=''; renderChk(); statChk();
 }
 async function togChk(id) {
-  const a=G('chk'),i=a.findIndex(x=>x.id===id);
-  if(i>-1) a[i].done=!a[i].done;
-  await S('chk',a); renderChk(); statChk();
+  const a=G('checklist'),i=a.findIndex(x=>x.id===id); if(i<0) return;
+  a[i].done=!a[i].done; await S('checklist',a); renderChk(); statChk();
 }
-async function delChk(id) { await S('chk',G('chk').filter(x=>x.id!==id)); renderChk(); statChk(); }
+async function delChk(id) { await S('checklist',G('checklist').filter(x=>x.id!==id)); renderChk(); statChk(); }
 function renderChk() {
-  const all=G('chk'),today=tds();
-  const f=chkTabSel==='전체'?all:chkTabSel==='오늘'?all.filter(x=>x.date===today):all.filter(x=>x.tab==='주간');
-  const el=document.getElementById('chk-list');
-  if(!f.length){el.innerHTML='<div class="empty"><div class="ei">✅</div>항목이 없습니다</div>';return;}
-  el.innerHTML=f.map(it=>
-    `<div class="list-item"><div class="chk ${it.done?'done':''}" onclick="togChk(${it.id})">${it.done?'✓':''}</div>
-    <span class="item-txt ${it.done?'done':''}">${it.text}</span>
-    <span style="font-size:10.5px;color:var(--dim);margin-right:4px">${it.cat}</span>
-    <button class="del" onclick="delChk(${it.id})">×</button></div>`
-  ).join('');
+  const a=G('checklist'),el=document.getElementById('chk-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">✅</div>할 일이 없습니다</div>';return;}
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item">
+    <div class="chk ${x.done?'done':''}" onclick="togChk(${x.id})">${x.done?'✓':''}</div>
+    <span class="item-txt ${x.done?'done':''}">${escH(x.text)}</span>
+    <button class="del" onclick="delChk(${x.id})">×</button>
+  </div>`).join('')+'</div>';
 }
 function statChk() {
-  const all=G('chk'),today=tds(),t=all.filter(x=>x.date===today),dn=t.filter(x=>x.done).length,tot=t.length,pct=tot?Math.round(dn/tot*100):0;
-  document.getElementById('sv-chk').innerHTML=`${tot}<span class="unit">개</span>`;
-  document.getElementById('sv-prog').style.width=pct+'%';
-  document.getElementById('sv-chk-sub').textContent=tot?`완료 진행중 ${pct}%`:'항목이 없습니다';
-  document.getElementById('fc-chk').innerHTML=`전체 <span class="cnt">${tot}건</span> · 완료 <span class="gcnt">${dn}</span>`;
+  const a=G('checklist'),done=a.filter(x=>x.done).length,total=a.length;
+  document.getElementById('sv-chk').innerHTML=`${total-done}<span class="unit">개</span>`;
+  document.getElementById('pf-chk').style.width=total?`${Math.round(done/total*100)}%`:'0%';
+  document.getElementById('ss-chk').textContent=`완료 ${done} / 전체 ${total}`;
+  document.getElementById('fc-chk').innerHTML=`완료 <span class="cnt">${done}</span> / 전체 <span class="cnt">${total}</span>`;
 }
 
-// ── Insta
-async function addIns() {
-  const v=document.getElementById('ins-title').value.trim(),type=document.getElementById('ins-type').value;
-  if(!v) return;
-  const a=G('ins'); a.unshift({id:Date.now(),title:v,type,status:'기획중',date:td()});
-  await S('ins',a); document.getElementById('ins-title').value=''; renderIns(); statIns();
+// ── Journal / Members
+let jnlMember = '__all__';
+function getMembers() { return G('jnl-members').length ? G('jnl-members') : []; }
+function renderJnlMemberBar() {
+  const members = getMembers();
+  const bar = document.getElementById('jnl-member-bar');
+  if (!bar) return;
+  const allTab = `<button class="jnl-mtab all ${jnlMember==='__all__'?'on':''}" onclick="setJnlMember('__all__')">전체</button>`;
+  const tabs = members.map(m => `<button class="jnl-mtab ${jnlMember===m?'on':''}" onclick="setJnlMember('${escH(m)}')">${escH(m)}</button>`).join('');
+  const manageBtn = `<button class="jnl-manage-btn" onclick="toggleMemberMgmt()">팀원 관리</button>`;
+  bar.innerHTML = allTab + tabs + manageBtn;
 }
-async function updInsStatus(id,s) { const a=G('ins'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ins',a);statIns(); }
-async function delIns(id) { await S('ins',G('ins').filter(x=>x.id!==id)); renderIns(); statIns(); }
-const INS_C={'기획중':'var(--orange)','제작중':'var(--blue)','예약':'var(--green)','발행':'var(--dim)'};
-function renderIns() {
-  const a=G('ins'),el=document.getElementById('ins-list');
-  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📸</div>등록된 콘텐츠가 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>
-    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.type}</span>
-    <span class="item-txt" style="flex:1">${x.title}</span>
-    <select class="badge" onchange="updInsStatus(${x.id},this.value)" style="background:var(--tag);color:${INS_C[x.status]||'var(--muted)'}">${['기획중','제작중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
-    <button class="del" onclick="delIns(${x.id})">×</button></div>`
-  ).join('')+'</div>';
+function setJnlMember(m) { jnlMember = m; renderJnl(); }
+function toggleMemberMgmt() {
+  const el = document.getElementById('member-mgmt');
+  el.classList.toggle('open');
+  if (el.classList.contains('open')) renderMemberChips();
 }
-function statIns() {
-  const a=G('ins'),r=a.filter(x=>x.status==='예약').length;
-  document.getElementById('sv-insta').innerHTML=`${r}<span class="unit">건</span>`;
-  document.getElementById('fc-ins').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${r}</span>`;
+function renderMemberChips() {
+  const members = getMembers();
+  document.getElementById('member-list-chips').innerHTML = members.map(m =>
+    `<div class="member-chip">${escH(m)}<button class="chip-del" onclick="delMember('${escH(m)}')">×</button></div>`
+  ).join('') || '<span style="font-size:12px;color:var(--dim)">등록된 팀원 없음</span>';
+}
+async function addMember() {
+  const v = document.getElementById('member-add-inp').value.trim();
+  if (!v) return;
+  const a = G('jnl-members');
+  if (!a.includes(v)) { a.push(v); await S('jnl-members', a); }
+  document.getElementById('member-add-inp').value = '';
+  renderMemberChips();
+  renderJnlMemberBar();
+}
+async function delMember(name) {
+  const a = G('jnl-members').filter(x => x !== name);
+  await S('jnl-members', a);
+  if (jnlMember === name) jnlMember = '__all__';
+  renderMemberChips();
+  renderJnlMemberBar();
+  renderJnl();
+}
+async function saveJnl() {
+  const title=document.getElementById('jnl-title').value.trim();
+  const body=document.getElementById('jnl-body').value.trim();
+  const date=document.getElementById('jnl-date').value||td();
+  if(!title&&!body) return;
+  const member = jnlMember === '__all__' ? (getMembers()[0]||'') : jnlMember;
+  const a=G('journal');
+  a.unshift({id:Date.now(),title,body,date,member});
+  await S('journal',a);
+  document.getElementById('jnl-title').value='';
+  document.getElementById('jnl-body').value='';
+  renderJnl(); statJnl();
+}
+async function delJnl(id) { await S('journal',G('journal').filter(x=>x.id!==id)); renderJnl(); statJnl(); }
+function renderJnl() {
+  renderJnlMemberBar();
+  const all=G('journal');
+  const filtered = jnlMember === '__all__' ? all : all.filter(x => x.member === jnlMember);
+  const el=document.getElementById('jnl-list');
+  if(!filtered.length){el.innerHTML='<div class="empty"><div class="ei">📓</div>업무일지가 없습니다</div>';return;}
+  el.innerHTML=filtered.map(x=>`<div class="j-entry">
+    <div class="j-hd">
+      <span class="j-title">${escH(x.title||'(제목 없음)')}</span>
+      <div class="j-meta">
+        ${x.member?`<span class="j-member-badge">${escH(x.member)}</span>`:''}
+        <span class="j-date">${x.date||''}</span>
+        <button class="del" onclick="delJnl(${x.id})">×</button>
+      </div>
+    </div>
+    ${x.body?`<div class="j-body">${escH(x.body)}</div>`:''}
+  </div>`).join('');
+}
+function statJnl() {
+  const a=G('journal');
+  const now=new Date(),weekAgo=new Date(now-7*864e5);
+  const wk=a.filter(x=>x.date&&new Date(x.date)>=weekAgo).length;
+  document.getElementById('sv-jnl').innerHTML=`${a.length}<span class="unit">건</span>`;
+  document.getElementById('ss-jnl').textContent=`이번 주 ${wk}건`;
+  document.getElementById('fc-jnl').innerHTML=`이번 주 <span class="cnt">${wk}건</span>`;
 }
 
-// ── Order
+// ── Orders
 async function addOrd() {
-  const site=document.getElementById('ord-site').value.trim(),item=document.getElementById('ord-item').value.trim(),qty=document.getElementById('ord-qty').value.trim(),price=document.getElementById('ord-price').value.trim(),pay=document.getElementById('ord-pay').value;
+  const item=document.getElementById('ord-item').value.trim(),qty=document.getElementById('ord-qty').value.trim(),date=document.getElementById('ord-date').value;
   if(!item) return;
-  const a=G('ord'); a.unshift({id:Date.now(),site:site||'—',item,qty:qty||'1',price:price||'—',pay,status:'입고대기',date:td()});
-  await S('ord',a);
-  document.getElementById('ord-site').value='';document.getElementById('ord-item').value='';document.getElementById('ord-qty').value='';document.getElementById('ord-price').value='';
-  renderOrd(); statOrd();
+  const a=G('orders'); a.unshift({id:Date.now(),item,qty,date,done:false}); await S('orders',a);
+  document.getElementById('ord-item').value=''; document.getElementById('ord-qty').value=''; renderOrd(); statOrd();
 }
-async function updOrdStatus(id,s) { const a=G('ord'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ord',a);statOrd(); }
-async function delOrd(id) { await S('ord',G('ord').filter(x=>x.id!==id)); renderOrd(); statOrd(); }
+async function togOrd(id) {
+  const a=G('orders'),i=a.findIndex(x=>x.id===id); if(i<0) return;
+  a[i].done=!a[i].done; await S('orders',a); renderOrd(); statOrd();
+}
+async function delOrd(id) { await S('orders',G('orders').filter(x=>x.id!==id)); renderOrd(); statOrd(); }
 function renderOrd() {
-  const a=G('ord'),el=document.getElementById('ord-list');
-  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📦</div>발주 내역이 없습니다</div>';return;}
-  const ORD_C={'입고대기':'badge-orange','입고완료':'badge-green','반품':'badge-red'};
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>
-    `<div class="list-item">
-    ${x.site&&x.site!=='—'?`<span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted);flex-shrink:0">${x.site}</span>`:''}
-    <span class="item-txt">${x.item}</span>
-    <span style="font-size:11.5px;color:var(--muted);flex-shrink:0">${x.qty}개</span>
-    <span style="font-size:11.5px;color:var(--muted);flex-shrink:0">${x.price}원</span>
-    <span style="font-size:10.5px;color:var(--dim);flex-shrink:0">${x.pay||''}</span>
-    <select class="badge ${ORD_C[x.status]||'badge-dim'}" onchange="updOrdStatus(${x.id},this.value)">${['입고대기','입고완료','반품'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
-    <button class="del" onclick="delOrd(${x.id})">×</button></div>`
-  ).join('')+'</div>';
+  const a=G('orders'),el=document.getElementById('ord-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🛒</div>발주 내역이 없습니다</div>';return;}
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item">
+    <div class="chk ${x.done?'done':''}" onclick="togOrd(${x.id})">${x.done?'✓':''}</div>
+    <span class="item-txt ${x.done?'done':''}">${escH(x.item)}${x.qty?` <span style="color:var(--muted);font-size:11px">${x.qty}개</span>`:''}</span>
+    ${x.date?`<span style="font-size:11px;color:var(--muted)">${x.date}</span>`:''}
+    <button class="del" onclick="delOrd(${x.id})">×</button>
+  </div>`).join('')+'</div>';
 }
 function statOrd() {
-  const a=G('ord'),p=a.filter(x=>x.status==='입고대기').length;
-  document.getElementById('sv-order').innerHTML=`${p}<span class="unit">건</span>`;
-  document.getElementById('fc-ord').innerHTML=`전체 <span class="cnt">${a.length}건</span> 입고대기 <span class="cnt">${p}</span>`;
+  const a=G('orders'),undone=a.filter(x=>!x.done).length;
+  document.getElementById('fc-ord').innerHTML=`전체 <span class="cnt">${a.length}건</span> 미납 <span class="cnt">${undone}</span>`;
 }
 
 // ── Inventory
 async function addInv() {
-  const n=document.getElementById('inv-name').value.trim(),q=document.getElementById('inv-qty').value.trim(),cat=document.getElementById('inv-cat').value;
-  if(!n) return;
-  const a=G('inv'); a.unshift({id:Date.now(),name:n,qty:q||'1',cat,status:'정상'});
-  await S('inv',a); document.getElementById('inv-name').value=''; document.getElementById('inv-qty').value=''; renderInv(); statInv();
+  const item=document.getElementById('inv-item').value.trim(),qty=document.getElementById('inv-qty').value.trim();
+  if(!item) return;
+  const a=G('inv'); a.unshift({id:Date.now(),item,qty}); await S('inv',a);
+  document.getElementById('inv-item').value=''; document.getElementById('inv-qty').value=''; renderInv(); statInv();
 }
 async function delInv(id) { await S('inv',G('inv').filter(x=>x.id!==id)); renderInv(); statInv(); }
 function renderInv() {
   const a=G('inv'),el=document.getElementById('inv-list');
-  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🗂️</div>재고 항목이 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>
-    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span>
-    <span class="item-txt">${x.name}</span>
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📦</div>재고 항목이 없습니다</div>';return;}
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item">
+    <span class="item-txt">${escH(x.item)}</span>
     <span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span>
     <button class="del" onclick="delInv(${x.id})">×</button></div>`
   ).join('')+'</div>';
 }
 function statInv() {
   document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${G('inv').length}건</span>`;
+}
+
+// ── Natural Language Calendar Parsing
+function parseNlDate(text) {
+  const today = new Date();
+  const pad = n => String(n).padStart(2,'0');
+  const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+  const dowNames = ['일','월','화','수','목','금','토'];
+  // 오늘/내일/모레
+  if (/오늘/.test(text)) return fmt(today);
+  if (/내일/.test(text)) { const d=new Date(today); d.setDate(d.getDate()+1); return fmt(d); }
+  if (/모레/.test(text)) { const d=new Date(today); d.setDate(d.getDate()+2); return fmt(d); }
+  // N일 후
+  const nDayMatch = text.match(/(\d+)일\s*후/);
+  if (nDayMatch) { const d=new Date(today); d.setDate(d.getDate()+parseInt(nDayMatch[1])); return fmt(d); }
+  // YYYY-MM-DD
+  const isoMatch = text.match(/(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (isoMatch) return `${isoMatch[1]}-${pad(isoMatch[2])}-${pad(isoMatch[3])}`;
+  // YYYY년 MM월 DD일
+  const fullMatch = text.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+  if (fullMatch) return `${fullMatch[1]}-${pad(fullMatch[2])}-${pad(fullMatch[3])}`;
+  // MM월 DD일
+  const mdMatch = text.match(/(\d{1,2})월\s*(\d{1,2})일/);
+  if (mdMatch) {
+    const m=parseInt(mdMatch[1])-1, day=parseInt(mdMatch[2]);
+    const yr = (m < today.getMonth() || (m === today.getMonth() && day < today.getDate())) ? today.getFullYear()+1 : today.getFullYear();
+    return `${yr}-${pad(m+1)}-${pad(day)}`;
+  }
+  // 다음주 요일
+  const nextWeekMatch = text.match(/다음\s*주\s*([일월화수목금토])/);
+  if (nextWeekMatch) {
+    const target = dowNames.indexOf(nextWeekMatch[1]);
+    const d = new Date(today);
+    const curr = d.getDay();
+    let diff = target - curr + 7;
+    if (diff <= 0) diff += 7;
+    d.setDate(d.getDate() + diff);
+    return fmt(d);
+  }
+  // 이번주 요일
+  const thisWeekMatch = text.match(/이번\s*주\s*([일월화수목금토])/);
+  if (thisWeekMatch) {
+    const target = dowNames.indexOf(thisWeekMatch[1]);
+    const d = new Date(today);
+    const curr = d.getDay();
+    let diff = target - curr;
+    if (diff < 0) diff += 7;
+    d.setDate(d.getDate() + diff);
+    return fmt(d);
+  }
+  return null;
+}
+function extractNlTitle(text) {
+  // Remove date patterns and trim to get the title
+  return text
+    .replace(/\d{4}-\d{1,2}-\d{1,2}/g,'')
+    .replace(/\d{4}년\s*\d{1,2}월\s*\d{1,2}일/g,'')
+    .replace(/\d{1,2}월\s*\d{1,2}일/g,'')
+    .replace(/다음\s*주\s*[일월화수목금토]/g,'')
+    .replace(/이번\s*주\s*[일월화수목금토]/g,'')
+    .replace(/\d+일\s*후/g,'')
+    .replace(/오늘|내일|모레/g,'')
+    .trim();
+}
+function nlCalPreview() {
+  const text = document.getElementById('nl-cal-inp')?.value || '';
+  const previewEl = document.getElementById('nl-cal-preview');
+  if (!previewEl) return;
+  if (!text.trim()) { previewEl.textContent = ''; return; }
+  const date = parseNlDate(text);
+  const title = extractNlTitle(text);
+  if (date && title) {
+    previewEl.textContent = `→ ${date}  ${title}`;
+  } else if (date) {
+    previewEl.textContent = `→ ${date}  (제목을 입력하세요)`;
+  } else if (title) {
+    previewEl.textContent = '날짜를 인식하지 못했습니다';
+  } else {
+    previewEl.textContent = '';
+  }
+}
+async function nlCalSave() {
+  const text = document.getElementById('nl-cal-inp')?.value || '';
+  if (!text.trim()) return;
+  const date = parseNlDate(text);
+  const title = extractNlTitle(text);
+  if (!date || !title) { alert('날짜 또는 제목을 인식하지 못했습니다.\n예) 센텀비치 타일공사 다음주 화요일'); return; }
+  const ev = {id:Date.now(), date, title};
+  const a = G('cal-events'); a.push(ev); await S('cal-events', a);
+  document.getElementById('nl-cal-inp').value = '';
+  document.getElementById('nl-cal-preview').textContent = '';
+  // Navigate to the event's month
+  const d = new Date(date);
+  calY = d.getFullYear(); calM = d.getMonth();
+  renderCal();
 }
 
 // ── Calendar
@@ -1283,7 +1061,10 @@ function calSelectDate(date) {
 async function saveCalEv() {
   const title = document.getElementById('cal-ev-inp')?.value.trim();
   if(!title || !calSelectedDate) return;
-  const a=G('cal-events'); a.push({id:Date.now(),date:calSelectedDate,title}); await S('cal-events',a);
+  const projId = document.getElementById('cal-proj-sel')?.value;
+  const ev = {id:Date.now(),date:calSelectedDate,title};
+  if(projId) ev.projectId = Number(projId);
+  const a=G('cal-events'); a.push(ev); await S('cal-events',a);
   calSelectedDate = null;
   renderCal();
 }
@@ -1305,14 +1086,24 @@ function renderCal() {
     return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''} ${isSelected?'selected':''}" onclick="calSelectDate('${evKey}')">${day}</div>`;
   }).join('')}</div>`;
   if(calSelectedDate) {
+    const projs = G('projects');
+    const projOpts = projs.length ? `<select class="inp" id="cal-proj-sel" style="flex:0;min-width:110px"><option value="">프로젝트 없음</option>${projs.map(p=>`<option value="${p.id}">${escH(p.name)}</option>`).join('')}</select>` : '';
     html += `<div class="cal-add-form"><div class="row" style="margin-bottom:0">
       <input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()">
+      ${projOpts}
       <button class="btn btn-g" onclick="saveCalEv()">추가</button>
       <button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button>
     </div></div>`;
   }
   const thisEvs=events.filter(e=>e.date.startsWith(ym));
-  if(thisEvs.length) html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${e.title}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`).join('')}</div></div>`;
+  if(thisEvs.length) {
+    const projs=G('projects');
+    html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>{
+      const proj=e.projectId?projs.find(p=>p.id===e.projectId):null;
+      const badge=proj?`<span style="font-size:10px;background:rgba(251,146,60,0.15);color:#fb923c;padding:1px 6px;border-radius:20px;margin-left:4px">${escH(proj.name)}</span>`:'';
+      return`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${e.title}${badge}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`;
+    }).join('')}</div></div>`;
+  }
   document.getElementById('cal-bd').innerHTML=html;
   document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;
 }
@@ -1323,8 +1114,13 @@ async function delCalEv(id) { await S('cal-events',G('cal-events').filter(x=>x.i
 const STAGES=['가구배치','철거','설비','목공','도장','바닥','타일','조명','마감','준공'];
 async function addSite() {
   const n=document.getElementById('con-name').value.trim(); if(!n) return;
-  const a=G('sites'); a.unshift({id:Date.now(),name:n,stages:[]}); await S('sites',a);
-  document.getElementById('con-name').value=''; renderCon(); statCon();
+  const projId = document.getElementById('con-proj-link')?.value;
+  const site = {id:Date.now(),name:n,stages:[]};
+  if(projId) site.projectId = Number(projId);
+  const a=G('sites'); a.unshift(site); await S('sites',a);
+  document.getElementById('con-name').value='';
+  if(document.getElementById('con-proj-link')) document.getElementById('con-proj-link').value='';
+  renderCon(); statCon();
 }
 async function togStage(siteId,stage) {
   const a=G('sites'),i=a.findIndex(x=>x.id===siteId); if(i<0) return;
@@ -1335,11 +1131,28 @@ async function togStage(siteId,stage) {
 async function delSite(id) { await S('sites',G('sites').filter(x=>x.id!==id)); renderCon(); statCon(); }
 function renderCon() {
   const a=G('sites'),el=document.getElementById('con-list');
+  // populate project dropdown
+  const projSel=document.getElementById('con-proj-link');
+  if(projSel){
+    const projs=G('projects');
+    projSel.innerHTML='<option value="">프로젝트 연결 없음</option>'+projs.map(p=>`<option value="${p.id}">${escH(p.name)}</option>`).join('');
+  }
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🏗️</div>등록된 현장이 없습니다</div>';return;}
+  const projs=G('projects');
   el.innerHTML=a.map(site=>{
     const pct=Math.round(site.stages.length/STAGES.length*100);
-    return`<div class="site-card"><div class="site-hd"><span class="site-name">${site.name}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--muted)">${pct}%</span><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;
+    const proj=site.projectId?projs.find(p=>p.id===site.projectId):null;
+    const projBadge=proj?`<span style="font-size:10px;background:rgba(251,146,60,0.15);color:#fb923c;padding:1px 6px;border-radius:20px;margin-left:6px">${escH(proj.name)}</span>`:'';
+    return`<div class="site-card"><div class="site-hd"><span class="site-name">${escH(site.name)}${projBadge}</span><div style="display:flex;align-items:center;gap:6px"><span style="font-size:11px;color:var(--muted)">${pct}%</span><button class="btn" style="font-size:11px;padding:2px 7px" onclick="calFromSite('${escH(site.name).replace(/'/g,"\\'")}')">📅 일정 추가</button><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;
   }).join('');
+}
+function calFromSite(siteName) {
+  close_('construction');
+  open_('calendar');
+  setTimeout(()=>{
+    const inp=document.getElementById('nl-cal-inp');
+    if(inp){inp.value=siteName+' ';inp.focus();nlCalPreview();}
+  },100);
 }
 function statCon() {
   const a=G('sites'),prog=a.filter(x=>x.stages.length>0&&x.stages.length<STAGES.length).length;
@@ -1347,45 +1160,63 @@ function statCon() {
 }
 
 // ── SEO
-function genSEO() {
-  const kw=document.getElementById('seo-kw').value.trim(),tone=document.getElementById('seo-tone').value,loc=document.getElementById('seo-loc').value.trim()||'부산';
-  if(!kw) return;
-  const el=document.getElementById('seo-out'); el.classList.add('visible'); el.textContent='생성 중...';
-  const tm={'전문가':'전문적이고 신뢰감 있는','고객':'실제 고객 경험 기반','친근':'친근하고 공감가는'};
-  setTimeout(()=>{
-    el.textContent=`[${tm[tone]} 화자 · ${kw} · ${loc}]\n\n안녕하세요, 디자인하담입니다 😊\n\n「${kw}」에 대해 꼼꼼하게 알려드릴게요.\n\n✅ 포인트 1\n${kw}에서 가장 중요한 것은 전체적인 밸런스입니다.\n\n✅ 포인트 2\n예산 설정부터 시작하세요. ${loc} 기준 평균 단가를 더 사전에 파악하세요.\n\n✅ 포인트 3\n시공 전 3D 시뮬레이션으로 후회 없는 결과를 만들어보세요.\n\n디자인하담에서 더 자세한 상담을 받아보세요 🏡\n\n#${kw.replace(/ /g,'')} #${loc}인테리어 #인테리어디자인 #홈인테리어 #디자인하담 #부산인테리어`;
-  },400);
+async function genSeo() {
+  const kw=document.getElementById('seo-kw').value.trim();
+  if(!kw){alert('키워드를 입력하세요');return;}
+  const tone=document.getElementById('seo-tone').value;
+  const length=document.getElementById('seo-length').value;
+  const out=document.getElementById('seo-out');
+  out.textContent='생성 중...';out.classList.add('visible');
+  try {
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'x-api-key':localStorage.getItem('__anth')||'','anthropic-version':'2023-06-01','content-type':'application/json','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:'claude-haiku-20240307',max_tokens:2000,messages:[{role:'user',content:`네이버 블로그용 인테리어 글을 작성해주세요.\n키워드: ${kw}\n톤: ${tone}\n길이: ${length}\n디자인하담은 부산의 인테리어 전문 업체입니다.`}]})
+    });
+    const d=await r.json();
+    out.textContent=d.content?.[0]?.text||'오류가 발생했습니다';
+  } catch(e) { out.textContent='API 오류: '+e.message; }
+}
+
+// ── Inspection
+async function addIns() {
+  const title=document.getElementById('ins-title').value.trim(),date=document.getElementById('ins-date').value,status=document.getElementById('ins-status').value;
+  if(!title) return;
+  const a=G('inspections'); a.unshift({id:Date.now(),title,date,status}); await S('inspections',a);
+  document.getElementById('ins-title').value=''; renderIns(); statIns();
+}
+async function delIns(id) { await S('inspections',G('inspections').filter(x=>x.id!==id)); renderIns(); statIns(); }
+function renderIns() {
+  const a=G('inspections'),el=document.getElementById('ins-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🔍</div>점검 내역이 없습니다</div>';return;}
+  const statusCls={'예약':'pending','진행중':'pending','완료':'passed','불합격':'failed'};
+  el.innerHTML=a.map(x=>`<div class="ins-card"><div class="ins-hd"><span class="ins-title">${escH(x.title)}</span><button class="del" onclick="delIns(${x.id})">×</button></div><div class="ins-meta">${x.date||'날짜 미정'}</div><span class="ins-status ${statusCls[x.status]||'pending'}">${x.status}</span></div>`).join('');
+}
+function statIns() {
+  const a=G('inspections'),booked=a.filter(x=>x.status==='예약').length;
+  document.getElementById('fc-ins').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${booked}</span>`;
 }
 
 // ── Thread
 async function addThread() {
-  const v=document.getElementById('thr-title').value.trim(),cat=document.getElementById('thr-cat').value;
-  if(!v) return;
-  const a=G('thread'); a.unshift({id:Date.now(),title:v,cat,status:'기획중',date:td()});
-  await S('thread',a); document.getElementById('thr-title').value=''; renderThread(); statThread();
+  const title=document.getElementById('thread-title').value.trim(),body=document.getElementById('thread-body').value.trim();
+  if(!title) return;
+  const a=G('threads'); a.unshift({id:Date.now(),title,body,date:td()}); await S('threads',a);
+  document.getElementById('thread-title').value=''; document.getElementById('thread-body').value=''; renderThread(); statThread();
 }
-async function updThreadStatus(id,s) { const a=G('thread'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('thread',a);renderThread();statThread(); }
-async function delThread(id) { await S('thread',G('thread').filter(x=>x.id!==id)); renderThread(); statThread(); }
-const THR_C={'기획중':'badge-orange','작성중':'badge-blue','예약':'badge-green','발행':'badge-dim'};
+async function delThread(id) { await S('threads',G('threads').filter(x=>x.id!==id)); renderThread(); statThread(); }
 function renderThread() {
-  const a=G('thread'),el=document.getElementById('thr-list');
-  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🧵</div>등록된 쓰레드가 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>
-    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span>
-    <span class="item-txt">${x.title}</span>
-    <select class="badge ${THR_C[x.status]||'badge-dim'}" onchange="updThreadStatus(${x.id},this.value)">${['기획중','작성중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
-    <button class="del" onclick="delThread(${x.id})">×</button></div>`
-  ).join('')+'</div>';
+  const a=G('threads'),el=document.getElementById('thread-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">💬</div>등록된 공지가 없습니다</div>';return;}
+  el.innerHTML=a.map(x=>`<div class="thread-item"><div class="thread-hd"><span class="thread-title">${escH(x.title)}</span><div style="display:flex;align-items:center;gap:8px"><span class="thread-meta">${x.date||''}</span><button class="del" onclick="delThread(${x.id})">×</button></div></div>${x.body?`<div class="thread-body">${escH(x.body)}</div>`:''}</div>`).join('');
 }
 function statThread() {
-  const a=G('thread');
-  document.getElementById('fc-thread').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${a.filter(x=>x.status==='예약').length}</span>`;
+  document.getElementById('fc-thread').innerHTML=`공지 <span class="cnt">${G('threads').length}건</span>`;
 }
 
 // ── Projects
 let projEditId = null;
-
-function openNewProj() {
+function showNewProjForm() {
   document.getElementById('proj-new-form').style.display = 'block';
   document.getElementById('pnf-name').focus();
 }
@@ -1425,7 +1256,29 @@ function openProjDetail(id) {
   document.getElementById('pd-start').value = p.start || '';
   document.getElementById('pd-end').value = p.end || '';
   document.getElementById('pd-memo').value = p.memo || '';
+  // Linked calendar events
+  const evs = G('cal-events').filter(e => e.projectId === id);
+  const el = document.getElementById('pd-linked-events');
+  if (el) {
+    if (evs.length) {
+      el.innerHTML = `<div style="font-size:11px;color:var(--muted);font-weight:600;margin-bottom:6px">📅 연결된 일정</div><div class="list-wrap">${evs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${escH(e.title)}</span></div>`).join('')}</div>`;
+    } else {
+      el.innerHTML = '';
+    }
+  }
   document.getElementById('proj-detail-overlay').classList.add('open');
+}
+function projAddSite() {
+  const p = G('projects').find(x => x.id === projEditId);
+  if (!p) return;
+  closeProjDetail();
+  open_('construction');
+  setTimeout(()=>{
+    const inp = document.getElementById('con-name');
+    if (inp) { inp.value = p.name; inp.focus(); }
+    const sel = document.getElementById('con-proj-link');
+    if (sel) sel.value = String(p.id);
+  }, 100);
 }
 
 function closeProjDetail() {
@@ -1507,15 +1360,7 @@ function allStats() { statChk(); statJnl(); statIns(); statOrd(); statInv(); sta
 (async function init() {
   document.getElementById('jnl-date') && (document.getElementById('jnl-date').value = td());
   // Init member selector on first load (modal not open yet, just prime the defaults)
-  const members = getMembers();
-  if(!members.length) saveMembers(['나']);
-  jnlActiveMember = members[0] || '나';
-
-  allStats();
-  const ym=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${G('cal-events').filter(e=>e.date.startsWith(ym)).length}건</span>`;
-
-  if(cloud.on) {
+  if (cloud.on) {
     setSyncStatus('syncing');
     await cloud.loadAll();
     allStats();
