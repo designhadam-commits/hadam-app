@@ -122,12 +122,45 @@
     .warn-box{background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);border-radius:10px;padding:13px 15px;font-size:12px;color:rgba(251,146,60,0.9);line-height:1.7;margin-bottom:14px}
     .ok-box{background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:13px 15px;font-size:12px;color:var(--green);line-height:1.7;margin-bottom:14px}
 
-    /* Journal */
+    /* Journal — member tabs bar */
+    .jnl-member-bar{display:flex;align-items:center;gap:0;margin-bottom:14px;border-bottom:1px solid var(--border);padding-bottom:0;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .jnl-member-bar::-webkit-scrollbar{display:none}
+    .jnl-mtab{padding:7px 14px;font-size:12px;cursor:pointer;background:none;border:none;color:var(--muted);font-family:inherit;border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+    .jnl-mtab:hover{color:var(--text)}
+    .jnl-mtab.on{color:var(--green);border-bottom-color:var(--green)}
+    .jnl-mtab.all{color:var(--blue)}
+    .jnl-mtab.all.on{color:var(--blue);border-bottom-color:var(--blue)}
+    .jnl-manage-btn{margin-left:auto;flex-shrink:0;padding:4px 10px;font-size:11px;background:var(--tag);border:none;border-radius:6px;color:var(--muted);cursor:pointer;font-family:inherit;white-space:nowrap;transition:background .15s}
+    .jnl-manage-btn:hover{background:rgba(255,255,255,0.1);color:var(--text)}
+
+    /* Journal member manage panel */
+    .member-mgmt{background:rgba(255,255,255,0.04);border-radius:10px;padding:13px;margin-bottom:14px;display:none}
+    .member-mgmt.open{display:block}
+    .member-list-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+    .member-chip{display:flex;align-items:center;gap:5px;padding:4px 10px;background:var(--tag);border-radius:20px;font-size:12px;color:var(--muted)}
+    .member-chip .chip-del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:14px;line-height:1;padding:0 2px}
+    .member-chip .chip-del:hover{color:var(--red)}
+
+    /* Journal entries */
     .j-entry{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px}
-    .j-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
-    .j-title{font-size:13px;font-weight:600}
+    .j-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;gap:8px}
+    .j-title{font-size:13px;font-weight:600;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .j-meta{display:flex;align-items:center;gap:6px;flex-shrink:0}
     .j-date{font-size:11px;color:var(--muted)}
+    .j-member-badge{font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(96,165,250,0.13);color:var(--blue);font-weight:600}
+    .j-cloud-badge{font-size:10px;padding:2px 7px;border-radius:4px;background:rgba(255,255,255,0.07);color:var(--muted);display:inline-flex;align-items:center;gap:3px}
     .j-body{font-size:12.5px;color:var(--muted);white-space:pre-wrap;line-height:1.65}
+
+    /* Cloud journal structured card */
+    .j-cloud-card{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.06);border-radius:10px;padding:14px;margin-bottom:8px}
+    .j-cloud-hd{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+    .j-cloud-title{font-size:13px;font-weight:600;flex:1}
+    .j-section{margin-bottom:8px}
+    .j-section:last-child{margin-bottom:0}
+    .j-section-label{font-size:10px;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:var(--dim);margin-bottom:4px}
+    .j-section-items{display:flex;flex-direction:column;gap:3px}
+    .j-section-item{font-size:12px;color:var(--muted);padding-left:10px;line-height:1.5}
+    .j-section-item::before{content:'·';margin-right:5px;color:var(--dim)}
 
     /* Calendar */
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
@@ -240,8 +273,8 @@
     <div class="feat-card" onclick="open_('journal')">
       <div class="feat-top"><div class="feat-icon">📝</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">업무일지</div>
-      <div class="feat-desc">날짜별 업무 기록, 현장·프로젝트 연결, 태그 검색, Ctrl+S로 빠른 저장.</div>
-      <div class="tags"><span class="tag">업무기록</span><span class="tag">현장</span><span class="tag">태그검색</span></div>
+      <div class="feat-desc">팀원별 업무 기록, 날짜별 현장 연결, 태그 검색, Ctrl+S로 빠른 저장.</div>
+      <div class="tags"><span class="tag">팀원별기록</span><span class="tag">현장</span><span class="tag">태그검색</span></div>
       <div class="feat-status" id="fc-jnl">작성된 일지 없음</div>
     </div>
     <div class="feat-card" onclick="open_('seo')">
@@ -351,16 +384,39 @@
 
 <!-- 업무일지 -->
 <div class="overlay" id="m-journal">
-  <div class="modal">
+  <div class="modal wide">
     <div class="modal-hd"><h2>📝 업무일지</h2><button class="close-btn" onclick="close_('journal')">✕</button></div>
     <div class="modal-bd">
-      <div class="row">
-        <input class="inp" id="jnl-title" placeholder="제목 / 현장명" style="flex:1">
-        <input class="inp" id="jnl-date" type="date" style="width:145px">
+
+      <!-- 팀원 탭 바 -->
+      <div class="jnl-member-bar" id="jnl-member-bar">
+        <!-- rendered by renderJnlMemberBar() -->
+        <button class="jnl-manage-btn" onclick="toggleMemberMgmt()" title="팀원 관리">👥 팀원 관리</button>
       </div>
-      <textarea class="inp" id="jnl-body" placeholder="오늘의 업무 내용... (Ctrl+S 저장)" style="width:100%;margin-bottom:8px"></textarea>
-      <button class="btn btn-g btn-full" onclick="saveJnl()">저장</button>
-      <div id="jnl-list" style="margin-top:14px"></div>
+
+      <!-- 팀원 관리 패널 -->
+      <div class="member-mgmt" id="member-mgmt-panel">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:8px;font-weight:600">팀원 목록</div>
+        <div class="member-list-row" id="member-chip-list"></div>
+        <div class="row" style="margin-bottom:0">
+          <input class="inp" id="member-add-inp" placeholder="새 팀원 이름" style="flex:1" onkeydown="if(event.key==='Enter')addMember()">
+          <button class="btn btn-g" onclick="addMember()">+ 추가</button>
+        </div>
+      </div>
+
+      <!-- 작성 폼 -->
+      <div style="background:rgba(255,255,255,0.03);border-radius:10px;padding:14px;margin-bottom:14px">
+        <div class="row">
+          <select class="inp" id="jnl-member-sel" style="max-width:130px"></select>
+          <input class="inp" id="jnl-title" placeholder="제목 / 현장명" style="flex:1">
+          <input class="inp" id="jnl-date" type="date" style="width:145px">
+        </div>
+        <textarea class="inp" id="jnl-body" placeholder="오늘의 업무 내용... (Ctrl+S 저장)" style="width:100%;margin-bottom:8px"></textarea>
+        <button class="btn btn-g btn-full" onclick="saveJnl()">저장</button>
+      </div>
+
+      <!-- 일지 목록 -->
+      <div id="jnl-list"></div>
     </div>
   </div>
 </div>
@@ -526,7 +582,6 @@ class CloudSync {
         this.shas[key] = d.content.sha;
         setSyncStatus('ok');
       } else if (r.status === 409) {
-        // SHA 충돌 → 재로드 후 재시도
         await this.load(key);
         await this.save(key, val);
       } else {
@@ -537,7 +592,12 @@ class CloudSync {
   async loadAll() {
     if (!this.on) return;
     setSyncStatus('syncing');
-    await Promise.all(['chk','jnl','ins','ord','inv','cal-events','sites'].map(k=>this.load(k)));
+    // load per-member journal keys in addition to other keys
+    const members = getMembers();
+    const jnlKeys = members.map(m => 'jnl_' + m);
+    await Promise.all(['chk','ins','ord','inv','cal-events','sites', ...jnlKeys].map(k=>this.load(k)));
+    // Also load cloud jnl.json for read-only cloud entries
+    await loadCloudJnl();
     setSyncStatus('ok');
   }
   async testToken() {
@@ -577,7 +637,12 @@ const tds = () => new Date().toDateString();
 function open_(id) {
   document.getElementById('m-'+id).classList.add('open');
   if(id==='checklist') renderChk();
-  else if(id==='journal') { renderJnl(); document.getElementById('jnl-date').value = td(); }
+  else if(id==='journal') {
+    document.getElementById('jnl-date').value = td();
+    renderJnlMemberBar();
+    renderJnlMemberSel();
+    renderJnl();
+  }
   else if(id==='insta') renderIns();
   else if(id==='order') renderOrd();
   else if(id==='inventory') renderInv();
@@ -624,11 +689,270 @@ async function savePAT() {
 }
 function clearPAT() {
   if(!confirm('모든 로컨 데이터를 삭제할까요?')) return;
-  ['__pat','chk','jnl','ins','ord','inv','cal-events','sites'].forEach(k=>localStorage.removeItem(k));
+  const members = getMembers();
+  const jnlKeys = members.map(m => 'jnl_' + m);
+  ['__pat','chk','ins','ord','inv','cal-events','sites','hadamMembers','__cloudJnl', ...jnlKeys].forEach(k=>localStorage.removeItem(k));
   cloud.token = ''; cloud.shas = {};
   setSyncStatus('off');
   allStats();
   renderSettings();
+}
+
+// ════════════════════════════════════════
+// Journal — member management
+// ════════════════════════════════════════
+function getMembers() {
+  const raw = localStorage.getItem('hadamMembers');
+  if(raw) {
+    try { return JSON.parse(raw); } catch{}
+  }
+  return ['나'];
+}
+function saveMembers(arr) {
+  localStorage.setItem('hadamMembers', JSON.stringify(arr));
+}
+
+// Current selected member tab: stored in memory
+let jnlActiveMember = null; // null means '전체보기'
+function getJnlActiveMember() {
+  if(jnlActiveMember === null) {
+    const members = getMembers();
+    jnlActiveMember = members[0] || '나';
+  }
+  return jnlActiveMember;
+}
+
+function renderJnlMemberBar() {
+  const members = getMembers();
+  const active = getJnlActiveMember();
+  const bar = document.getElementById('jnl-member-bar');
+  let html = members.map(m =>
+    `<button class="jnl-mtab ${active===m?'on':''}" onclick="selectJnlMember('${escH(m)}')">${escH(m)}</button>`
+  ).join('');
+  html += `<button class="jnl-mtab all ${active==='__all__'?'on':''}" onclick="selectJnlMember('__all__')">전체보기</button>`;
+  // keep manage button at end
+  html += `<button class="jnl-manage-btn" onclick="toggleMemberMgmt()" title="팀원 관리">👥 팀원 관리</button>`;
+  bar.innerHTML = html;
+}
+
+function selectJnlMember(m) {
+  jnlActiveMember = m;
+  renderJnlMemberBar();
+  renderJnl();
+}
+
+let memberMgmtOpen = false;
+function toggleMemberMgmt() {
+  memberMgmtOpen = !memberMgmtOpen;
+  const panel = document.getElementById('member-mgmt-panel');
+  panel.classList.toggle('open', memberMgmtOpen);
+  renderMemberChips();
+}
+
+function renderMemberChips() {
+  const members = getMembers();
+  const el = document.getElementById('member-chip-list');
+  if(!members.length) { el.innerHTML = '<span style="font-size:12px;color:var(--dim)">팀원이 없습니다</span>'; return; }
+  el.innerHTML = members.map((m,i) =>
+    `<div class="member-chip">${escH(m)}<button class="chip-del" onclick="deleteMember(${i})" title="삭제">×</button></div>`
+  ).join('');
+}
+
+function addMember() {
+  const inp = document.getElementById('member-add-inp');
+  const name = inp.value.trim();
+  if(!name) return;
+  const members = getMembers();
+  if(members.includes(name)) { inp.value=''; return; }
+  members.push(name);
+  saveMembers(members);
+  inp.value = '';
+  renderMemberChips();
+  renderJnlMemberBar();
+  renderJnlMemberSel();
+}
+
+function deleteMember(idx) {
+  const members = getMembers();
+  const name = members[idx];
+  if(!confirm(`"${name}" 팀원을 삭제할까요? 해당 팀원의 일지 데이터는 로컬에 남습니다.`)) return;
+  members.splice(idx, 1);
+  saveMembers(members);
+  // If the deleted member was selected, switch to first or all
+  if(jnlActiveMember === name) {
+    jnlActiveMember = members.length ? members[0] : '__all__';
+  }
+  renderMemberChips();
+  renderJnlMemberBar();
+  renderJnlMemberSel();
+  renderJnl();
+}
+
+function renderJnlMemberSel() {
+  const members = getMembers();
+  const sel = document.getElementById('jnl-member-sel');
+  const current = sel.value;
+  sel.innerHTML = members.map(m =>
+    `<option value="${escH(m)}" ${m===current?'selected':''}>${escH(m)}</option>`
+  ).join('');
+  // default to first member if current is not in list
+  if(!members.includes(current) && members.length) sel.value = members[0];
+}
+
+// ── Cloud jnl.json loading
+// Format: array of {member, date, 완료:[], 진행중:[], 발주:[], 이슈:[], 내일계획:[]}
+let cloudJnlEntries = []; // cached parsed entries from jnl.json
+
+async function loadCloudJnl() {
+  if(!cloud.on) return;
+  try {
+    const r = await fetch(cloud.url('jnl'), { headers: cloud.hdrs() });
+    if(r.status === 404) { cloudJnlEntries = []; return; }
+    if(!r.ok) return;
+    const d = await r.json();
+    const raw = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+    if(Array.isArray(raw)) {
+      cloudJnlEntries = raw;
+      localStorage.setItem('__cloudJnl', JSON.stringify(raw));
+    }
+  } catch(e) {
+    // try from local cache
+    const cached = localStorage.getItem('__cloudJnl');
+    if(cached) { try { cloudJnlEntries = JSON.parse(cached); } catch{} }
+    console.warn('loadCloudJnl', e);
+  }
+}
+
+function getCloudJnlEntries() {
+  if(cloudJnlEntries.length) return cloudJnlEntries;
+  const cached = localStorage.getItem('__cloudJnl');
+  if(cached) { try { return JSON.parse(cached); } catch{} }
+  return [];
+}
+
+// ── Journal save / render
+async function saveJnl() {
+  const member = document.getElementById('jnl-member-sel').value || getMembers()[0] || '나';
+  const title = document.getElementById('jnl-title').value.trim();
+  const body  = document.getElementById('jnl-body').value.trim();
+  const date  = document.getElementById('jnl-date').value || td();
+  if(!body) return;
+  const key = 'jnl_' + member;
+  const a = G(key);
+  a.unshift({id:Date.now(), title:title||'업무일지', body, date, member});
+  await S(key, a);
+  document.getElementById('jnl-title').value = '';
+  document.getElementById('jnl-body').value  = '';
+  renderJnl();
+  statJnl();
+}
+
+async function delJnl(member, id) {
+  const key = 'jnl_' + member;
+  await S(key, G(key).filter(x => x.id !== id));
+  renderJnl();
+  statJnl();
+}
+
+function renderJnl() {
+  const activeMember = getJnlActiveMember();
+  const members = getMembers();
+  const el = document.getElementById('jnl-list');
+
+  // Build entry list
+  let entries = [];
+
+  if(activeMember === '__all__') {
+    // Merge all members
+    members.forEach(m => {
+      const local = G('jnl_' + m).map(e => ({...e, member:m, _cloud:false}));
+      entries.push(...local);
+    });
+    // Cloud entries
+    getCloudJnlEntries().forEach(e => entries.push({...e, _cloud:true}));
+  } else {
+    const local = G('jnl_' + activeMember).map(e => ({...e, member:activeMember, _cloud:false}));
+    entries.push(...local);
+    // Cloud entries for this member
+    getCloudJnlEntries().filter(e => e.member === activeMember).forEach(e => entries.push({...e, _cloud:true}));
+  }
+
+  // Sort by date descending, then id descending
+  entries.sort((a,b) => {
+    const dc = (b.date||'').localeCompare(a.date||'');
+    if(dc !== 0) return dc;
+    return (b.id||0) - (a.id||0);
+  });
+
+  if(!entries.length) {
+    el.innerHTML = '<div class="empty"><div class="ei">📝</div>작성된 일지가 없습니다</div>';
+    return;
+  }
+
+  el.innerHTML = entries.map(x => {
+    if(x._cloud) return renderCloudJnlCard(x);
+    return renderLocalJnlCard(x, activeMember === '__all__');
+  }).join('');
+}
+
+function renderLocalJnlCard(x, showMember) {
+  const memberBadge = showMember
+    ? `<span class="j-member-badge">${escH(x.member||'나')}</span>`
+    : '';
+  return `<div class="j-entry">
+    <div class="j-hd">
+      <span class="j-title">${escH(x.title)}</span>
+      <div class="j-meta">${memberBadge}<span class="j-date">${x.date}</span><button class="del" onclick="delJnl('${escH(x.member||'나')}',${x.id})">×</button></div>
+    </div>
+    <div class="j-body">${escH(x.body)}</div>
+  </div>`;
+}
+
+function renderCloudJnlCard(x) {
+  const cats = [
+    {label:'완료', items: x['완료']||[]},
+    {label:'진행중', items: x['진행중']||[]},
+    {label:'발주', items: x['발주']||[]},
+    {label:'이슈', items: x['이슈']||[]},
+    {label:'내일계획', items: x['내일계획']||[]}
+  ].filter(c => c.items.length > 0);
+
+  const sectionsHtml = cats.map(c =>
+    `<div class="j-section">
+      <div class="j-section-label">${escH(c.label)}</div>
+      <div class="j-section-items">${c.items.map(item => `<div class="j-section-item">${escH(String(item))}</div>`).join('')}</div>
+    </div>`
+  ).join('');
+
+  return `<div class="j-cloud-card">
+    <div class="j-cloud-hd">
+      <span class="j-cloud-title">${escH(x.member||'')} 업무일지</span>
+      <span class="j-member-badge">${escH(x.member||'')}</span>
+      <span class="j-date">${x.date||''}</span>
+      <span class="j-cloud-badge">☁ 클라우드</span>
+    </div>
+    ${sectionsHtml || '<div style="font-size:12px;color:var(--dim)">내용 없음</div>'}
+  </div>`;
+}
+
+function escH(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function statJnl() {
+  const members = getMembers();
+  let total = 0;
+  let todayCount = 0;
+  members.forEach(m => {
+    const a = G('jnl_' + m);
+    total += a.length;
+    todayCount += a.filter(x => x.date === td()).length;
+  });
+  // add cloud entries count
+  const cloudCount = getCloudJnlEntries().length;
+  document.getElementById('sv-jnl').textContent = todayCount || '—';
+  document.getElementById('sv-jnl-sub').textContent = todayCount ? `오늘 ${todayCount}건 작성됨` : '오늘 작성된 일지 없음';
+  document.getElementById('fc-jnl').textContent = `전체 ${total}건` + (cloudCount ? ` · 클라우드 ${cloudCount}건` : '');
 }
 
 // ── Checklist
@@ -672,31 +996,6 @@ function statChk() {
   document.getElementById('sv-prog').style.width=pct+'%';
   document.getElementById('sv-chk-sub').textContent=tot?`완료 진행중 ${pct}%`:'항목이 없습니다';
   document.getElementById('fc-chk').innerHTML=`전체 <span class="cnt">${tot}건</span> · 완료 <span class="gcnt">${dn}</span>`;
-}
-
-// ── Journal
-async function saveJnl() {
-  const title=document.getElementById('jnl-title').value.trim();
-  const body=document.getElementById('jnl-body').value.trim();
-  const date=document.getElementById('jnl-date').value||td();
-  if(!body) return;
-  const a=G('jnl');
-  a.unshift({id:Date.now(),title:title||'업무일지',body,date});
-  await S('jnl',a);
-  document.getElementById('jnl-title').value='';
-  document.getElementById('jnl-body').value='';
-  renderJnl(); statJnl();
-}
-function renderJnl() {
-  const a=G('jnl'),el=document.getElementById('jnl-list');
-  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>작성된 일지가 없습니다</div>';return;}
-  el.innerHTML=a.map(x=>`<div class="j-entry"><div class="j-hd"><span class="j-title">${x.title}</span><span class="j-date">${x.date}</span></div><div class="j-body">${x.body}</div></div>`).join('');
-}
-function statJnl() {
-  const a=G('jnl'),tc=a.filter(x=>x.date===td()).length;
-  document.getElementById('sv-jnl').textContent=tc||'—';
-  document.getElementById('sv-jnl-sub').textContent=tc?`오늘 ${tc}건 작성됨`:'오늘 작성된 일지 없음';
-  document.getElementById('fc-jnl').textContent=`전체 ${a.length}건`;
 }
 
 // ── Insta
@@ -848,6 +1147,11 @@ function allStats() { statChk(); statJnl(); statIns(); statOrd(); statInv(); sta
 // ── Init
 (async function init() {
   document.getElementById('jnl-date') && (document.getElementById('jnl-date').value = td());
+  // Init member selector on first load (modal not open yet, just prime the defaults)
+  const members = getMembers();
+  if(!members.length) saveMembers(['나']);
+  jnlActiveMember = members[0] || '나';
+
   allStats();
   const ym=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
   document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${G('cal-events').filter(e=>e.date.startsWith(ym)).length}건</span>`;
