@@ -475,6 +475,13 @@
       </div>
       <!-- Write form -->
       <div id="jnl-write-area">
+        <div class="row" style="margin-bottom:8px;align-items:center">
+          <label class="btn" style="cursor:pointer;display:flex;align-items:center;gap:6px;flex:0;white-space:nowrap" title=".md 파일 불러오기">
+            📄 .md 불러오기
+            <input type="file" accept=".md,.txt" id="jnl-md-file" style="display:none" onchange="loadMdFile(this)">
+          </label>
+          <span id="jnl-md-name" style="font-size:11px;color:var(--muted);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+        </div>
         <div class="row">
           <input class="inp" id="jnl-title" placeholder="제목 (예: 해운대 현장 오전 작업)">
           <input class="inp" id="jnl-date" type="date" style="flex:0;min-width:130px">
@@ -483,8 +490,10 @@
           <textarea class="inp" id="jnl-body" placeholder="업무 내용을 입력하세요..." style="min-height:100px;resize:none"></textarea>
         </div>
         <div class="row" style="margin-bottom:14px">
-          <button class="btn btn-g" onclick="saveJnl()" style="flex:1">저장</button>
+          <button class="btn btn-g" onclick="saveJnl()" style="flex:1">💾 저장</button>
+          <button class="btn" id="jnl-cloud-btn" onclick="uploadJournalMd()" style="display:none;white-space:nowrap">☁️ hadam-cloud 업로드</button>
         </div>
+        <div id="jnl-md-status" style="display:none;font-size:11.5px;margin-bottom:10px;padding:8px 12px;border-radius:8px"></div>
       </div>
       <div id="jnl-list"></div>
     </div>
@@ -777,7 +786,11 @@ function renderSettings() {
 function open_(id) {
   document.getElementById('m-'+id).classList.add('open');
   if(id==='checklist') renderChk();
-  else if(id==='journal') renderJnl();
+  else if(id==='journal') {
+    renderJnl();
+    document.getElementById('jnl-date').value = td();
+    if (cloud.pat) document.getElementById('jnl-cloud-btn').style.display = '';
+  }
   else if(id==='order') renderOrd();
   else if(id==='inventory') renderInv();
   else if(id==='calendar') renderCal();
@@ -881,6 +894,90 @@ async function saveJnl() {
   renderJnl(); statJnl();
 }
 async function delJnl(id) { await S('journal',G('journal').filter(x=>x.id!==id)); renderJnl(); statJnl(); }
+
+// ── MD file loading
+let jnlMdRaw = null;
+let jnlMdFilename = '';
+
+function loadMdFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  jnlMdFilename = file.name;
+  document.getElementById('jnl-md-name').textContent = file.name;
+  const reader = new FileReader();
+  reader.onload = e => {
+    jnlMdRaw = e.target.result;
+    // Auto-fill title from filename (strip .md) and body from content
+    const titleEl = document.getElementById('jnl-title');
+    if (!titleEl.value) {
+      titleEl.value = file.name.replace(/\.md$/i,'').replace(/[-_]/g,' ');
+    }
+    document.getElementById('jnl-body').value = jnlMdRaw;
+    // Show cloud upload button if PAT is set
+    if (cloud.pat) {
+      document.getElementById('jnl-cloud-btn').style.display = '';
+    }
+    showMdStatus('info', `📄 ${file.name} 불러옴 (${(file.size/1024).toFixed(1)} KB)`);
+  };
+  reader.readAsText(file, 'utf-8');
+  // Reset so same file can be re-selected
+  input.value = '';
+}
+
+function showMdStatus(type, msg) {
+  const el = document.getElementById('jnl-md-status');
+  el.style.display = '';
+  const colors = {
+    info:  {bg:'rgba(96,165,250,0.08)',border:'rgba(96,165,250,0.2)',color:'rgba(96,165,250,0.9)'},
+    ok:    {bg:'rgba(74,222,128,0.08)',border:'rgba(74,222,128,0.2)',color:'var(--green)'},
+    error: {bg:'rgba(248,113,113,0.08)',border:'rgba(248,113,113,0.2)',color:'var(--red)'}
+  };
+  const c = colors[type] || colors.info;
+  el.style.cssText += `;background:${c.bg};border:1px solid ${c.border};color:${c.color}`;
+  el.textContent = msg;
+}
+
+async function uploadJournalMd() {
+  if (!cloud.pat) { showMdStatus('error','PAT가 설정되지 않았습니다. 설정 → GitHub PAT를 먼저 입력하세요.'); return; }
+  const member = jnlMember === '__all__' ? (getMembers()[0]||'나') : jnlMember;
+  const dateVal = document.getElementById('jnl-date').value || td();
+  const dateStr = dateVal.replace(/-/g,'');
+  const body = document.getElementById('jnl-body').value || jnlMdRaw || '';
+  if (!body) { showMdStatus('error','내용이 없습니다.'); return; }
+  const path = `daily/${dateStr}/${member}.md`;
+  showMdStatus('info','☁️ 업로드 중...');
+  try {
+    // Get existing SHA if file exists
+    const apiBase = `https://api.github.com/repos/designhadam-commits/hadam-cloud/contents/${path}`;
+    let sha;
+    try {
+      const r = await fetch(apiBase, {headers:{Authorization:`token ${cloud.pat}`,Accept:'application/vnd.github.v3+json'}});
+      if (r.ok) { const d = await r.json(); sha = d.sha; }
+    } catch(e){}
+    const b64 = btoa(unescape(encodeURIComponent(body)));
+    const payload = {message:`업무일지: ${member} ${dateVal}`, content:b64};
+    if (sha) payload.sha = sha;
+    const res = await fetch(apiBase, {
+      method:'PUT',
+      headers:{Authorization:`token ${cloud.pat}`,Accept:'application/vnd.github.v3+json','Content-Type':'application/json'},
+      body:JSON.stringify(payload)
+    });
+    if (res.ok) {
+      showMdStatus('ok', `✅ hadam-cloud/daily/${dateStr}/${member}.md 업로드 완료`);
+      // Also save locally
+      const title = document.getElementById('jnl-title').value.trim() || jnlMdFilename.replace(/\.md$/i,'') || '업무일지';
+      const a = G('journal');
+      a.unshift({id:Date.now(), title, body, date:dateVal, member, cloud:true});
+      await S('journal', a);
+      renderJnl(); statJnl();
+    } else {
+      const err = await res.json();
+      showMdStatus('error', `❌ 업로드 실패: ${err.message||res.status}`);
+    }
+  } catch(e) {
+    showMdStatus('error', `❌ 오류: ${e.message}`);
+  }
+}
 function renderJnl() {
   renderJnlMemberBar();
   const all=G('journal');
