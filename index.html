@@ -7,38 +7,42 @@
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --bg:#0f0f0f;
-      --card:#1a1a1a;
-      --card-hover:#222;
-      --border:rgba(255,255,255,0.07);
-      --text:#f0f0f0;
-      --muted:#888;
-      --dim:#4a4a4a;
-      --green:#4ade80;
-      --green-dim:rgba(74,222,128,0.13);
-      --blue:#60a5fa;
-      --orange:#fb923c;
-      --tag:#ffffff14;
-      --modal-bg:rgba(0,0,0,0.72);
+      --bg:#0f0f0f;--card:#1a1a1a;--card-hover:#222;
+      --border:rgba(255,255,255,0.07);--text:#f0f0f0;
+      --muted:#888;--dim:#4a4a4a;
+      --green:#4ade80;--green-dim:rgba(74,222,128,0.13);
+      --blue:#60a5fa;--orange:#fb923c;--red:#f87171;
+      --tag:#ffffff14;--modal-bg:rgba(0,0,0,0.72);
     }
     body{background:var(--bg);color:var(--text);font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;font-size:14px;line-height:1.5;min-height:100vh}
 
-    /* ── Header ── */
+    /* Header */
     header{display:flex;align-items:center;justify-content:space-between;padding:18px 32px;border-bottom:1px solid var(--border)}
     .logo{display:flex;align-items:center;gap:12px}
     .logo-badge{width:36px;height:36px;background:#2a2a2a;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#f5f0ea;letter-spacing:-0.5px}
     .logo-text h1{font-size:14px;font-weight:700;letter-spacing:0.2px}
     .logo-text span{font-size:9.5px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase}
+    .hd-right{display:flex;align-items:center;gap:14px}
     .header-date{text-align:right}
     .header-date .dm{font-size:14px;font-weight:600}
     .header-date .ds{font-size:10px;color:var(--muted);letter-spacing:0.3px}
 
-    /* ── Layout ── */
+    /* Sync indicator */
+    .sync-badge{display:flex;align-items:center;gap:6px;padding:5px 11px;border-radius:8px;font-size:11.5px;cursor:pointer;border:1px solid var(--border);background:var(--card);transition:background .15s}
+    .sync-badge:hover{background:var(--card-hover)}
+    .sync-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+    .sync-dot.ok{background:var(--green)}
+    .sync-dot.syncing{background:var(--orange);animation:pulse 1s infinite}
+    .sync-dot.err{background:var(--red)}
+    .sync-dot.off{background:var(--dim)}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* Layout */
     main{padding:28px 32px;max-width:1200px}
     .sec-title{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:13px;margin-top:28px}
     .sec-title:first-child{margin-top:0}
 
-    /* ── Today status row ── */
+    /* Status row */
     .status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:4px}
     .stat-card{background:var(--card);border:1px solid var(--border);border-radius:13px;padding:16px 18px;cursor:pointer;transition:background .15s}
     .stat-card:hover{background:var(--card-hover)}
@@ -51,7 +55,7 @@
     .prog-bar{height:3px;background:rgba(255,255,255,0.07);border-radius:2px;margin:8px 0 4px;overflow:hidden}
     .prog-fill{height:100%;background:var(--green);border-radius:2px;transition:width .4s ease}
 
-    /* ── Feature grid ── */
+    /* Feature grid */
     .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
     .feat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;cursor:pointer;transition:background .15s,border-color .15s}
     .feat-card:hover{background:var(--card-hover);border-color:rgba(255,255,255,0.11)}
@@ -67,12 +71,12 @@
     .cnt{color:var(--text);font-weight:600}
     .gcnt{color:var(--green);font-weight:600}
 
-    /* ── Quick links ── */
+    /* Quick links */
     .qlinks{display:grid;grid-template-columns:repeat(4,1fr);gap:9px}
     .qlink{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 15px;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;color:var(--muted);font-size:12px;transition:background .15s,color .15s}
     .qlink:hover{background:var(--card-hover);color:var(--text)}
 
-    /* ── Modal ── */
+    /* Modal */
     .overlay{display:none;position:fixed;inset:0;background:var(--modal-bg);z-index:100;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px}
     .overlay.open{display:flex}
     .modal{background:#1c1c1e;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:660px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
@@ -83,7 +87,7 @@
     .close-btn:hover{color:var(--text)}
     .modal-bd{padding:20px 22px;overflow-y:auto;flex:1}
 
-    /* ── UI Components ── */
+    /* UI Components */
     .row{display:flex;gap:8px;margin-bottom:10px}
     .inp{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
     .inp:focus{border-color:rgba(255,255,255,0.2)}
@@ -94,6 +98,8 @@
     .btn:hover{background:rgba(255,255,255,0.15)}
     .btn-g{background:var(--green-dim);color:var(--green)}
     .btn-g:hover{background:rgba(74,222,128,0.22)}
+    .btn-r{background:rgba(248,113,113,0.12);color:var(--red)}
+    .btn-r:hover{background:rgba(248,113,113,0.2)}
     .btn-full{width:100%;margin-top:8px}
     .tabs{display:flex;gap:6px;margin-bottom:14px}
     .tab{padding:5px 13px;border-radius:6px;font-size:12px;cursor:pointer;background:var(--tag);color:var(--muted);border:none;font-family:inherit;transition:all .15s}
@@ -106,19 +112,24 @@
     .item-txt{flex:1;font-size:13px}
     .item-txt.done{text-decoration:line-through;color:var(--dim)}
     .del{background:none;border:none;color:var(--dim);cursor:pointer;font-size:16px;line-height:1;padding:2px 4px;transition:color .1s}
-    .del:hover{color:#f87171}
+    .del:hover{color:var(--red)}
     .empty{text-align:center;padding:36px 0;color:var(--dim);font-size:13px}
     .empty .ei{font-size:28px;margin-bottom:8px}
     .badge{border-radius:5px;padding:3px 8px;font-size:11px;border:none;cursor:pointer;font-family:inherit}
 
-    /* ── Journal ── */
+    /* Info box */
+    .info-box{background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);border-radius:10px;padding:13px 15px;font-size:12px;color:rgba(96,165,250,0.9);line-height:1.7;margin-bottom:14px}
+    .warn-box{background:rgba(251,146,60,0.08);border:1px solid rgba(251,146,60,0.2);border-radius:10px;padding:13px 15px;font-size:12px;color:rgba(251,146,60,0.9);line-height:1.7;margin-bottom:14px}
+    .ok-box{background:var(--green-dim);border:1px solid rgba(74,222,128,0.2);border-radius:10px;padding:13px 15px;font-size:12px;color:var(--green);line-height:1.7;margin-bottom:14px}
+
+    /* Journal */
     .j-entry{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px}
     .j-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
     .j-title{font-size:13px;font-weight:600}
     .j-date{font-size:11px;color:var(--muted)}
     .j-body{font-size:12.5px;color:var(--muted);white-space:pre-wrap;line-height:1.65}
 
-    /* ── Calendar ── */
+    /* Calendar */
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}
     .cal-day-name{text-align:center;font-size:11px;color:var(--muted);padding:5px 0}
     .cal-day{text-align:center;padding:9px 4px;border-radius:8px;font-size:13px;cursor:pointer;transition:background .1s;position:relative}
@@ -127,17 +138,19 @@
     .cal-day.has-event::after{content:'';position:absolute;bottom:3px;left:50%;transform:translateX(-50%);width:4px;height:4px;background:var(--green);border-radius:50%}
     .cal-day.today.has-event::after{background:#000}
 
-    /* ── Construction ── */
+    /* Construction */
     .site-card{background:rgba(255,255,255,0.04);border-radius:10px;padding:14px;margin-bottom:8px}
     .site-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
     .site-name{font-size:13px;font-weight:600}
-    .prog-label{font-size:11px;color:var(--muted)}
     .site-prog{height:5px;background:rgba(255,255,255,0.08);border-radius:3px;overflow:hidden;margin-bottom:6px}
     .site-prog-fill{height:100%;background:var(--green);border-radius:3px}
     .stages{display:flex;gap:4px;flex-wrap:wrap}
     .stage{padding:3px 8px;border-radius:5px;font-size:10.5px;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
     .stage.done-s{background:var(--green-dim);color:var(--green)}
     .stage.pend-s{background:var(--tag);color:var(--muted)}
+
+    /* Divider */
+    .divider{height:1px;background:var(--border);margin:14px 0}
 
     ::-webkit-scrollbar{width:4px}
     ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:2px}
@@ -156,46 +169,39 @@
       <span>Internal Portal</span>
     </div>
   </div>
-  <div class="header-date">
-    <div class="dm" id="dateMain"></div>
-    <div class="ds" id="dateSub"></div>
+  <div class="hd-right">
+    <div class="sync-badge" onclick="open_('settings')" id="sync-badge" title="클라우드 동기화 설정">
+      <div class="sync-dot off" id="sync-dot"></div>
+      <span id="sync-text">연결 안됨</span>
+    </div>
+    <div class="header-date">
+      <div class="dm" id="dateMain"></div>
+      <div class="ds" id="dateSub"></div>
+    </div>
   </div>
 </header>
 
 <main>
-
   <div class="sec-title">오늘 현황</div>
   <div class="status-row">
     <div class="stat-card" onclick="open_('checklist')">
-      <div class="stat-top">
-        <div class="stat-label">✅ 업무 체크리스트</div>
-        <div class="stat-arr">↗</div>
-      </div>
+      <div class="stat-top"><div class="stat-label">✅ 업무 체크리스트</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-chk">0<span class="unit">개</span></div>
       <div class="prog-bar"><div class="prog-fill" id="sv-prog" style="width:0%"></div></div>
       <div class="stat-sub" id="sv-chk-sub">항목이 없습니다</div>
     </div>
     <div class="stat-card" onclick="open_('journal')">
-      <div class="stat-top">
-        <div class="stat-label">📋 업무일지</div>
-        <div class="stat-arr">↗</div>
-      </div>
+      <div class="stat-top"><div class="stat-label">📋 업무일지</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-jnl">—</div>
       <div class="stat-sub" id="sv-jnl-sub">오늘 작성된 일지 없음</div>
     </div>
     <div class="stat-card" onclick="open_('insta')">
-      <div class="stat-top">
-        <div class="stat-label">📸 인스타 콘텐츠</div>
-        <div class="stat-arr">↗</div>
-      </div>
+      <div class="stat-top"><div class="stat-label">📸 인스타 콘텐츠</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-insta">0<span class="unit">건</span></div>
       <div class="stat-sub">예약된 콘텐츠</div>
     </div>
     <div class="stat-card" onclick="open_('order')">
-      <div class="stat-top">
-        <div class="stat-label">📦 발주관리</div>
-        <div class="stat-arr">↗</div>
-      </div>
+      <div class="stat-top"><div class="stat-label">📦 발주관리</div><div class="stat-arr">↗</div></div>
       <div class="stat-val" id="sv-order">0<span class="unit">건</span></div>
       <div class="stat-sub">입고 대기 중</div>
     </div>
@@ -203,7 +209,6 @@
 
   <div class="sec-title">업무 노드</div>
   <div class="feat-grid">
-
     <div class="feat-card" onclick="open_('cloud')">
       <div class="feat-top"><div class="feat-icon">☁️</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">파일 클라우드</div>
@@ -211,7 +216,6 @@
       <div class="tags"><span class="tag">파일관리</span><span class="tag">이미지</span><span class="tag">공유</span></div>
       <div class="feat-status">hadam-cloud 저장소 연동</div>
     </div>
-
     <div class="feat-card" onclick="open_('checklist')">
       <div class="feat-top"><div class="feat-icon" style="background:var(--green-dim)">✅</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">업무 체크리스트</div>
@@ -219,7 +223,6 @@
       <div class="tags"><span class="tag">오늘업무</span><span class="tag">주간</span><span class="tag">카테고리</span></div>
       <div class="feat-status" id="fc-chk">전체 <span class="cnt">0건</span> · 완료 <span class="gcnt">0</span></div>
     </div>
-
     <div class="feat-card" onclick="open_('inventory')">
       <div class="feat-top"><div class="feat-icon">🗂️</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">당비실 재고관리</div>
@@ -227,7 +230,6 @@
       <div class="tags"><span class="tag">재고현황</span><span class="tag">구매일정</span><span class="tag">긴급알림</span></div>
       <div class="feat-status" id="fc-inv">전체 <span class="cnt">0건</span></div>
     </div>
-
     <div class="feat-card" onclick="open_('calendar')">
       <div class="feat-top"><div class="feat-icon">📅</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">캘린더</div>
@@ -235,7 +237,6 @@
       <div class="tags"><span class="tag">일정관리</span><span class="tag">현장</span><span class="tag">마케팅</span></div>
       <div class="feat-status" id="fc-cal">이번 달 일정 <span class="cnt">0건</span></div>
     </div>
-
     <div class="feat-card" onclick="open_('journal')">
       <div class="feat-top"><div class="feat-icon">📝</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">업무일지</div>
@@ -243,7 +244,6 @@
       <div class="tags"><span class="tag">업무기록</span><span class="tag">현장</span><span class="tag">태그검색</span></div>
       <div class="feat-status" id="fc-jnl">작성된 일지 없음</div>
     </div>
-
     <div class="feat-card" onclick="open_('seo')">
       <div class="feat-top"><div class="feat-icon">🔍</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">SEO 블로그 자동화</div>
@@ -251,7 +251,6 @@
       <div class="tags"><span class="tag">블로그자동화</span><span class="tag">키워드</span><span class="tag">자동생성</span></div>
       <div class="feat-status">—</div>
     </div>
-
     <div class="feat-card" onclick="open_('order')">
       <div class="feat-top"><div class="feat-icon">📦</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">발주관리</div>
@@ -259,7 +258,6 @@
       <div class="tags"><span class="tag">발주이력</span><span class="tag">수량관리</span><span class="tag">납기추적</span></div>
       <div class="feat-status" id="fc-ord">전체 <span class="cnt">0건</span> 입고대기 <span class="cnt">0</span></div>
     </div>
-
     <div class="feat-card" onclick="open_('thread')">
       <div class="feat-top"><div class="feat-icon">🧵</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">쓰레드 자동화</div>
@@ -267,7 +265,6 @@
       <div class="tags"><span class="tag">쓰레드관리</span><span class="tag">예약발행</span><span class="tag">템플릿</span></div>
       <div class="feat-status">hadam-thread 저장소 연동</div>
     </div>
-
     <div class="feat-card" onclick="open_('insta')">
       <div class="feat-top"><div class="feat-icon">📸</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">인스타 콘텐츠</div>
@@ -275,7 +272,6 @@
       <div class="tags"><span class="tag">인스타관리</span><span class="tag">카드뉴스</span><span class="tag">릴스</span></div>
       <div class="feat-status" id="fc-ins">전체 <span class="cnt">0건</span> 예약 <span class="cnt">0</span></div>
     </div>
-
     <div class="feat-card" onclick="open_('construction')">
       <div class="feat-top"><div class="feat-icon">🏗️</div><div class="arr-btn">↗</div></div>
       <div class="feat-title">공정관리</div>
@@ -283,7 +279,6 @@
       <div class="tags"><span class="tag">현장관리</span><span class="tag">진행률</span><span class="tag">사진메모</span></div>
       <div class="feat-status" id="fc-con">현장 <span class="cnt">0개</span> 진행중 <span class="cnt">0</span></div>
     </div>
-
   </div>
 
   <div class="sec-title">바로 가기</div>
@@ -293,10 +288,46 @@
     <a class="qlink" href="https://place.naver.com" target="_blank">📍 네이버 플레이스</a>
     <a class="qlink" href="mailto:gesignhadam@gmail.com">✉️ 이메일</a>
   </div>
-
 </main>
 
-<!-- ══ MODALS ══════════════════════════════════════════════ -->
+<!-- ======== MODALS ======== -->
+
+<!-- 설정 (Cloud Sync) -->
+<div class="overlay" id="m-settings">
+  <div class="modal">
+    <div class="modal-hd"><h2>⚙️ 클라우드 동기화 설정</h2><button class="close-btn" onclick="close_('settings')">✕</button></div>
+    <div class="modal-bd">
+      <div class="info-box">
+        하담 인터널 포털의 모든 데이터를 <strong>hadam-cloud</strong> 저장소에 저장합니다.<br>
+        어떤 기기에서 접속해도 데이터가 동일하게 유지됩니다.
+      </div>
+
+      <div style="margin-bottom:6px;font-size:12px;color:var(--muted);font-weight:600">GitHub Personal Access Token</div>
+      <div class="row">
+        <input class="inp" id="pat-input" type="password" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx">
+        <button class="btn btn-g" onclick="savePAT()">저장</button>
+      </div>
+
+      <div style="font-size:11.5px;color:var(--dim);line-height:1.8;margin-bottom:16px">
+        토큰 발급: GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)<br>
+        필요 권한: <code style="background:var(--tag);padding:1px 5px;border-radius:3px">repo</code> (Contents 읽기/쓰기)
+      </div>
+
+      <div class="divider"></div>
+
+      <div id="settings-status"></div>
+
+      <div style="margin-bottom:6px;font-size:12px;color:var(--muted);font-weight:600">저장 위치</div>
+      <div style="background:var(--tag);border-radius:8px;padding:10px 13px;font-size:12px;color:var(--muted);font-family:monospace">
+        designhadam-commits / hadam-cloud / data/*.json
+      </div>
+
+      <div class="divider"></div>
+
+      <button class="btn btn-r" style="width:100%" onclick="clearPAT()">토큰 삭제 및 로컬 저장소 초기화</button>
+    </div>
+  </div>
+</div>
 
 <!-- 체크리스트 -->
 <div class="overlay" id="m-checklist">
@@ -310,9 +341,7 @@
       </div>
       <div class="row">
         <input class="inp" id="chk-inp" placeholder="새 업무 입력 후 Enter" onkeydown="if(event.key==='Enter')addChk()">
-        <select class="inp" id="chk-cat" style="max-width:110px">
-          <option>일반</option><option>현장</option><option>마케팅</option><option>행정</option>
-        </select>
+        <select class="inp" id="chk-cat" style="max-width:110px"><option>일반</option><option>현장</option><option>마케팅</option><option>행정</option></select>
         <button class="btn btn-g" onclick="addChk()">추가</button>
       </div>
       <div class="list-wrap" id="chk-list"></div>
@@ -329,7 +358,7 @@
         <input class="inp" id="jnl-title" placeholder="제목 / 현장명" style="flex:1">
         <input class="inp" id="jnl-date" type="date" style="width:145px">
       </div>
-      <textarea class="inp" id="jnl-body" placeholder="오늘의 업무 내용을 기록하세요...&#10;(Ctrl+S 로 저장)" style="width:100%;margin-bottom:8px"></textarea>
+      <textarea class="inp" id="jnl-body" placeholder="오늘의 업무 내용... (Ctrl+S 저장)" style="width:100%;margin-bottom:8px"></textarea>
       <button class="btn btn-g btn-full" onclick="saveJnl()">저장</button>
       <div id="jnl-list" style="margin-top:14px"></div>
     </div>
@@ -341,7 +370,8 @@
   <div class="modal">
     <div class="modal-hd"><h2>☁️ 파일 클라우드</h2><button class="close-btn" onclick="close_('cloud')">✕</button></div>
     <div class="modal-bd">
-      <div class="empty"><div class="ei">☁️</div><div style="font-weight:600;margin-bottom:6px">hadam-cloud 저장소와 연동됩니다</div><div style="font-size:11.5px">각 기능 레포가 추가될 때마다 여기서 관리됩니다</div></div>
+      <div class="empty"><div class="ei">☁️</div><div style="font-weight:600;margin-bottom:6px">hadam-cloud 저장소 연동</div><div style="font-size:11.5px">각 기능 레포가 추가될 때마다 여기서 관리됩니다</div></div>
+      <a href="https://github.com/designhadam-commits/hadam-cloud" target="_blank" class="btn" style="display:block;text-align:center;text-decoration:none;margin-top:12px">GitHub 저장소 보기 →</a>
     </div>
   </div>
 </div>
@@ -397,9 +427,7 @@
       <div class="row">
         <input class="inp" id="inv-name" placeholder="품목명">
         <input class="inp" id="inv-qty" placeholder="수량" style="width:72px">
-        <select class="inp" id="inv-cat" style="width:100px">
-          <option>물품</option><option>견적</option><option>스포츠</option>
-        </select>
+        <select class="inp" id="inv-cat" style="width:100px"><option>물품</option><option>견적</option><option>스포츠</option></select>
         <button class="btn btn-g" onclick="addInv()">추가</button>
       </div>
       <div id="inv-list"></div>
@@ -425,9 +453,7 @@
     <div class="modal-bd">
       <div class="row">
         <input class="inp" id="ins-title" placeholder="콘텐츠 주제 / 제목">
-        <select class="inp" id="ins-type" style="width:90px">
-          <option>카드뉴스</option><option>릴스</option><option>피드</option>
-        </select>
+        <select class="inp" id="ins-type" style="width:90px"><option>카드뉴스</option><option>릴스</option><option>피드</option></select>
         <button class="btn btn-g" onclick="addIns()">추가</button>
       </div>
       <div id="ins-list"></div>
@@ -450,67 +476,197 @@
 </div>
 
 <script>
+// ════════════════════════════════════════
+// CloudSync — GitHub Contents API 연동
+// ════════════════════════════════════════
+class CloudSync {
+  constructor() {
+    this.token = localStorage.getItem('__pat') || '';
+    this.owner = 'designhadam-commits';
+    this.repo  = 'hadam-cloud';
+    this.shas  = {};
+  }
+  get on() { return !!this.token; }
+  hdrs() {
+    return {
+      'Authorization': `token ${this.token}`,
+      'Accept': 'application/vnd.github.v3+json',
+      'Content-Type': 'application/json'
+    };
+  }
+  url(key) {
+    return `https://api.github.com/repos/${this.owner}/${this.repo}/contents/data/${key}.json`;
+  }
+  async load(key) {
+    try {
+      const r = await fetch(this.url(key), { headers: this.hdrs() });
+      if (r.status === 404) return;
+      if (!r.ok) throw r.status;
+      const d = await r.json();
+      this.shas[key] = d.sha;
+      const val = JSON.parse(decodeURIComponent(escape(atob(d.content.replace(/\n/g,'')))));
+      localStorage.setItem(key, JSON.stringify(val));
+    } catch(e) { console.warn('cloud.load', key, e); }
+  }
+  async save(key, val) {
+    if (!this.on) return;
+    setSyncStatus('syncing');
+    try {
+      const content = btoa(unescape(encodeURIComponent(JSON.stringify(val, null, 2))));
+      const body = {
+        message: `[portal] ${key} 저장 ${new Date().toISOString().slice(0,10)}`,
+        content
+      };
+      if (this.shas[key]) body.sha = this.shas[key];
+      const r = await fetch(this.url(key), {
+        method: 'PUT', headers: this.hdrs(), body: JSON.stringify(body)
+      });
+      if (r.ok) {
+        const d = await r.json();
+        this.shas[key] = d.content.sha;
+        setSyncStatus('ok');
+      } else if (r.status === 409) {
+        // SHA 충돌 → 재로드 후 재시도
+        await this.load(key);
+        await this.save(key, val);
+      } else {
+        setSyncStatus('err');
+      }
+    } catch(e) { console.warn('cloud.save', key, e); setSyncStatus('err'); }
+  }
+  async loadAll() {
+    if (!this.on) return;
+    setSyncStatus('syncing');
+    await Promise.all(['chk','jnl','ins','ord','inv','cal-events','sites'].map(k=>this.load(k)));
+    setSyncStatus('ok');
+  }
+  async testToken() {
+    try {
+      const r = await fetch(`https://api.github.com/repos/${this.owner}/${this.repo}`, { headers: this.hdrs() });
+      return r.ok;
+    } catch { return false; }
+  }
+}
+const cloud = new CloudSync();
+
+// ── Sync status indicator
+function setSyncStatus(s) {
+  const dot = document.getElementById('sync-dot');
+  const txt = document.getElementById('sync-text');
+  dot.className = 'sync-dot ' + s;
+  txt.textContent = {ok:'동기화 완료', syncing:'동기화 중...', err:'동기화 오류', off:'연결 안됨'}[s] || s;
+}
+
+// ── LocalStorage wrapper
+const G = k => JSON.parse(localStorage.getItem(k) || '[]');
+const S = async (k, v) => { localStorage.setItem(k, JSON.stringify(v)); await cloud.save(k, v); };
+
+// ── Date
 const DAYS=['일','월','화','수','목','금','토'];
-function updateDate(){
-  const n=new Date(),y=n.getFullYear(),m=n.getMonth()+1,d=n.getDate(),dw=DAYS[n.getDay()];
-  document.getElementById('dateMain').textContent=`${y}년 ${m}월 ${d}일 (${dw})`;
+function updateDate() {
+  const n=new Date(), y=n.getFullYear(), m=n.getMonth()+1, d=n.getDate();
+  document.getElementById('dateMain').textContent=`${y}년 ${m}월 ${d}일 (${DAYS[n.getDay()]})`;
   document.getElementById('dateSub').textContent=n.toLocaleDateString('en-US',{month:'long',year:'numeric'});
 }
 updateDate();
 
-const G=k=>JSON.parse(localStorage.getItem(k)||'[]');
-const S=(k,v)=>localStorage.setItem(k,JSON.stringify(v));
+const td  = () => new Date().toISOString().slice(0,10);
+const tds = () => new Date().toDateString();
 
 // ── Modal
-function open_(id){
+function open_(id) {
   document.getElementById('m-'+id).classList.add('open');
-  if(id==='checklist')renderChk();
-  else if(id==='journal'){renderJnl();document.getElementById('jnl-date').value=td();}
-  else if(id==='insta')renderIns();
-  else if(id==='order')renderOrd();
-  else if(id==='inventory')renderInv();
-  else if(id==='calendar')renderCal();
-  else if(id==='construction')renderCon();
+  if(id==='checklist') renderChk();
+  else if(id==='journal') { renderJnl(); document.getElementById('jnl-date').value = td(); }
+  else if(id==='insta') renderIns();
+  else if(id==='order') renderOrd();
+  else if(id==='inventory') renderInv();
+  else if(id==='calendar') renderCal();
+  else if(id==='construction') renderCon();
+  else if(id==='settings') renderSettings();
 }
-function close_(id){document.getElementById('m-'+id).classList.remove('open');}
-document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open');}));
-document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='s'){e.preventDefault();saveJnl();}});
+function close_(id) { document.getElementById('m-'+id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(el =>
+  el.addEventListener('click', e => { if(e.target===el) el.classList.remove('open'); })
+);
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));
+  if(e.ctrlKey && e.key==='s') { e.preventDefault(); saveJnl(); }
+});
 
-function td(){return new Date().toISOString().slice(0,10);}
-function tds(){return new Date().toDateString();}
+// ── Settings
+function renderSettings() {
+  const el = document.getElementById('settings-status');
+  if(cloud.on) {
+    el.innerHTML = `<div class="ok-box">✅ 토큰이 등록되어 있습니다. 클라우드 동기화가 활성화되어 있습니다.</div>`;
+  } else {
+    el.innerHTML = `<div class="warn-box">⚠️ 토큰이 없습니다. 데이터가 이 브라우저에만 저장됩니다.</div>`;
+  }
+}
+async function savePAT() {
+  const v = document.getElementById('pat-input').value.trim();
+  if(!v) return;
+  cloud.token = v;
+  localStorage.setItem('__pat', v);
+  const ok = await cloud.testToken();
+  const el = document.getElementById('settings-status');
+  if(ok) {
+    el.innerHTML = `<div class="ok-box">✅ 연결 성공! 클라우드 동기화를 시작합니다...</div>`;
+    setSyncStatus('syncing');
+    await cloud.loadAll();
+    allStats();
+  } else {
+    el.innerHTML = `<div class="warn-box">❌ 연결 실패. 토큰 권한을 확인해주세요 (repo 에 대한 read/write 필요).</div>`;
+    cloud.token = '';
+    localStorage.removeItem('__pat');
+  }
+  document.getElementById('pat-input').value = '';
+}
+function clearPAT() {
+  if(!confirm('모든 로컨 데이터를 삭제할까요?')) return;
+  ['__pat','chk','jnl','ins','ord','inv','cal-events','sites'].forEach(k=>localStorage.removeItem(k));
+  cloud.token = ''; cloud.shas = {};
+  setSyncStatus('off');
+  allStats();
+  renderSettings();
+}
 
 // ── Checklist
 let chkTabSel='오늘';
-function chkTab(t,btn){
+function chkTab(t,btn) {
   chkTabSel=t;
   btn.closest('.tabs').querySelectorAll('.tab').forEach(b=>b.classList.remove('on'));
   btn.classList.add('on');
   renderChk();
 }
-function addChk(){
-  const v=document.getElementById('chk-inp').value.trim();
-  if(!v)return;
+async function addChk() {
+  const v=document.getElementById('chk-inp').value.trim(); if(!v) return;
   const cat=document.getElementById('chk-cat').value;
-  const items=G('chk');
-  items.push({id:Date.now(),text:v,done:false,tab:chkTabSel,cat,date:tds()});
-  S('chk',items);
+  const a=G('chk');
+  a.push({id:Date.now(),text:v,done:false,tab:chkTabSel,cat,date:tds()});
+  await S('chk',a);
   document.getElementById('chk-inp').value='';
-  renderChk();statChk();
+  renderChk(); statChk();
 }
-function togChk(id){
+async function togChk(id) {
   const a=G('chk'),i=a.findIndex(x=>x.id===id);
-  if(i>-1)a[i].done=!a[i].done;
-  S('chk',a);renderChk();statChk();
+  if(i>-1) a[i].done=!a[i].done;
+  await S('chk',a); renderChk(); statChk();
 }
-function delChk(id){S('chk',G('chk').filter(x=>x.id!==id));renderChk();statChk();}
-function renderChk(){
+async function delChk(id) { await S('chk',G('chk').filter(x=>x.id!==id)); renderChk(); statChk(); }
+function renderChk() {
   const all=G('chk'),today=tds();
   const f=chkTabSel==='전체'?all:chkTabSel==='오늘'?all.filter(x=>x.date===today):all.filter(x=>x.tab==='주간');
   const el=document.getElementById('chk-list');
   if(!f.length){el.innerHTML='<div class="empty"><div class="ei">✅</div>항목이 없습니다</div>';return;}
-  el.innerHTML=f.map(it=>`<div class="list-item"><div class="chk ${it.done?'done':''}" onclick="togChk(${it.id})">${it.done?'✓':''}</div><span class="item-txt ${it.done?'done':''}">${it.text}</span><span style="font-size:10.5px;color:var(--dim);margin-right:4px">${it.cat}</span><button class="del" onclick="delChk(${it.id})">×</button></div>`).join('');
+  el.innerHTML=f.map(it=>
+    `<div class="list-item"><div class="chk ${it.done?'done':''}" onclick="togChk(${it.id})">${it.done?'✓':''}</div>
+    <span class="item-txt ${it.done?'done':''}">${it.text}</span>
+    <span style="font-size:10.5px;color:var(--dim);margin-right:4px">${it.cat}</span>
+    <button class="del" onclick="delChk(${it.id})">×</button></div>`
+  ).join('');
 }
-function statChk(){
+function statChk() {
   const all=G('chk'),today=tds(),t=all.filter(x=>x.date===today),dn=t.filter(x=>x.done).length,tot=t.length,pct=tot?Math.round(dn/tot*100):0;
   document.getElementById('sv-chk').innerHTML=`${tot}<span class="unit">개</span>`;
   document.getElementById('sv-prog').style.width=pct+'%';
@@ -519,164 +675,190 @@ function statChk(){
 }
 
 // ── Journal
-function saveJnl(){
+async function saveJnl() {
   const title=document.getElementById('jnl-title').value.trim();
   const body=document.getElementById('jnl-body').value.trim();
   const date=document.getElementById('jnl-date').value||td();
-  if(!body)return;
-  const e=G('jnl');
-  e.unshift({id:Date.now(),title:title||'업무일지',body,date});
-  S('jnl',e);
+  if(!body) return;
+  const a=G('jnl');
+  a.unshift({id:Date.now(),title:title||'업무일지',body,date});
+  await S('jnl',a);
   document.getElementById('jnl-title').value='';
   document.getElementById('jnl-body').value='';
-  renderJnl();statJnl();
+  renderJnl(); statJnl();
 }
-function renderJnl(){
-  const e=G('jnl'),el=document.getElementById('jnl-list');
-  if(!e.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>작성된 일지가 없습니다</div>';return;}
-  el.innerHTML=e.map(x=>`<div class="j-entry"><div class="j-hd"><span class="j-title">${x.title}</span><span class="j-date">${x.date}</span></div><div class="j-body">${x.body}</div></div>`).join('');
+function renderJnl() {
+  const a=G('jnl'),el=document.getElementById('jnl-list');
+  if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📝</div>작성된 일지가 없습니다</div>';return;}
+  el.innerHTML=a.map(x=>`<div class="j-entry"><div class="j-hd"><span class="j-title">${x.title}</span><span class="j-date">${x.date}</span></div><div class="j-body">${x.body}</div></div>`).join('');
 }
-function statJnl(){
-  const e=G('jnl'),t=td(),tc=e.filter(x=>x.date===t).length;
+function statJnl() {
+  const a=G('jnl'),tc=a.filter(x=>x.date===td()).length;
   document.getElementById('sv-jnl').textContent=tc||'—';
   document.getElementById('sv-jnl-sub').textContent=tc?`오늘 ${tc}건 작성됨`:'오늘 작성된 일지 없음';
-  document.getElementById('fc-jnl').textContent=`전체 ${e.length}건`;
+  document.getElementById('fc-jnl').textContent=`전체 ${a.length}건`;
 }
 
 // ── Insta
-function addIns(){
+async function addIns() {
   const v=document.getElementById('ins-title').value.trim(),type=document.getElementById('ins-type').value;
-  if(!v)return;
-  const a=G('ins');a.unshift({id:Date.now(),title:v,type,status:'기획중',date:td()});
-  S('ins',a);document.getElementById('ins-title').value='';renderIns();statIns();
+  if(!v) return;
+  const a=G('ins'); a.unshift({id:Date.now(),title:v,type,status:'기획중',date:td()});
+  await S('ins',a); document.getElementById('ins-title').value=''; renderIns(); statIns();
 }
-function updInsStatus(id,s){
-  const a=G('ins'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;S('ins',a);statIns();
-}
-function delIns(id){S('ins',G('ins').filter(x=>x.id!==id));renderIns();statIns();}
-const INS_COLORS={'기획중':'var(--orange)','제작중':'var(--blue)','예약':'var(--green)','발행':'var(--dim)'};
-function renderIns(){
+async function updInsStatus(id,s) { const a=G('ins'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ins',a);statIns(); }
+async function delIns(id) { await S('ins',G('ins').filter(x=>x.id!==id)); renderIns(); statIns(); }
+const INS_C={'기획중':'var(--orange)','제작중':'var(--blue)','예약':'var(--green)','발행':'var(--dim)'};
+function renderIns() {
   const a=G('ins'),el=document.getElementById('ins-list');
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📸</div>등록된 콘텐츠가 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.type}</span><span class="item-txt" style="flex:1">${x.title}</span><select class="badge" onchange="updInsStatus(${x.id},this.value)" style="background:var(--tag);color:${INS_COLORS[x.status]||'var(--muted)'}">${['기획중','제작중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="del" onclick="delIns(${x.id})">×</button></div>`).join('')+'</div>';
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>
+    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.type}</span>
+    <span class="item-txt" style="flex:1">${x.title}</span>
+    <select class="badge" onchange="updInsStatus(${x.id},this.value)" style="background:var(--tag);color:${INS_C[x.status]||'var(--muted)'}">${['기획중','제작중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    <button class="del" onclick="delIns(${x.id})">×</button></div>`
+  ).join('')+'</div>';
 }
-function statIns(){
+function statIns() {
   const a=G('ins'),r=a.filter(x=>x.status==='예약').length;
   document.getElementById('sv-insta').innerHTML=`${r}<span class="unit">건</span>`;
   document.getElementById('fc-ins').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${r}</span>`;
 }
 
 // ── Order
-function addOrd(){
+async function addOrd() {
   const item=document.getElementById('ord-item').value.trim(),qty=document.getElementById('ord-qty').value.trim(),price=document.getElementById('ord-price').value.trim();
-  if(!item)return;
-  const a=G('ord');a.unshift({id:Date.now(),item,qty:qty||'1',price:price||'—',status:'입고대기',date:td()});
-  S('ord',a);document.getElementById('ord-item').value='';document.getElementById('ord-qty').value='';document.getElementById('ord-price').value='';
-  renderOrd();statOrd();
+  if(!item) return;
+  const a=G('ord'); a.unshift({id:Date.now(),item,qty:qty||'1',price:price||'—',status:'입고대기',date:td()});
+  await S('ord',a); document.getElementById('ord-item').value=''; document.getElementById('ord-qty').value=''; document.getElementById('ord-price').value=''; renderOrd(); statOrd();
 }
-function updOrdStatus(id,s){const a=G('ord'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;S('ord',a);statOrd();}
-function delOrd(id){S('ord',G('ord').filter(x=>x.id!==id));renderOrd();statOrd();}
-function renderOrd(){
+async function updOrdStatus(id,s) { const a=G('ord'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ord',a);statOrd(); }
+async function delOrd(id) { await S('ord',G('ord').filter(x=>x.id!==id)); renderOrd(); statOrd(); }
+function renderOrd() {
   const a=G('ord'),el=document.getElementById('ord-list');
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📦</div>발주 내역이 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span class="item-txt">${x.item}</span><span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span><span style="font-size:11.5px;color:var(--muted);margin:0 6px">${x.price}원</span><select class="badge" onchange="updOrdStatus(${x.id},this.value)" style="background:var(--tag);color:var(--muted)">${['입고대기','입고완료','반품'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="del" onclick="delOrd(${x.id})">×</button></div>`).join('')+'</div>';
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>
+    `<div class="list-item"><span class="item-txt">${x.item}</span>
+    <span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span>
+    <span style="font-size:11.5px;color:var(--muted);margin:0 6px">${x.price}원</span>
+    <select class="badge" onchange="updOrdStatus(${x.id},this.value)" style="background:var(--tag);color:var(--muted)">${['입고대기','입고완료','반품'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select>
+    <button class="del" onclick="delOrd(${x.id})">×</button></div>`
+  ).join('')+'</div>';
 }
-function statOrd(){
+function statOrd() {
   const a=G('ord'),p=a.filter(x=>x.status==='입고대기').length;
   document.getElementById('sv-order').innerHTML=`${p}<span class="unit">건</span>`;
   document.getElementById('fc-ord').innerHTML=`전체 <span class="cnt">${a.length}건</span> 입고대기 <span class="cnt">${p}</span>`;
 }
 
 // ── Inventory
-function addInv(){
+async function addInv() {
   const n=document.getElementById('inv-name').value.trim(),q=document.getElementById('inv-qty').value.trim(),cat=document.getElementById('inv-cat').value;
-  if(!n)return;
-  const a=G('inv');a.unshift({id:Date.now(),name:n,qty:q||'1',cat,status:'정상'});
-  S('inv',a);document.getElementById('inv-name').value='';document.getElementById('inv-qty').value='';
-  renderInv();statInv();
+  if(!n) return;
+  const a=G('inv'); a.unshift({id:Date.now(),name:n,qty:q||'1',cat,status:'정상'});
+  await S('inv',a); document.getElementById('inv-name').value=''; document.getElementById('inv-qty').value=''; renderInv(); statInv();
 }
-function delInv(id){S('inv',G('inv').filter(x=>x.id!==id));renderInv();statInv();}
-function renderInv(){
+async function delInv(id) { await S('inv',G('inv').filter(x=>x.id!==id)); renderInv(); statInv(); }
+function renderInv() {
   const a=G('inv'),el=document.getElementById('inv-list');
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🗂️</div>재고 항목이 없습니다</div>';return;}
-  el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span><span class="item-txt">${x.name}</span><span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span><button class="del" onclick="delInv(${x.id})">×</button></div>`).join('')+'</div>';
+  el.innerHTML='<div class="list-wrap">'+a.map(x=>
+    `<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span>
+    <span class="item-txt">${x.name}</span>
+    <span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span>
+    <button class="del" onclick="delInv(${x.id})">×</button></div>`
+  ).join('')+'</div>';
 }
-function statInv(){
-  const a=G('inv');document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${a.length}건</span>`;
+function statInv() {
+  document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${G('inv').length}건</span>`;
 }
 
 // ── Calendar
 let calY,calM;
-function renderCal(){
-  const now=new Date();if(!calY){calY=now.getFullYear();calM=now.getMonth();}
-  const events=G('cal-events');
-  const first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate(),today=now.getDate();
-  const isThisMonth=calY===now.getFullYear()&&calM===now.getMonth();
+function renderCal() {
+  const now=new Date(); if(!calY){calY=now.getFullYear();calM=now.getMonth();}
+  const events=G('cal-events'),first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate();
+  const today=now.getDate(),isThis=calY===now.getFullYear()&&calM===now.getMonth();
+  const ym=`${calY}-${String(calM+1).padStart(2,'0')}`;
   let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
     <button class="btn" onclick="calNav(-1)">←</button>
     <span style="font-size:15px;font-weight:700">${calY}년 ${calM+1}월</span>
-    <button class="btn" onclick="calNav(1)">→</button>
-  </div>
+    <button class="btn" onclick="calNav(1)">→</button></div>
   <div class="cal-grid" style="margin-bottom:6px">${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="cal-day-name" style="color:${i===0?'#f87171':i===6?'#60a5fa':'var(--muted)'}">${d}</div>`).join('')}</div>
-  <div class="cal-grid">${'<div></div>'.repeat(first)}${Array.from({length:days},(_,i)=>{const day=i+1;const isToday=isThisMonth&&day===today;const evKey=`${calY}-${String(calM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const hasEv=events.some(e=>e.date===evKey);return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''}" onclick="addCalEv('${evKey}')">${day}</div>`;}).join('')}</div>`;
-  const thisMonthEvs=events.filter(e=>e.date.startsWith(`${calY}-${String(calM+1).padStart(2,'0')}`));
-  if(thisMonthEvs.length){
-    html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:0.5px">이번 달 일정</div><div class="list-wrap">${thisMonthEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:70px">${e.date}</span><span class="item-txt">${e.title}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`).join('')}</div></div>`;
-  }
+  <div class="cal-grid">${'<div></div>'.repeat(first)}${Array.from({length:days},(_,i)=>{
+    const day=i+1,isToday=isThis&&day===today;
+    const evKey=`${calY}-${String(calM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const hasEv=events.some(e=>e.date===evKey);
+    return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''}" onclick="addCalEv('${evKey}')">${day}</div>`;
+  }).join('')}</div>`;
+  const thisEvs=events.filter(e=>e.date.startsWith(ym));
+  if(thisEvs.length) html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${e.title}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`).join('')}</div></div>`;
   document.getElementById('cal-bd').innerHTML=html;
-  document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${thisMonthEvs.length}건</span>`;
+  document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;
 }
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--;}else if(calM>11){calM=0;calY++;}renderCal();}
-function addCalEv(date){
-  const title=prompt(`${date} 일정 제목`);if(!title)return;
-  const a=G('cal-events');a.push({id:Date.now(),date,title});S('cal-events',a);renderCal();
+async function addCalEv(date) {
+  const title=prompt(`${date} 일정 제목`); if(!title) return;
+  const a=G('cal-events'); a.push({id:Date.now(),date,title}); await S('cal-events',a); renderCal();
 }
-function delCalEv(id){S('cal-events',G('cal-events').filter(x=>x.id!==id));renderCal();}
+async function delCalEv(id) { await S('cal-events',G('cal-events').filter(x=>x.id!==id)); renderCal(); }
 
 // ── Construction
 const STAGES=['가구배치','철거','설비','목공','도장','바닥','타일','조명','마감','준공'];
-function addSite(){
-  const n=document.getElementById('con-name').value.trim();if(!n)return;
-  const a=G('sites');a.unshift({id:Date.now(),name:n,stages:[]});S('sites',a);
-  document.getElementById('con-name').value='';renderCon();statCon();
+async function addSite() {
+  const n=document.getElementById('con-name').value.trim(); if(!n) return;
+  const a=G('sites'); a.unshift({id:Date.now(),name:n,stages:[]}); await S('sites',a);
+  document.getElementById('con-name').value=''; renderCon(); statCon();
 }
-function togStage(siteId,stage){
-  const a=G('sites'),i=a.findIndex(x=>x.id===siteId);if(i<0)return;
-  const s=a[i].stages;const si=s.indexOf(stage);
-  if(si>-1)s.splice(si,1);else s.push(stage);
-  S('sites',a);renderCon();statCon();
+async function togStage(siteId,stage) {
+  const a=G('sites'),i=a.findIndex(x=>x.id===siteId); if(i<0) return;
+  const s=a[i].stages,si=s.indexOf(stage);
+  si>-1?s.splice(si,1):s.push(stage);
+  await S('sites',a); renderCon(); statCon();
 }
-function delSite(id){S('sites',G('sites').filter(x=>x.id!==id));renderCon();statCon();}
-function renderCon(){
+async function delSite(id) { await S('sites',G('sites').filter(x=>x.id!==id)); renderCon(); statCon(); }
+function renderCon() {
   const a=G('sites'),el=document.getElementById('con-list');
   if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🏗️</div>등록된 현장이 없습니다</div>';return;}
   el.innerHTML=a.map(site=>{
     const pct=Math.round(site.stages.length/STAGES.length*100);
-    return`<div class="site-card"><div class="site-hd"><span class="site-name">${site.name}</span><div style="display:flex;align-items:center;gap:8px"><span class="prog-label">${pct}%</span><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;
+    return`<div class="site-card"><div class="site-hd"><span class="site-name">${site.name}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--muted)">${pct}%</span><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;
   }).join('');
 }
-function statCon(){
+function statCon() {
   const a=G('sites'),prog=a.filter(x=>x.stages.length>0&&x.stages.length<STAGES.length).length;
   document.getElementById('fc-con').innerHTML=`현장 <span class="cnt">${a.length}개</span> 진행중 <span class="cnt">${prog}</span>`;
 }
 
 // ── SEO
-function genSEO(){
+function genSEO() {
   const kw=document.getElementById('seo-kw').value.trim(),tone=document.getElementById('seo-tone').value,loc=document.getElementById('seo-loc').value.trim()||'부산';
-  if(!kw)return;
-  const el=document.getElementById('seo-out');el.style.color='var(--muted)';el.textContent='생성 중...';
-  const toneMap={전문가:'전문적이고 신뢰감 있는',고객:'실제 고객 경험 기반',친근:'친근하고 공감가는'};
+  if(!kw) return;
+  const el=document.getElementById('seo-out'); el.style.color='var(--muted)'; el.textContent='생성 중...';
+  const tm={'전문가':'전문적이고 신뢰감 있는','고객':'실제 고객 경험 기반','친근':'친근하고 공감가는'};
   setTimeout(()=>{
     el.style.color='var(--text)';
-    el.textContent=`[${toneMap[tone]} 화자 · ${kw} · ${loc}]\n\n안녕하세요, 디자인하담입니다 😊\n\n오늘은 많은 분들이 궁금해하시는 「${kw}」에 대해 꼼꼼하게 알려드릴게요.\n\n✅ 포인트 1\n${kw}에서 가장 중요한 것은 전체적인 밸런스입니다. 색상, 소재, 가구 배치 순으로 계획하면 실패 없는 인테리어를 완성할 수 있어요.\n\n✅ 포인트 2\n예산 설정은 필수! ${loc} 기준 평균 시공 단가와 자재비를 미리 파악하는 것이 중요합니다.\n\n✅ 포인트 3\n시공 전 현장 실측과 3D 시뮬레이션으로 후회 없는 결과를 만들어보세요.\n\n궁금한 점은 댓글이나 톡톡으로 언제든지 문의해 주세요! 🏡\n\n#${kw.replace(/ /g,'')} #${loc}인테리어 #인테리어디자인 #홈인테리어 #인테리어스타그램 #디자인하담 #부산인테리어`;
-  },500);
+    el.textContent=`[${tm[tone]} 화자 · ${kw} · ${loc}]\n\n안녕하세요, 디자인하담입니다 😊\n\n「${kw}」에 대해 꼼꼼하게 알려드릴게요.\n\n✅ 포인트 1\n${kw}에서 가장 중요한 것은 전체적인 밸런스입니다.\n\n✅ 포인트 2\n예산 설정부터 시작하세요. ${loc} 기준 평균 단가를 더 사전에 파악하세요.\n\n✅ 포인트 3\n시공 전 3D 시뮬레이션으로 후회 없는 결과를 만들어보세요.\n\n디자인하담에서 더 자세한 상담을 받아보세요 🏡\n\n#${kw.replace(/ /g,'')} #${loc}인테리어 #인테리어디자인 #홈인테리어 #디자인하담 #부산인테리어`;
+  },400);
 }
 
+// ── All stats
+function allStats() { statChk(); statJnl(); statIns(); statOrd(); statInv(); statCon(); }
+
 // ── Init
-(function init(){
-  statChk();statJnl();statIns();statOrd();statInv();statCon();
-  const evts=G('cal-events'),now=new Date(),ym=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-  document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${evts.filter(e=>e.date.startsWith(ym)).length}건</span>`;
+(async function init() {
+  document.getElementById('jnl-date') && (document.getElementById('jnl-date').value = td());
+  allStats();
+  const ym=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
+  document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${G('cal-events').filter(e=>e.date.startsWith(ym)).length}건</span>`;
+
+  if(cloud.on) {
+    setSyncStatus('syncing');
+    await cloud.loadAll();
+    allStats();
+  } else {
+    setSyncStatus('off');
+  }
 })();
 </script>
 </body>
