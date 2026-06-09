@@ -29,7 +29,7 @@ nav{background:var(--charcoal);display:flex;align-items:center;justify-content:s
 .panel{display:none;}.panel.active{display:block;}
 
 /* LAYOUT */
-.layout{max-width:1200px;margin:0 auto;padding:32px 24px;display:grid;grid-template-columns:360px 1fr;gap:26px;}
+.layout{max-width:none;margin:0 auto;padding:32px 28px;display:grid;grid-template-columns:400px 1fr;gap:26px;}
 @media(max-width:860px){.layout{grid-template-columns:1fr;}}
 
 /* LEFT */
@@ -256,7 +256,7 @@ select:focus{border-color:var(--terra);}
 .si-voice.m{background:#F5EDE4;color:var(--manager);}
 
 /* AUTO PANEL */
-.auto-layout{max-width:960px;margin:0 auto;padding:32px 24px;}
+.auto-layout{max-width:none;margin:0 auto;padding:32px 28px;}
 .auto-hero{background:var(--charcoal);color:white;border-radius:14px;padding:28px;margin-bottom:20px;position:relative;overflow:hidden;}
 .auto-hero::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;border-radius:50%;background:rgba(192,107,69,.1);}
 .auto-hero h2{font-family:'Noto Serif KR',serif;font-size:1.2rem;margin-bottom:7px;color:var(--gold);}
@@ -424,6 +424,17 @@ select:focus{border-color:var(--terra);}
           <option value="5">5개</option>
         </select>
       </div>
+    </div>
+
+    <!-- 블로그 규칙(프롬프트) 수정 -->
+    <div class="card">
+      <div class="card-title">✍️ 블로그 규칙 수정</div>
+      <div style="font-size:.78rem;color:#888;margin-bottom:8px;line-height:1.6">글 생성 규칙(말투·표현)을 직접 고칠 수 있어요. 비워두면 기본 규칙을 사용합니다. 저장하면 모든 직원에게 공유됩니다.</div>
+      <div style="font-size:.82rem;font-weight:600;margin-bottom:4px">🙂 고객 화자 규칙</div>
+      <textarea id="ruleCustomer" rows="7" style="width:100%;box-sizing:border-box;font-size:.8rem;line-height:1.6;padding:8px;border:1px solid var(--border,#e0e0e0);border-radius:8px;margin-bottom:10px" placeholder="(비우면 기본 규칙 사용)"></textarea>
+      <div style="font-size:.82rem;font-weight:600;margin-bottom:4px">👔 실장 화자 규칙</div>
+      <textarea id="ruleManager" rows="7" style="width:100%;box-sizing:border-box;font-size:.8rem;line-height:1.6;padding:8px;border:1px solid var(--border,#e0e0e0);border-radius:8px;margin-bottom:10px" placeholder="(비우면 기본 규칙 사용)"></textarea>
+      <div style="display:flex;gap:8px;align-items:center"><button class="btn" onclick="saveBlogRules()" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer">💾 규칙 저장</button><button class="btn" onclick="resetBlogRules()" style="background:#eee;border:none;padding:8px 14px;border-radius:8px;cursor:pointer">기본값 보기</button><span id="ruleStatus" style="font-size:.78rem"></span></div>
     </div>
 
     <!-- API 설정 카드 -->
@@ -755,6 +766,9 @@ allKws.forEach(kw => {
 
 <div class="toast" id="toast"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 // ── STATE ──
 let voice = 'manager';
@@ -1019,7 +1033,7 @@ JSON만 반환 (마크다운 없이): {"keywords":["키워드1","키워드2",...
 
 // ── BUILD PROMPT ──
 function buildPrompt(topic, allKws, minCount, postLen, secCount) {
-  const styleBlock = voice === 'customer' ? CUSTOMER_PROMPT : MANAGER_PROMPT;
+  const styleBlock = voice === 'customer' ? (BLOG_RULES.customer||CUSTOMER_PROMPT) : (BLOG_RULES.manager||MANAGER_PROMPT);
   const today = new Date().toLocaleDateString('ko-KR',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
   const perSec = Math.floor(postLen / secCount);
 
@@ -1404,6 +1418,7 @@ function savePost() {
   };
   saved.unshift(postToSave);
   localStorage.setItem('hd_blog_v3', JSON.stringify(saved));
+  cloudSave();
   renderSaved();
   toast('저장 완료! 💾');
 }
@@ -1413,6 +1428,7 @@ function deletePost(id, e) {
   if (!confirm('이 글을 삭제할까요?')) return;
   saved = saved.filter(x => x.id !== id);
   localStorage.setItem('hd_blog_v3', JSON.stringify(saved));
+  cloudSave();
   renderSaved();
   toast('삭제됐어요 🗑️');
 }
@@ -1518,6 +1534,41 @@ function initApiCard() {
 }
 renderSaved();
 initApiCard();
+
+// ── Firebase 실시간 동기화 (글 목록만, API 키는 로컬 유지) ──
+const firebaseConfig={apiKey:"AIzaSyBvzNeaUuzuvnI9pAKe4VBII56XApL2gqw",authDomain:"hadam-fa01a.firebaseapp.com",projectId:"hadam-fa01a",storageBucket:"hadam-fa01a.firebasestorage.app",messagingSenderId:"809077194187",appId:"1:809077194187:web:7c48e00620f1d29ce34a4e"};
+let _db=null,_mute=false;
+var BLOG_RULES={customer:'',manager:''};
+try{BLOG_RULES=JSON.parse(localStorage.getItem('blog_rules')||'{}');BLOG_RULES.customer=BLOG_RULES.customer||'';BLOG_RULES.manager=BLOG_RULES.manager||'';}catch(e){BLOG_RULES={customer:'',manager:''};}
+function fillBlogRules(){var c=document.getElementById('ruleCustomer'),m=document.getElementById('ruleManager');if(c)c.value=BLOG_RULES.customer||'';if(m)m.value=BLOG_RULES.manager||'';}
+function saveBlogRules(){
+  BLOG_RULES={customer:(document.getElementById('ruleCustomer').value||'').trim(),manager:(document.getElementById('ruleManager').value||'').trim()};
+  try{localStorage.setItem('blog_rules',JSON.stringify(BLOG_RULES));}catch(e){}
+  if(_db)_db.collection('appdata').doc('blog_rules').set({payload:BLOG_RULES,updated:Date.now()}).catch(function(e){console.warn(e);});
+  var st=document.getElementById('ruleStatus');if(st){st.textContent='✅ 저장됨 (모든 직원 공유)';st.style.color='#16a34a';setTimeout(function(){st.textContent='';},2500);}
+}
+function resetBlogRules(){document.getElementById('ruleCustomer').value=CUSTOMER_PROMPT;document.getElementById('ruleManager').value=MANAGER_PROMPT;var st=document.getElementById('ruleStatus');if(st){st.textContent='기본 규칙을 불러왔습니다. 저장하면 적용됩니다.';st.style.color='#888';}}
+function cloudSave(){ if(_db&&!_mute){ _db.collection('appdata').doc('blog_posts').set({payload:saved,updated:Date.now()}).catch(e=>console.warn('cloud',e)); } }
+(function(){
+  try{ if(!firebase.apps.length)firebase.initializeApp(firebaseConfig); _db=firebase.firestore(); }
+  catch(e){ console.warn('fb init',e); fillBlogRules(); return; }
+  var started=false;
+  // 포털에서 로그인한 세션을 공유(같은 출처). 로그인된 경우에만 동기화
+  firebase.auth().onAuthStateChanged(function(user){ if(user&&!started){ started=true; startSync(); } });
+  function startSync(){
+    _db.collection('appdata').doc('blog_posts').onSnapshot(function(snap){
+      if(snap.exists&&snap.data()&&Array.isArray(snap.data().payload)){
+        _mute=true; saved=snap.data().payload; _mute=false;
+        try{localStorage.setItem('hd_blog_v3',JSON.stringify(saved));}catch(e){}
+        renderSaved();
+      } else { cloudSave(); } // 최초 로컬→클라우드 이관
+    }, function(e){ console.warn('snap',e); });
+    _db.collection('appdata').doc('blog_rules').onSnapshot(function(snap){
+      if(snap.exists&&snap.data()&&snap.data().payload){BLOG_RULES=snap.data().payload;try{localStorage.setItem('blog_rules',JSON.stringify(BLOG_RULES));}catch(e){}fillBlogRules();}
+    }, function(e){});
+  }
+  fillBlogRules();
+})();
 </script>
 </body>
 </html>
