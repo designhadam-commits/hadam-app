@@ -187,6 +187,13 @@
     .upload-box .sec-label{margin-top:0;color:var(--green);font-weight:700}
     .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .si-masklbl{margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+    .mat-crumb{font-size:13px;color:var(--muted);margin-bottom:12px}
+    .mat-cr{cursor:pointer;color:var(--blue)}
+    .mat-cr:hover{text-decoration:underline}
+    .mat-folders{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+    .mat-folder{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:11px 16px;cursor:pointer;font-size:13px;font-weight:600;transition:border-color .12s,background .12s}
+    .mat-folder:hover{border-color:var(--blue);background:rgba(59,130,246,.07)}
+    .mat-fc{color:var(--dim);font-weight:400;font-size:11px;margin-left:5px}
     .ins-cell{aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;background:var(--card);border:1px solid var(--border);cursor:pointer}
     .ins-cell img{width:100%;height:100%;object-fit:cover;display:block}
     .ins-empty-cell{display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:20px}
@@ -389,9 +396,6 @@
     <div class="sb-item" onclick="openModal('thread-modal');setSbActive(this)">
       <div class="sb-ic">🧵</div><span class="sb-lbl">쓰레드</span>
     </div>
-    <div class="sb-item" onclick="openModal('cardnews-modal');setSbActive(this)">
-      <div class="sb-ic">🖼️</div><span class="sb-lbl">카드뉴스</span>
-    </div>
     <div class="sb-item" onclick="openModal('seo-modal');setSbActive(this)">
       <div class="sb-ic">✍️</div><span class="sb-lbl">SEO 블로그</span>
     </div>
@@ -536,13 +540,6 @@
         <div class="tags"><span class="tag">노트</span><span class="tag">hadam-notes</span></div>
         <div class="feat-status">저장소 연동</div>
       </div>
-      <div class="feat-card" onclick="openModal('cardnews-modal')">
-        <div class="feat-top"><div class="feat-icon">🖼️</div><div class="arr-btn">↗</div></div>
-        <div class="feat-title">카드뉴스</div>
-        <div class="feat-desc">생성된 카드뉴스를 날짜별 갤러리로 봅니다.</div>
-        <div class="tags"><span class="tag">카드뉴스</span><span class="tag">hadam-cardnews</span></div>
-        <div class="feat-status">저장소 연동</div>
-      </div>
       <div class="feat-card" onclick="openModal('proc-modal')">
         <div class="feat-top"><div class="feat-icon">📐</div><div class="arr-btn">↗</div></div>
         <div class="feat-title">공정과정</div>
@@ -641,10 +638,12 @@
 
 <div class="overlay" id="ins-modal">
   <div class="modal wide">
-    <div class="modal-hd"><h2>📸 인스타그램 관리</h2><button class="close-btn" onclick="closeModal('ins-modal')">✕</button></div>
+    <div class="modal-hd"><h2>📸 인스타그램 · 카드뉴스 관리</h2><button class="close-btn" onclick="closeModal('ins-modal')">✕</button></div>
     <div class="modal-bd">
-      <div class="auto-bar"><button class="btn btn-g" onclick="insCardnewsPanel()">⚡ 카드뉴스 지금 생성</button><button class="btn" onclick="openModal('cardnews-modal');renderCardnewsConfig()">⚙️ 자동생성 설정</button><button class="btn" onclick="openModal('cardnews-modal')">🖼️ 카드뉴스 보기</button><span class="auto-hint">매일 평일 오전 10시 자동 생성</span></div>
-      <div id="ins-genpanel"></div>
+      <div class="sec-label" style="margin-top:0">🖼️ 카드뉴스 (자동 생성)</div>
+      <div id="cardnews-view"></div>
+      <div class="divider"></div>
+      <div class="sec-label">📝 수동 포스팅 관리</div>
       <div class="ins-status-row"><span class="badge badge-green">발행 <span id="is-pub">0</span></span><span class="badge badge-blue">예약 <span id="is-sch">0</span></span><span class="badge badge-orange">작성중 <span id="is-drf">0</span></span><span class="badge badge-dim">아이디어 <span id="is-idea">0</span></span></div>
       <div class="row"><input class="inp" id="ins-cap" placeholder="캡션 / 주제 입력..."><select class="inp" id="ins-status" style="max-width:100px"><option>아이디어</option><option>작성중</option><option>예약</option><option>발행</option></select><input class="inp" id="ins-img" placeholder="이미지 URL (선택)" style="max-width:180px"><button class="btn btn-g" onclick="addIns()">추가</button></div>
       <div class="divider"></div>
@@ -685,11 +684,6 @@
 <div class="overlay" id="notes-modal">
   <div class="modal wide"><div class="modal-hd"><h2>📝 업무 노트</h2><button class="close-btn" onclick="closeModal('notes-modal')">✕</button></div>
   <div class="modal-bd"><div id="notes-view"></div></div></div>
-</div>
-
-<div class="overlay" id="cardnews-modal">
-  <div class="modal wide"><div class="modal-hd"><h2>🖼️ 카드뉴스</h2><button class="close-btn" onclick="closeModal('cardnews-modal')">✕</button></div>
-  <div class="modal-bd"><div id="cardnews-view"></div></div></div>
 </div>
 
 <div class="overlay" id="design-modal">
@@ -1064,7 +1058,7 @@ function openModal(id,_fromHistory){
     else _fr.setAttribute('src',_fr.getAttribute('data-src'));
   }
   if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();var _td=document.getElementById('jnl-target-date');if(_td&&!_td.value)_td.value=td();renderJnlUploaded();}
-  if(id==='ins-modal'){renderIns();renderInsGrid();}
+  if(id==='ins-modal'){renderCardnewsView();renderIns();renderInsGrid();}
   if(id==='ord-modal')renderOrd();
   if(id==='cal-modal')renderCal();
   if(id==='con-modal')renderCon();
@@ -1074,7 +1068,6 @@ function openModal(id,_fromHistory){
   if(id==='graph-modal')startGraph();
   if(id==='thread-modal')renderThreadView();
   if(id==='notes-modal')renderNotesView();
-  if(id==='cardnews-modal')renderCardnewsView();
   if(id==='design-modal')renderDesignView();
   if(id==='kb-modal')renderKbView();
   if(id==='proc-modal')renderProc();
@@ -1676,66 +1669,80 @@ async function extractTasks(nameEnc){
 }
 
 // ── 자료실 (현장별 사진·견적서·마감재 업로드/다운로드) ──
-const MAT_CATS=['현장 전 사진','현장 후 사진','견적서','마감재 상세','도면','기타'];
+const MAT_CATS=['공사전','공사후','견적서','도면','마감재','기타'];
+let matPath=[]; // 자료/ 아래 현재 탐색 경로 (년/월/현장/분류)
 function matSites(){var s=new Set(G('sites').map(x=>x.name).filter(Boolean));(G('process')||[]).forEach(p=>s.add(p.site));return [...s];}
+function matYears(){var y=new Date().getFullYear();return [y+1,y,y-1,y-2].map(String);}
+function matMonths(){var a=[];for(var i=1;i<=12;i++)a.push(String(i).padStart(2,'0'));return a;}
 async function renderMatView(){
   var v=document.getElementById('mat-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
-  var sites=matSites();
-  var html='<div class="gen-form" style="margin-bottom:14px"><input class="inp" id="mat-site" list="mat-sites" placeholder="현장명" style="flex:1;min-width:160px"><datalist id="mat-sites">'+sites.map(s=>'<option value="'+ghEsc(s)+'">').join('')+'</datalist>'
-    +'<select class="inp" id="mat-cat" style="max-width:160px">'+MAT_CATS.map(c=>'<option>'+c+'</option>').join('')+'</select>'
-    +'<input class="inp" id="mat-files" type="file" multiple style="flex:1;min-width:180px;font-size:12px">'
+  var sites=matSites();var now=new Date();
+  var dY=matPath[0]||String(now.getFullYear());
+  var dM=matPath[1]||String(now.getMonth()+1).padStart(2,'0');
+  var dSite=matPath[2]||'';var dCat=matPath[3]||MAT_CATS[0];
+  function sel(id,opts,def){return '<select class="inp" id="'+id+'" style="max-width:100px">'+opts.map(function(o){return '<option'+(o===def?' selected':'')+'>'+o+'</option>';}).join('')+'</select>';}
+  var html='<div class="gen-form" style="margin-bottom:6px;flex-wrap:wrap;gap:6px">'
+    +sel('mat-year',matYears(),dY)+sel('mat-month',matMonths(),dM)
+    +'<input class="inp" id="mat-site" list="mat-sites" placeholder="현장명" value="'+ghEsc(dSite)+'" style="flex:1;min-width:130px"><datalist id="mat-sites">'+sites.map(function(s){return '<option value="'+ghEsc(s)+'">';}).join('')+'</datalist>'
+    +sel('mat-cat',MAT_CATS,dCat)
+    +'<input class="inp" id="mat-files" type="file" multiple style="flex:1;min-width:150px;font-size:12px">'
     +'<button class="btn btn-g" onclick="matUpload()" id="mat-up-btn">📤 업로드</button></div>'
-    +'<div id="mat-up-status" class="gen-status" style="margin:-8px 0 10px"></div>'
+    +'<div class="auto-hint" style="margin:0 0 10px">폴더 구조: 년도 › 월 › 현장 › 공사전/공사후 (사진은 자동 압축 저장)</div>'
+    +'<div id="mat-up-status" class="gen-status" style="margin:-4px 0 10px"></div>'
     +'<div id="mat-list">'+ghLoading()+'</div>';
   v.innerHTML=html;
   matRefreshList();
 }
+function matNav(i){matPath=matPath.slice(0,i);renderMatView();}
+function matInto(seg){matPath.push(decodeURIComponent(seg));renderMatView();}
 async function matRefreshList(){
   var el=document.getElementById('mat-list');if(!el)return;el.innerHTML=ghLoading();
   try{
     var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1&t='+Date.now(),{headers:ghHeaders()});
     var j=await r.json();
     var files=(j.tree||[]).filter(function(t){return t.type==='blob'&&t.path.indexOf('자료/')===0;});
-    if(!files.length){el.innerHTML='<div class="gh-need">업로드된 자료가 없습니다. 위에서 현장·분류 선택 후 파일을 올리세요.</div>';return;}
-    var bySite={};
-    files.forEach(function(t){var m=t.path.match(/^자료\/([^\/]+)\/([^\/]+)\/(.+)$/);if(!m)return;var site=m[1],cat=m[2],name=m[3].replace(/^\d+-/,'');bySite[site]=bySite[site]||{};(bySite[site][cat]=bySite[site][cat]||[]).push({sha:t.sha,name:name,path:t.path});});
-    var html='';
-    Object.keys(bySite).sort().forEach(function(site){
-      html+='<div class="proc-site"><div class="proc-sitehd"><span class="proc-sitename">🏗️ '+ghEsc(site)+'</span></div>';
-      Object.keys(bySite[site]).forEach(function(cat){
-        html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:8px 0 4px">'+ghEsc(cat)+' <span style="color:var(--dim);font-weight:400">'+bySite[site][cat].length+'</span></div><div class="mat-grid">';
-        bySite[site][cat].forEach(function(f){
-          var img=/\.(jpe?g|png|gif|webp|heic)$/i.test(f.name);
-          var fn=f.name.replace(/'/g,'');
-          html+='<div class="mat-item"><div class="mat-name" title="'+ghEsc(f.name)+'">'+(img?'🖼️':'📄')+' '+ghEsc(f.name)+'</div><div class="mat-acts">'+(img?'<button class="btn" onclick="matViewImg(\''+f.sha+'\',\''+ghEsc(fn)+'\')">보기</button>':'')+'<button class="btn" onclick="matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">다운로드</button><button class="del" onclick="matDel(\''+encodeURIComponent(f.path)+'\')" title="삭제">×</button></div></div>';
-        });
-        html+='</div>';
-      });
-      html+='</div>';
+    var crumb='<div class="mat-crumb"><span class="mat-cr" onclick="matNav(0)">📁 자료실</span>'+matPath.map(function(seg,i){return ' › <span class="mat-cr" onclick="matNav('+(i+1)+')">'+ghEsc(seg)+'</span>';}).join('')+'</div>';
+    var prefix='자료/'+(matPath.length?matPath.join('/')+'/':'');
+    var folders={},here=[];
+    files.forEach(function(t){
+      if(t.path.indexOf(prefix)!==0)return;
+      var parts=t.path.slice(prefix.length).split('/');
+      if(parts.length>1){folders[parts[0]]=(folders[parts[0]]||0)+1;}
+      else{here.push({sha:t.sha,name:parts[0].replace(/^\d+-/,''),path:t.path});}
     });
+    var html=crumb;
+    var fkeys=Object.keys(folders).sort(function(a,b){return b.localeCompare(a);});
+    if(fkeys.length){html+='<div class="mat-folders">'+fkeys.map(function(f){return '<div class="mat-folder" onclick="matInto(\''+encodeURIComponent(f)+'\')">📁 '+ghEsc(f)+' <span class="mat-fc">'+folders[f]+'</span></div>';}).join('')+'</div>';}
+    if(here.length){html+='<div class="mat-grid">'+here.map(function(f){
+      var img=/\.(jpe?g|png|gif|webp|heic)$/i.test(f.name);var fn=f.name.replace(/'/g,'');
+      return '<div class="mat-item"><div class="mat-name" title="'+ghEsc(f.name)+'">'+(img?'🖼️':'📄')+' '+ghEsc(f.name)+'</div><div class="mat-acts">'+(img?'<button class="btn" onclick="matViewImg(\''+f.sha+'\',\''+ghEsc(fn)+'\')">보기</button>':'')+'<button class="btn" onclick="matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">다운로드</button><button class="del" onclick="matDel(\''+encodeURIComponent(f.path)+'\')" title="삭제">×</button></div></div>';
+    }).join('')+'</div>';}
+    if(!fkeys.length&&!here.length)html+='<div class="gh-need">이 폴더에 자료가 없습니다. 위에서 년도·월·현장·구분을 선택해 업로드하세요.</div>';
     el.innerHTML=html;
   }catch(e){el.innerHTML=ghErr(e);}
 }
 async function matUpload(){
   var token=localStorage.getItem('gh_pat');if(!token){openModal('settings-modal');return;}
+  var y=document.getElementById('mat-year').value,m=document.getElementById('mat-month').value;
   var site=document.getElementById('mat-site').value.trim(),cat=document.getElementById('mat-cat').value,inp=document.getElementById('mat-files');
   if(!site){alert('현장명을 입력하세요');return;}
   if(!inp.files||!inp.files.length){alert('파일을 선택하세요');return;}
   var btn=document.getElementById('mat-up-btn'),st=document.getElementById('mat-up-status');
-  btn.disabled=true;btn.textContent='업로드 중...';var ok=0,fail=0;
-  var saved=0;
+  btn.disabled=true;btn.textContent='업로드 중...';var ok=0,fail=0,saved=0;
   for(var i=0;i<inp.files.length;i++){var f=inp.files[i];
     try{
       var b64,safe=f.name.replace(/[^\w.\-가-힣 ]/g,'_').trim();
       if(isCompressibleImg(f.name)){try{b64=await compressImageToB64(f,1600,0.72);safe=safe.replace(/\.[^.]+$/,'')+'.jpg';saved+=Math.max(0,f.size-Math.round(b64.length*0.75));}catch(e){b64=await fileToB64(f);}}
       else{if(f.size>9*1024*1024){fail++;continue;}b64=await fileToB64(f);}
-      var path='자료/'+site+'/'+cat+'/'+Date.now()+'-'+safe;
-      var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'자료 업로드: '+site+'/'+cat+'/'+f.name,content:b64,branch:'main'})});
+      var path='자료/'+y+'/'+m+'/'+site+'/'+cat+'/'+Date.now()+'-'+safe;
+      var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'자료 업로드: '+y+'/'+m+'/'+site+'/'+cat+'/'+f.name,content:b64,branch:'main'})});
       if(r.ok)ok++;else fail++;
     }catch(e){fail++;}
   }
   btn.disabled=false;btn.textContent='📤 업로드';inp.value='';
+  // 업로드한 폴더로 이동해서 결과 표시
+  matPath=[y,m,site,cat];
   st.textContent='✅ '+ok+'개 업로드'+(saved>0?' (사진 압축으로 약 '+(saved/1048576).toFixed(1)+'MB 절약)':'')+(fail?' / ❌ '+fail+'개 실패(9MB 초과 등)':'');st.style.color=fail?'var(--red)':'var(--green)';
   matRefreshList();
 }
@@ -1864,18 +1871,6 @@ async function cardnewsGenRun(){
   var st=document.getElementById('cn-genstatus');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~5분 소요)';
   try{await ghDispatch('hadam-cardnews','daily-cardnews.yml',{topic:topic});
     st.innerHTML='✅ 실행됨! 콘텐츠+이미지 생성에 몇 분 걸립니다. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a><br><button class="btn" style="margin-top:8px" onclick="renderCardnewsView()">목록 새로고침</button>';
-  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
-}
-function insCardnewsPanel(){
-  var el=document.getElementById('ins-genpanel');if(!el)return;
-  if(el.innerHTML){el.innerHTML='';return;}
-  el.innerHTML='<div class="gen-form"><input class="inp" id="ins-cn-topic" placeholder="주제 직접 지정 (비우면 요일 자동)"><button class="btn btn-g" onclick="insCardnewsRun()">생성 실행</button></div><div id="ins-cn-status" class="gen-status"></div>';
-}
-async function insCardnewsRun(){
-  var topic=document.getElementById('ins-cn-topic').value.trim();
-  var st=document.getElementById('ins-cn-status');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~6분 소요)';
-  try{await ghDispatch('hadam-cardnews','daily-cardnews.yml',{topic:topic});
-    st.innerHTML='✅ 실행됨! 콘텐츠+이미지 생성에 몇 분 걸립니다. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a> · <a href="#" onclick="openModal(\'cardnews-modal\');return false" style="color:var(--blue)">카드뉴스 보기</a>';
   }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
 }
 async function renderCardnewsConfig(){
