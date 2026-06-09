@@ -783,6 +783,8 @@ function _refreshAll(){ try{renderDaily();renderWeekly();renderSites();renderCon
     _db.collection('appdata').doc('checklist_state').onSnapshot(function(snap){
       if(snap.exists&&snap.data()&&snap.data().payload){
         _mute=true; state=snap.data().payload; _mute=false;
+        // 새 날이면 일일 체크 초기화(클라우드 로드 이후에도 적용)
+        if(state.dailyDate!==todayStr()){ state.daily={}; state.dailyDate=todayStr(); save(); }
         try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
         _refreshAll();
       } else { cloudSave(); } // 최초 로컬→클라우드 이관
