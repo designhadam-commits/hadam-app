@@ -186,6 +186,7 @@
     .upload-box{background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.15);border-radius:12px;padding:16px;margin-top:4px}
     .upload-box .sec-label{margin-top:0;color:var(--green);font-weight:700}
     .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+    .si-masklbl{margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
     .ins-cell{aspect-ratio:1;border-radius:8px;overflow:hidden;position:relative;background:var(--card);border:1px solid var(--border);cursor:pointer}
     .ins-cell img{width:100%;height:100%;object-fit:cover;display:block}
     .ins-empty-cell{display:flex;align-items:center;justify-content:center;color:var(--dim);font-size:20px}
@@ -377,6 +378,9 @@
     <div class="sb-item" onclick="openModal('mat-modal');setSbActive(this)">
       <div class="sb-ic">📂</div><span class="sb-lbl">자료실</span>
     </div>
+    <div class="sb-item" onclick="openModal('siteinfo-modal');setSbActive(this)">
+      <div class="sb-ic">🔑</div><span class="sb-lbl">현장별 정보</span>
+    </div>
 
     <div class="sb-section-label">콘텐츠</div>
     <div class="sb-item" onclick="openModal('ins-modal');setSbActive(this)">
@@ -479,7 +483,7 @@
       <div class="feat-card" onclick="openModal('ins-modal')">
         <div class="feat-top"><div class="feat-icon">📸</div><div class="arr-btn">↗</div></div>
         <div class="feat-title">인스타그램 관리</div>
-        <div class="feat-desc">포스팅 일정 및 피드 그리드를 미리 확인합니다.</div>
+        <div class="feat-desc">카드뉴스 생성·포스팅 일정을 관리합니다.</div>
         <div class="tags"><span class="tag">SNS</span><span class="tag">스케줄</span></div>
         <div class="feat-status" id="fc-ins">—</div>
       </div>
@@ -545,6 +549,13 @@
         <div class="feat-desc">현장별 공정을 시작·종료·담당자로 관리하고 캘린더에 자동 반영합니다.</div>
         <div class="tags"><span class="tag">공정</span><span class="tag">캘린더 연동</span></div>
         <div class="feat-status">현장별 일정</div>
+      </div>
+      <div class="feat-card" onclick="openModal('siteinfo-modal')">
+        <div class="feat-top"><div class="feat-icon">🔑</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">현장별 정보</div>
+        <div class="feat-desc">도어락·공동현관 비밀번호, WiFi 등 현장별 정보를 저장합니다.</div>
+        <div class="tags"><span class="tag">비밀번호</span><span class="tag">현장</span></div>
+        <div class="feat-status" id="fc-siteinfo">—</div>
       </div>
       <div class="feat-card" onclick="openModal('mat-modal')">
         <div class="feat-top"><div class="feat-icon">📂</div><div class="arr-btn">↗</div></div>
@@ -636,8 +647,6 @@
       <div id="ins-genpanel"></div>
       <div class="ins-status-row"><span class="badge badge-green">발행 <span id="is-pub">0</span></span><span class="badge badge-blue">예약 <span id="is-sch">0</span></span><span class="badge badge-orange">작성중 <span id="is-drf">0</span></span><span class="badge badge-dim">아이디어 <span id="is-idea">0</span></span></div>
       <div class="row"><input class="inp" id="ins-cap" placeholder="캡션 / 주제 입력..."><select class="inp" id="ins-status" style="max-width:100px"><option>아이디어</option><option>작성중</option><option>예약</option><option>발행</option></select><input class="inp" id="ins-img" placeholder="이미지 URL (선택)" style="max-width:180px"><button class="btn btn-g" onclick="addIns()">추가</button></div>
-      <div class="sec-label">피드 그리드 미리보기</div>
-      <div class="ins-grid" id="ins-grid"></div>
       <div class="divider"></div>
       <div id="ins-list"></div>
     </div>
@@ -701,6 +710,15 @@
 <div class="overlay" id="mat-modal">
   <div class="modal wide"><div class="modal-hd"><h2>📂 자료실</h2><button class="close-btn" onclick="closeModal('mat-modal')">✕</button></div>
   <div class="modal-bd"><div id="mat-view"></div></div></div>
+</div>
+
+<div class="overlay" id="siteinfo-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>🔑 현장별 정보</h2><button class="close-btn" onclick="closeModal('siteinfo-modal')">✕</button></div>
+  <div class="modal-bd">
+    <div class="auto-bar"><input class="inp" id="si-newsite" list="si-sitelist" placeholder="현장명 입력 (예: 해운대 자이)" style="max-width:260px" onkeydown="if(event.key==='Enter')siAddSite()"><button class="btn btn-g" onclick="siAddSite()">+ 현장 추가</button><label class="si-masklbl"><input type="checkbox" id="si-mask" onchange="renderSiteInfo()" checked> 비밀번호 가리기</label></div>
+    <div id="siteinfo-view"></div>
+    <datalist id="si-sitelist"></datalist>
+  </div></div>
 </div>
 
 <div class="overlay" id="member-modal">
@@ -850,7 +868,7 @@
 
 // ── Firebase 실시간 클라우드 저장 ──
 const firebaseConfig={apiKey:"AIzaSyBvzNeaUuzuvnI9pAKe4VBII56XApL2gqw",authDomain:"hadam-fa01a.firebaseapp.com",projectId:"hadam-fa01a",storageBucket:"hadam-fa01a.firebasestorage.app",messagingSenderId:"809077194187",appId:"1:809077194187:web:7c48e00620f1d29ce34a4e"};
-const FB_KEYS=['chk','jnl','ins','ord','inv','cal-events','sites','thread','members','posted','process','tasks'];
+const FB_KEYS=['chk','jnl','ins','ord','inv','cal-events','sites','thread','members','posted','process','tasks','siteinfo'];
 const CLOUD={};
 FB_KEYS.forEach(k=>{try{CLOUD[k]=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){CLOUD[k]=[];}});
 let db=null,_listening=false;
@@ -1008,6 +1026,7 @@ function onCloudUpdate(k){
     else if(id==='ins-modal'){renderIns();renderInsGrid();}
     else if(id==='jnl-modal')renderJnl();
     else if(id==='member-modal')renderMemberList();
+    else if(id==='siteinfo-modal'){var ae=document.activeElement;if(!(ae&&ae.closest&&ae.closest('#siteinfo-view')))renderSiteInfo();}
   }catch(e){}
 }
 
@@ -1060,6 +1079,7 @@ function openModal(id,_fromHistory){
   if(id==='kb-modal')renderKbView();
   if(id==='proc-modal')renderProc();
   if(id==='mat-modal')renderMatView();
+  if(id==='siteinfo-modal')renderSiteInfo();
   // 뒤로가기(브라우저·휴대폰) 지원: 모달 열기를 히스토리에 기록
   if(!_fromHistory){try{if(_wasOpen&&history.state&&history.state.hadamModal)history.replaceState({hadamModal:id},'','#'+id);else history.pushState({hadamModal:id},'','#'+id);}catch(e){}}
 }
@@ -1188,7 +1208,7 @@ function statJnl(){const a=G('jnl'),ym=td().slice(0,7),memo=a.filter(x=>x.date&&
 async function addIns(){const cap=document.getElementById('ins-cap').value.trim(),st=document.getElementById('ins-status').value,img=document.getElementById('ins-img').value.trim();if(!cap)return;const a=G('ins');a.unshift({id:Date.now(),cap,status:st,img,date:td()});await S('ins',a);document.getElementById('ins-cap').value='';document.getElementById('ins-img').value='';renderIns();renderInsGrid();statIns();}
 async function delIns(id){await S('ins',G('ins').filter(x=>x.id!==id));renderIns();renderInsGrid();statIns();}
 async function updInsStatus(id,s){const a=G('ins'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].status=s;await S('ins',a);renderIns();renderInsGrid();statIns();}
-function renderInsGrid(){const a=G('ins'),el=document.getElementById('ins-grid');const cells=a.slice(0,9);while(cells.length<9)cells.push(null);el.innerHTML=cells.map(x=>x?`<div class="ins-cell">${x.img?`<img src="${x.img}" onerror="this.style.display='none'">`:'<div class="ins-empty-cell">📷</div>'}<div class="ins-overlay"><span>${x.status}</span></div></div>`:'<div class="ins-cell ins-empty-cell">+</div>').join('');}
+function renderInsGrid(){const el=document.getElementById('ins-grid');if(!el)return;const a=G('ins');const cells=a.slice(0,9);while(cells.length<9)cells.push(null);el.innerHTML=cells.map(x=>x?`<div class="ins-cell">${x.img?`<img src="${x.img}" onerror="this.style.display='none'">`:'<div class="ins-empty-cell">📷</div>'}<div class="ins-overlay"><span>${x.status}</span></div></div>`:'<div class="ins-cell ins-empty-cell">+</div>').join('');}
 function renderIns(){const a=G('ins'),el=document.getElementById('ins-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📸</div>등록된 포스트가 없습니다</div>';return;}const SC={'발행':'badge-green','예약':'badge-blue','작성중':'badge-orange','아이디어':'badge-dim'};el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span class="item-txt">${x.cap}</span><select class="badge ${SC[x.status]||'badge-dim'}" onchange="updInsStatus(${x.id},this.value)">${['아이디어','작성중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="del" onclick="delIns(${x.id})">×</button></div>`).join('')+'</div>';}
 function statIns(){const a=G('ins');document.getElementById('is-pub').textContent=a.filter(x=>x.status==='발행').length;document.getElementById('is-sch').textContent=a.filter(x=>x.status==='예약').length;document.getElementById('is-drf').textContent=a.filter(x=>x.status==='작성중').length;document.getElementById('is-idea').textContent=a.filter(x=>x.status==='아이디어').length;document.getElementById('fc-ins').innerHTML=`발행 <span class="gcnt">${a.filter(x=>x.status==='발행').length}</span> 예약 <span class="cnt">${a.filter(x=>x.status==='예약').length}</span>`;}
 
@@ -1588,7 +1608,7 @@ async function kbSave(){
 
 function stopGraph(){if(graphAF){cancelAnimationFrame(graphAF);graphAF=null;}const tip=document.getElementById('graph-tooltip');if(tip)tip.style.display='none';}
 
-function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();}
+function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();try{statSiteInfo();}catch(e){}}
 
 // ─── GitHub 연동 뷰어 (쓰레드 / 노트 / 카드뉴스) ───
 const GH_ORG='designhadam-commits';
@@ -1949,6 +1969,35 @@ async function designOpen(name){
     }
   }catch(e){v.innerHTML=ghErr(e);}
 }
+
+// ===== 현장별 정보(비밀번호 등) =====
+const SI_DEFAULT_FIELDS=['도어락 비밀번호','공동현관 비밀번호','WiFi 비밀번호','주차','메모'];
+function siEsc(s){return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function statSiteInfo(){var el=document.getElementById('fc-siteinfo');if(el)el.innerHTML='현장 <span class="cnt">'+G('siteinfo').length+'곳</span>';}
+function renderSiteInfo(){
+  var v=document.getElementById('siteinfo-view');if(!v)return;
+  var data=G('siteinfo');
+  var sset=new Set();G('sites').forEach(function(s){if(s&&s.name)sset.add(s.name);});G('process').forEach(function(p){if(p&&p.site)sset.add(p.site);});data.forEach(function(d){sset.add(d.site);});
+  var dl=document.getElementById('si-sitelist');if(dl)dl.innerHTML=[...sset].map(function(s){return '<option value="'+siEsc(s)+'">';}).join('');
+  var mEl=document.getElementById('si-mask');var mask=mEl?mEl.checked:true;
+  if(!data.length){v.innerHTML='<div class="gh-need">현장을 추가하고 도어락·공동현관 비밀번호, WiFi 등 현장별 정보를 저장하세요. 로그인한 직원만 볼 수 있습니다.</div>';statSiteInfo();return;}
+  v.innerHTML=data.map(function(d){
+    var fields=d.fields||[];
+    return '<div class="proc-site" style="margin-bottom:12px"><div class="proc-sitehd"><span class="proc-sitename">🏠 '+ghEsc(d.site)+'</span><button class="del" title="현장 삭제" onclick="siDelSite('+d.id+')" style="margin-left:auto">×</button></div>'
+      +'<div style="padding:10px 12px">'+fields.map(function(f,i){
+        var isPw=/비밀번호|password|pw|비번|패스/i.test(f.k||'');
+        var typ=(mask&&isPw&&f.v)?'password':'text';
+        return '<div class="row" style="margin:5px 0;gap:6px"><input class="inp" style="max-width:170px" value="'+siEsc(f.k)+'" placeholder="항목명" onchange="siField('+d.id+','+i+',\'k\',this.value)"><input class="inp" type="'+typ+'" value="'+siEsc(f.v)+'" placeholder="내용" onchange="siField('+d.id+','+i+',\'v\',this.value)"><button class="del" title="삭제" onclick="siDelField('+d.id+','+i+')">×</button></div>';
+      }).join('')
+      +'<button class="btn" style="margin-top:6px" onclick="siAddField('+d.id+')">+ 항목 추가</button></div></div>';
+  }).join('');
+  statSiteInfo();
+}
+function siAddSite(){var inp=document.getElementById('si-newsite');var name=(inp.value||'').trim();if(!name)return;var data=G('siteinfo').slice();if(data.some(function(d){return d.site===name;})){alert('이미 등록된 현장입니다.');inp.value='';return;}data.unshift({id:Date.now(),site:name,fields:SI_DEFAULT_FIELDS.map(function(k){return{k:k,v:''};})});S('siteinfo',data);inp.value='';renderSiteInfo();}
+function siField(id,i,which,val){var data=G('siteinfo').slice();var d=data.find(function(x){return x.id===id;});if(!d)return;d.fields=d.fields||[];if(!d.fields[i])d.fields[i]={k:'',v:''};d.fields[i][which]=val;S('siteinfo',data);statSiteInfo();}
+function siAddField(id){var data=G('siteinfo').slice();var d=data.find(function(x){return x.id===id;});if(!d)return;d.fields=d.fields||[];d.fields.push({k:'',v:''});S('siteinfo',data);renderSiteInfo();}
+function siDelField(id,i){var data=G('siteinfo').slice();var d=data.find(function(x){return x.id===id;});if(!d)return;d.fields.splice(i,1);S('siteinfo',data);renderSiteInfo();}
+function siDelSite(id){if(!confirm('이 현장 정보를 삭제할까요?'))return;S('siteinfo',G('siteinfo').filter(function(x){return x.id!==id;}));renderSiteInfo();}
 
 // ===== 대시보드 카드 드래그앤드롭 (순서 저장) =====
 function dashCardKey(c){var oc=c.getAttribute('onclick')||'';var m=oc.match(/openModal\('([^']+)'\)/);return m?m[1]:'';}
