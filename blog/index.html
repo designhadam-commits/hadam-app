@@ -1464,7 +1464,7 @@ function renderSaved() {
   if (!saved.length) { document.getElementById('savedWrap').classList.remove('on'); return; }
   document.getElementById('savedWrap').classList.add('on');
   document.getElementById('savedList').innerHTML = saved.slice(0,20).map(p => `
-    <div class="saved-item" onclick="loadSaved(${p.id})">
+    <div class="saved-item" onclick="viewPost(${p.id})">
       <div style="flex:1;min-width:0;">
         <div class="si-title">${p.title}</div>
         <div class="si-meta">${new Date(p.savedAt).toLocaleDateString('ko-KR')} · ${p._imgUrls?.length?`📸 ${p._imgUrls.length}장`:'이미지 없음'}</div>
@@ -1569,6 +1569,67 @@ function cloudSave(){ if(_db&&!_mute){ _db.collection('appdata').doc('blog_posts
   }
   fillBlogRules();
 })();
+</script>
+<div id="postViewModal" class="pv-modal" onclick="if(event.target===this)closePostView()">
+  <div class="pv-box">
+    <div class="pv-head"><span class="pv-htitle">📄 글 보기</span><div><button class="pv-editbtn" onclick="editFromView()">✏️ 편집</button><button class="pv-close" onclick="closePostView()">✕</button></div></div>
+    <div class="pv-body" id="pvBody"></div>
+  </div>
+</div>
+<style>
+.pv-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9999;align-items:flex-start;justify-content:center;padding:24px;overflow:auto}
+.pv-modal.on{display:flex}
+.pv-box{background:#fff;border-radius:16px;max-width:760px;width:100%;margin:auto;box-shadow:0 20px 60px rgba(0,0,0,.3);overflow:hidden}
+.pv-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff}
+.pv-htitle{font-weight:700}
+.pv-close,.pv-editbtn{border:none;background:#f1f3f5;border-radius:8px;padding:7px 12px;cursor:pointer;font-size:13px;margin-left:6px}
+.pv-editbtn{background:#e7f0ff;color:#2563eb}
+.pv-body{padding:24px 26px;line-height:1.8;color:#222;max-height:calc(100vh - 140px);overflow:auto}
+.pv-body .pv-tag{display:inline-block;background:#eef2ff;color:#4f46e5;font-size:12px;font-weight:600;padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.pv-body .pv-title{font-size:24px;font-weight:800;margin:6px 0 4px;line-height:1.35}
+.pv-body .pv-sub{color:#666;font-size:15px;margin-bottom:8px}
+.pv-body .pv-meta{color:#999;font-size:12px;margin-bottom:18px;border-bottom:1px solid #f0f0f0;padding-bottom:14px}
+.pv-body h2{font-size:18px;font-weight:700;margin:22px 0 10px}
+.pv-body p{margin:10px 0}
+.pv-body ul{margin:10px 0;padding-left:20px}
+.pv-body img.pv-img{max-width:100%;border-radius:10px;margin:12px 0;display:block}
+.pv-body table{border-collapse:collapse;width:100%;margin:12px 0}
+.pv-body th,.pv-body td{border:1px solid #e5e7eb;padding:8px 10px;font-size:14px}
+.pv-body .out-cta,.pv-body .pv-cta{background:#f8fafc;border-left:4px solid #2563eb;padding:12px 16px;border-radius:8px;margin:16px 0}
+@media(max-width:768px){.pv-modal{padding:0}.pv-box{border-radius:0;min-height:100vh}.pv-body{padding:18px 16px;max-height:calc(100vh - 120px)}.pv-body .pv-title{font-size:21px}}
+</style>
+<script>
+let _pvId=null;
+function buildPostViewHTML(post){
+  const isCustomer=post._voice==='customer';
+  let h='<div class="pv-tag">'+(post.tag||'인테리어')+'</div>';
+  h+='<div class="pv-title">'+(post.title||'')+'</div>';
+  if(post.subtitle)h+='<div class="pv-sub">'+post.subtitle+'</div>';
+  h+='<div class="pv-meta">'+(isCustomer?'⭐ 고객후기':'🏠 실장글')+' · '+new Date(post.savedAt||Date.now()).toLocaleDateString('ko-KR')+'</div>';
+  const imgs=post._imgUrls||[];let ii=0;
+  if(post.intro)h+='<p>'+String(post.intro).replace(/\n/g,'</p><p>')+'</p>';
+  (post.sections||[]).forEach(function(s){
+    h+='<h2>'+(s.heading||'')+'</h2>';
+    if(imgs[ii]){h+='<img class="pv-img" src="'+imgs[ii]+'">';ii++;}
+    let content=String(s.content||'').replace(/\n/g,'</p><p>');
+    if(post.tables){post.tables.forEach(function(tbl){var tag='['+tbl.id+']';if(content.indexOf(tag)>-1&&typeof buildTable==='function')content=content.replace(tag,'</p>'+buildTable(tbl)+'<p>');});}
+    h+='<p>'+content+'</p>';
+  });
+  // 남은 이미지 모두 표시
+  while(imgs[ii]){h+='<img class="pv-img" src="'+imgs[ii]+'">';ii++;}
+  if(post.tips&&post.tips.length){h+='<h2>실천 팁</h2><ul>';post.tips.forEach(function(t){h+='<li><strong>'+t+'</strong></li>';});h+='</ul>';}
+  if(post.cta)h+='<div class="pv-cta">'+String(post.cta).replace(/\n/g,'<br>')+'</div>';
+  return h;
+}
+function viewPost(id){
+  var p=(typeof saved!=='undefined'?saved:[]).find(function(x){return x.id===id;});
+  if(!p)return;_pvId=id;
+  document.getElementById('pvBody').innerHTML=buildPostViewHTML(p);
+  document.getElementById('postViewModal').classList.add('on');
+}
+function closePostView(){document.getElementById('postViewModal').classList.remove('on');}
+function editFromView(){var id=_pvId;closePostView();if(id!=null&&typeof loadSaved==='function')loadSaved(id);}
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closePostView();});
 </script>
 </body>
 </html>
