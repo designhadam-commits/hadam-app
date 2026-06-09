@@ -117,16 +117,18 @@
     .qlink{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px 15px;display:flex;align-items:center;gap:8px;cursor:pointer;text-decoration:none;color:var(--muted);font-size:12px;transition:background .15s,color .15s}
     .qlink:hover{background:var(--card-hover);color:var(--text)}
 
-    /* ── Modal ── */
-    .overlay{display:none;position:fixed;inset:0;background:var(--modal-bg);z-index:100;backdrop-filter:blur(5px);align-items:center;justify-content:center;padding:20px}
-    .overlay.open{display:flex}
-    .modal{background:#1c1c1e;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:660px;max-width:100%;max-height:88vh;display:flex;flex-direction:column;overflow:hidden}
-    .modal.wide{width:820px}
-    .modal-hd{padding:18px 22px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+    /* ── Feature page (사이드바 오른쪽 전체 화면) ── */
+    .overlay{display:none;position:fixed;top:0;right:0;bottom:0;left:var(--sb-w);background:var(--bg);z-index:100;transition:left .22s cubic-bezier(.4,0,.2,1)}
+    .overlay.open{display:block}
+    .app-content.sb-collapsed~.overlay{left:var(--sb-collapsed)}
+    .modal{background:var(--bg)!important;border:none!important;border-radius:0!important;width:100%!important;max-width:none!important;height:100%;max-height:none;display:flex;flex-direction:column;overflow:hidden}
+    .modal.wide{width:100%!important}
+    .modal-hd{padding:16px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:sticky;top:0;background:var(--bg);z-index:5}
     .modal-hd h2{font-size:14px;font-weight:700}
     .close-btn{width:28px;height:28px;background:var(--tag);border:none;border-radius:7px;color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
     .close-btn:hover{color:var(--text)}
-    .modal-bd{padding:20px 22px;overflow-y:auto;flex:1}
+    .modal-bd{padding:24px 28px;overflow-y:auto;flex:1}
+    .modal-bd>*{max-width:1180px}
     .row{display:flex;gap:8px;margin-bottom:10px}
     .inp{flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
     .inp:focus{border-color:rgba(255,255,255,0.2)}
@@ -548,9 +550,14 @@ function toggleSidebar(){sbCollapsed=!sbCollapsed;document.getElementById('sideb
 function setSbActive(el){document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');}
 function scrollToTop(){document.getElementById('app-content').scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));document.getElementById('sb-home').classList.add('active');}
 
-// ── Modal
+// ── Feature page (full-screen panel)
 function openModal(id){
+  // 한 번에 하나의 기능 페이지만 표시 — 다른 열린 패널은 닫기
+  document.querySelectorAll('.overlay.open').forEach(o=>{
+    if(o.id!==id){o.classList.remove('open');if(o.id==='graph-modal')stopGraph();}
+  });
   document.getElementById(id).classList.add('open');
+  document.getElementById('app-content').scrollTo({top:0});
   if(id==='chk-modal')renderChk();
   if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();}
   if(id==='ins-modal'){renderIns();renderInsGrid();}
@@ -562,7 +569,7 @@ function openModal(id){
   if(id==='settings-modal'){const s=localStorage.getItem('gh_pat');if(s)document.getElementById('gh-pat-inp').value=s;}
   if(id==='graph-modal')startGraph();
 }
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();}
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
 
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label');dot.className='sync-dot '+s;label.textContent=s==='ok'?'연결됨':s==='syncing'?'업로드 중...':s==='err'?'오류':'설정';}
