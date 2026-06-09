@@ -234,6 +234,26 @@
     .graph-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
     .graph-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .graph-tooltip{position:fixed;pointer-events:none;background:#1c1c1e;border:1px solid #e1e5ea;border-radius:8px;padding:7px 11px;font-size:12px;color:var(--text);z-index:999;display:none;max-width:200px;line-height:1.5}
+    /* ─── 리퀴드 글래스 + 색상 통일(토스 블루) ─── */
+    body{background:linear-gradient(135deg,#e6eefb 0%,#efeafb 42%,#fdf2ec 100%);background-attachment:fixed;}
+    .sidebar{background:rgba(255,255,255,.55)!important;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);border-right:1px solid rgba(255,255,255,.6)}
+    header{background:rgba(255,255,255,.5)!important;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.6)}
+    .stat-card,.feat-card,.qlink{background:rgba(255,255,255,.58)!important;-webkit-backdrop-filter:blur(18px) saturate(180%);backdrop-filter:blur(18px) saturate(180%);border:1px solid rgba(255,255,255,.65)!important;box-shadow:0 6px 22px rgba(60,80,120,.10),inset 0 1px 0 rgba(255,255,255,.7)!important}
+    .stat-card:hover,.feat-card:hover,.qlink:hover{box-shadow:0 12px 32px rgba(60,80,120,.16),inset 0 1px 0 rgba(255,255,255,.8)!important}
+    .feat-icon,.stat-arr,.arr-btn,.sb-item .sb-ic,.tag{background:rgba(255,255,255,.55)!important}
+    .sync-badge{background:rgba(255,255,255,.5)!important;-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border-color:rgba(255,255,255,.6)!important}
+    .modal-hd{background:rgba(255,255,255,.6)!important;-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-bottom:1px solid rgba(255,255,255,.6)}
+    .gh-row{background:rgba(255,255,255,.58)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.65)!important}
+    .gh-post{background:rgba(255,255,255,.6)!important;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+    /* 포인트 색을 토스 블루로 통일 */
+    .sb-item.active{background:var(--blue-dim)!important;color:var(--blue)!important}
+    .sb-item.active .sb-ic{background:#d6e6fd!important}
+    .prog-fill,.site-prog-fill{background:var(--blue)!important}
+    .cal-day.today{background:var(--blue-dim)!important;color:var(--blue)!important}
+    .member-chip.active{background:var(--blue-dim)!important;color:var(--blue)!important;border-color:#cfe2fd!important}
+    .stage.done-s{background:var(--blue-dim)!important;color:var(--blue)!important}
+    .badge-green{background:var(--blue-dim)!important;color:var(--blue)!important}
+    .gcnt{color:var(--blue)!important}
   </style>
 </head>
 <body>
