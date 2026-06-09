@@ -88,7 +88,7 @@
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
     /* ── Main ── */
-    main{padding:24px 28px;max-width:1100px}
+    main{padding:24px 28px;max-width:none}
     .sec-title{font-size:10px;font-weight:700;color:var(--dim);letter-spacing:1.2px;text-transform:uppercase;margin-bottom:13px;margin-top:28px}
     .sec-title:first-child{margin-top:0}
     .status-row{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin-bottom:4px}
@@ -131,7 +131,7 @@
     .close-btn{width:28px;height:28px;background:var(--tag);border:none;border-radius:7px;color:var(--muted);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
     .close-btn:hover{color:var(--text)}
     .modal-bd{padding:24px 28px;overflow-y:auto;flex:1}
-    .modal-bd>*{max-width:1180px}
+    .modal-bd>*{max-width:none}
     .modal-bd.embed-bd{padding:0;overflow:hidden}
     .modal-bd.embed-bd>*{max-width:none}
     .embed-frame{width:100%;height:100%;border:0;display:block;background:var(--card)}
@@ -194,12 +194,28 @@
     .ins-overlay span{font-size:10.5px;color:#fff}
     .ins-status-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
     .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px}
-    .cal-day{text-align:center;padding:7px 3px;border-radius:7px;font-size:12.5px;cursor:pointer;transition:background .15s;position:relative}
-    .cal-day:hover{background:#eaedf0}
-    .cal-day.today{background:var(--green-dim);color:var(--green);font-weight:700}
-    .cal-day.has-event::after{content:'';width:4px;height:4px;background:var(--blue);border-radius:50%;position:absolute;bottom:2px;left:50%;transform:translateX(-50%)}
-    .cal-day.selected{background:rgba(96,165,250,0.18);color:var(--blue)}
-    .cal-day-name{text-align:center;font-size:10.5px;color:var(--muted);padding:4px 0}
+    .cal-day{text-align:left;padding:4px 4px 5px;border-radius:7px;font-size:12px;cursor:pointer;transition:background .15s;position:relative;min-height:64px;display:flex;flex-direction:column;gap:2px;overflow:hidden;border:1px solid transparent}
+    .cal-day:hover{background:#eef1f4}
+    .cal-dnum{font-size:13px;color:var(--muted);line-height:1.3;padding-left:2px;font-weight:600}
+    .cal-day.today{background:var(--blue-dim)}
+    .cal-day.today .cal-dnum{color:var(--blue);font-weight:700}
+    .cal-bar{font-size:9px;line-height:1.5;color:#fff;padding:1px 4px;border-radius:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;font-weight:500}
+    .cal-more{font-size:9px;color:var(--muted);padding-left:3px}
+    .cal-day.selected{border-color:var(--blue);background:rgba(49,130,246,0.06)}
+    .cal-week{margin-bottom:3px}
+    .cal-dnum-row{margin-bottom:2px}
+    .cal-dcell{min-height:20px;border-radius:6px;padding:1px 4px;cursor:pointer;border:1px solid transparent}
+    .cal-dcell:hover{background:#eef1f4}
+    .cal-dcell.today{background:var(--blue-dim)}
+    .cal-dcell.today .cal-dnum{color:var(--blue);font-weight:700}
+    .cal-dcell.selected{border-color:var(--blue)}
+    .cal-lane{margin-bottom:2px;align-items:center}
+    .cal-bar2{font-size:13px;color:#fff;padding:3px 9px;border-radius:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600;height:24px;line-height:18px;min-width:0}
+    #cal-bd{max-width:none;width:100%}
+    #cal-bd>*{max-width:none}
+    #cal-bd .cal-dcell{min-height:34px}
+    #cal-bd .cal-lane{margin-bottom:4px}
+    .cal-day-name{text-align:center;font-size:13px;color:var(--muted);padding:6px 0;font-weight:600}
     .cal-add-form{background:rgba(96,165,250,0.07);border:1px solid rgba(96,165,250,0.2);border-radius:10px;padding:12px;margin-top:10px}
     .site-card{background:#f6f8fa;border-radius:11px;padding:14px;border:1px solid var(--border);margin-bottom:9px}
     .site-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
@@ -216,7 +232,7 @@
     .member-chip.active{background:var(--green-dim);color:var(--green);border-color:rgba(74,222,128,0.3)}
     .member-chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
     /* Graph */
-    #graph-canvas{display:block;width:100%;border-radius:12px;background:#0a0a0a;cursor:grab}
+    #graph-canvas{display:block;width:100%;border-radius:12px;background:#f7f8fa;border:1px solid var(--border);cursor:grab}
     #graph-canvas:active{cursor:grabbing}
     .graph-wrap{display:flex;gap:12px;align-items:flex-start}
     .graph-main{flex:1;min-width:0}
@@ -233,7 +249,15 @@
     .graph-legend{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
     .graph-legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
     .graph-legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
-    .graph-tooltip{position:fixed;pointer-events:none;background:#1c1c1e;border:1px solid #e1e5ea;border-radius:8px;padding:7px 11px;font-size:12px;color:var(--text);z-index:999;display:none;max-width:200px;line-height:1.5}
+    .graph-tooltip{position:fixed;pointer-events:none;background:#1c1c1e;border:1px solid rgba(255,255,255,.15);border-radius:8px;padding:8px 12px;font-size:13px;color:#fff;z-index:999;display:none;max-width:280px;line-height:1.6;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+    .graph-tooltip .tt-type{color:#9aa3ad;font-size:11px}
+    .cpop{position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;padding:24px}
+    .cpop-card{background:var(--card);border-radius:16px;width:840px;max-width:94vw;max-height:86vh;display:flex;flex-direction:column;box-shadow:0 20px 60px rgba(0,27,55,.25);overflow:hidden}
+    .cpop-hd{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border)}
+    .cpop-hd h3{margin:0;font-size:16px;font-weight:700;color:var(--text)}
+    .cpop-bd{padding:18px 22px;overflow:auto;flex:1}
+    .cpop-bd pre{white-space:pre-wrap;font-size:14px;line-height:1.8;margin:0;color:var(--text);font-family:inherit}
+    .cpop-ft{padding:12px 20px;border-top:1px solid var(--border)}
     /* ─── 리퀴드 글래스 + 색상 통일(토스 블루) ─── */
     body{background:linear-gradient(135deg,#e6eefb 0%,#efeafb 42%,#fdf2ec 100%);background-attachment:fixed;}
     .sidebar{background:rgba(255,255,255,.55)!important;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%);border-right:1px solid rgba(255,255,255,.6)}
@@ -254,9 +278,56 @@
     .stage.done-s{background:var(--blue-dim)!important;color:var(--blue)!important}
     .badge-green{background:var(--blue-dim)!important;color:var(--blue)!important}
     .gcnt{color:var(--blue)!important}
+    /* ── 모바일 반응형 ── */
+    @media (max-width:768px){
+      .sidebar{width:56px;overflow-y:auto;overflow-x:hidden}
+      .overlay{left:56px!important}
+      .sb-lbl,.sb-section-label,.sb-logo-txt,.sb-toggle{display:none!important}
+      .sb-head{justify-content:center;padding:14px 0}
+      .sb-item{justify-content:center;padding:11px 0;gap:0}
+      .sb-ic{margin:0}
+      .sb-nav,.sb-bottom{padding:6px 4px}
+      main{padding:14px 12px!important}
+      .modal-bd{padding:14px 12px}
+      .modal-hd{padding:12px 14px}
+      .modal-hd h2{font-size:16px}
+      .sec-title{font-size:14px}
+      .status-row{grid-template-columns:repeat(2,1fr);gap:8px}
+      .feat-grid{grid-template-columns:1fr}
+      .cn-grid{grid-template-columns:repeat(2,1fr)!important}
+      .mat-grid{grid-template-columns:1fr}
+      .gen-form{flex-direction:column;align-items:stretch}
+      .gen-form .inp,.gen-form select{max-width:none!important;width:100%}
+      .proc-addrow{flex-wrap:wrap}
+      .proc-addrow .inp{flex:1 1 100%;max-width:none}
+      .proc-row{flex-wrap:wrap;gap:6px 8px}
+      .proc-row .inp{max-width:none;flex:1 1 42%}
+      #cal-bd{max-width:none}
+      .cal-bar2{font-size:9px;padding:1px 4px;height:18px;line-height:14px}
+      #cal-bd .cal-dcell{min-height:22px}
+      .cal-dnum{font-size:11px}
+      .cal-day-name{font-size:10px;padding:3px 0}
+      .row{flex-wrap:wrap}
+      .header-date .dm{font-size:14px}
+    }
   </style>
 </head>
 <body>
+
+<!-- ── 로그인 화면 ── -->
+<div id="login-overlay" style="position:fixed;inset:0;z-index:99999;display:none;align-items:center;justify-content:center;background:linear-gradient(135deg,#eaf1fb,#f2f4f6);font-family:'Pretendard',-apple-system,sans-serif">
+  <div style="width:360px;max-width:88vw;background:rgba(255,255,255,.72);backdrop-filter:blur(20px) saturate(180%);-webkit-backdrop-filter:blur(20px) saturate(180%);border:1px solid rgba(255,255,255,.6);border-radius:20px;box-shadow:0 20px 60px rgba(0,27,55,.15);padding:36px 30px">
+    <div style="text-align:center;margin-bottom:24px">
+      <div style="width:48px;height:48px;margin:0 auto 12px;background:#3182f6;color:#fff;border-radius:14px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">하담</div>
+      <h2 style="font-size:18px;font-weight:700;color:#191f28;margin:0">디자인하담 포털</h2>
+      <p style="font-size:12px;color:#6b7684;margin:6px 0 0">직원 로그인</p>
+    </div>
+    <input id="login-email" type="email" placeholder="이메일" autocomplete="username" style="width:100%;box-sizing:border-box;padding:13px 14px;margin-bottom:10px;border:1px solid #e5e8eb;border-radius:12px;font-size:14px;background:#fff;color:#191f28;outline:none">
+    <input id="login-pw" type="password" placeholder="비밀번호" autocomplete="current-password" style="width:100%;box-sizing:border-box;padding:13px 14px;margin-bottom:8px;border:1px solid #e5e8eb;border-radius:12px;font-size:14px;background:#fff;color:#191f28;outline:none">
+    <div id="login-err" style="color:#f04452;font-size:12px;min-height:16px;margin-bottom:8px"></div>
+    <button id="login-btn" style="width:100%;padding:13px;border:none;border-radius:12px;background:#3182f6;color:#fff;font-size:15px;font-weight:700;cursor:pointer">로그인</button>
+  </div>
+</div>
 
 <!-- ── Sidebar ── -->
 <nav class="sidebar" id="sidebar">
@@ -281,11 +352,17 @@
     <div class="sb-item" onclick="openModal('jnl-modal');setSbActive(this)">
       <div class="sb-ic">📓</div><span class="sb-lbl">업무 일지</span>
     </div>
+    <div class="sb-item" onclick="openModal('notes-modal');setSbActive(this)">
+      <div class="sb-ic">📝</div><span class="sb-lbl">업무 노트</span>
+    </div>
     <div class="sb-item" onclick="openModal('cal-modal');setSbActive(this)">
       <div class="sb-ic">📅</div><span class="sb-lbl">일정 캘린더</span>
     </div>
     <div class="sb-item" onclick="openModal('con-modal');setSbActive(this)">
       <div class="sb-ic">🏗️</div><span class="sb-lbl">시공 현장</span>
+    </div>
+    <div class="sb-item" onclick="openModal('proc-modal');setSbActive(this)">
+      <div class="sb-ic">📐</div><span class="sb-lbl">공정과정</span>
     </div>
 
     <div class="sb-section-label">자재·재고</div>
@@ -295,6 +372,9 @@
     <div class="sb-item" onclick="openModal('inv-modal');setSbActive(this)">
       <div class="sb-ic">🗂️</div><span class="sb-lbl">재고 관리</span>
     </div>
+    <div class="sb-item" onclick="openModal('mat-modal');setSbActive(this)">
+      <div class="sb-ic">📂</div><span class="sb-lbl">자료실</span>
+    </div>
 
     <div class="sb-section-label">콘텐츠</div>
     <div class="sb-item" onclick="openModal('ins-modal');setSbActive(this)">
@@ -303,8 +383,17 @@
     <div class="sb-item" onclick="openModal('thread-modal');setSbActive(this)">
       <div class="sb-ic">🧵</div><span class="sb-lbl">쓰레드</span>
     </div>
+    <div class="sb-item" onclick="openModal('cardnews-modal');setSbActive(this)">
+      <div class="sb-ic">🖼️</div><span class="sb-lbl">카드뉴스</span>
+    </div>
     <div class="sb-item" onclick="openModal('seo-modal');setSbActive(this)">
       <div class="sb-ic">✍️</div><span class="sb-lbl">SEO 블로그</span>
+    </div>
+    <div class="sb-item" onclick="openModal('design-modal');setSbActive(this)">
+      <div class="sb-ic">🎨</div><span class="sb-lbl">디자인 시안</span>
+    </div>
+    <div class="sb-item" onclick="openModal('kb-modal');setSbActive(this)">
+      <div class="sb-ic">📚</div><span class="sb-lbl">지식베이스</span>
     </div>
     <div class="sb-item" onclick="openModal('graph-modal');setSbActive(this)">
       <div class="sb-ic">🕸️</div><span class="sb-lbl">그래프 뷰</span>
@@ -315,8 +404,14 @@
     <div class="sb-item" onclick="openModal('member-modal');setSbActive(this)">
       <div class="sb-ic">👥</div><span class="sb-lbl">멤버 관리</span>
     </div>
+    <div class="sb-item" onclick="openModal('secrets-modal');setSbActive(this)">
+      <div class="sb-ic">🔑</div><span class="sb-lbl">시크릿 키</span>
+    </div>
     <div class="sb-item" onclick="openModal('settings-modal')">
       <div class="sb-ic">⚙️</div><span class="sb-lbl">클라우드 설정</span>
+    </div>
+    <div class="sb-item" onclick="logout()">
+      <div class="sb-ic">🚪</div><span class="sb-lbl">로그아웃</span>
     </div>
   </div>
 </nav>
@@ -442,6 +537,41 @@
         <div class="tags"><span class="tag">카드뉴스</span><span class="tag">hadam-cardnews</span></div>
         <div class="feat-status">저장소 연동</div>
       </div>
+      <div class="feat-card" onclick="openModal('proc-modal')">
+        <div class="feat-top"><div class="feat-icon">📐</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">공정과정</div>
+        <div class="feat-desc">현장별 공정을 시작·종료·담당자로 관리하고 캘린더에 자동 반영합니다.</div>
+        <div class="tags"><span class="tag">공정</span><span class="tag">캘린더 연동</span></div>
+        <div class="feat-status">현장별 일정</div>
+      </div>
+      <div class="feat-card" onclick="openModal('mat-modal')">
+        <div class="feat-top"><div class="feat-icon">📂</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">자료실</div>
+        <div class="feat-desc">현장 전·후 사진, 견적서, 마감재 자료를 업로드·다운로드합니다.</div>
+        <div class="tags"><span class="tag">사진</span><span class="tag">견적서</span><span class="tag">마감재</span></div>
+        <div class="feat-status">저장소 연동</div>
+      </div>
+      <div class="feat-card" onclick="openModal('design-modal')">
+        <div class="feat-top"><div class="feat-icon">🎨</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">디자인 시안</div>
+        <div class="feat-desc">스타일·공간을 골라 인테리어 콘셉트 시안을 자동 생성합니다.</div>
+        <div class="tags"><span class="tag">Higgsfield</span><span class="tag">시안</span></div>
+        <div class="feat-status">콘셉트 렌더</div>
+      </div>
+      <div class="feat-card" onclick="openModal('kb-modal')">
+        <div class="feat-top"><div class="feat-icon">📚</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">지식베이스</div>
+        <div class="feat-desc">프로젝트·고객·프로세스 문서를 열람·편집합니다.</div>
+        <div class="tags"><span class="tag">hadam-cloud</span><span class="tag">열람·편집</span></div>
+        <div class="feat-status">업무 지식</div>
+      </div>
+      <div class="feat-card" onclick="openModal('graph-modal')">
+        <div class="feat-top"><div class="feat-icon">🕸️</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">그래프 뷰</div>
+        <div class="feat-desc">프로젝트·담당자·일지를 옵시디언식 지식그래프로 봅니다.</div>
+        <div class="tags"><span class="tag">그래프</span><span class="tag">분석</span></div>
+        <div class="feat-status">지식 연결망</div>
+      </div>
     </div>
 
     <div class="sec-title">바로가기</div>
@@ -469,13 +599,25 @@
     <div class="modal-bd">
       <div class="member-chips" id="jnl-member-chips"></div>
       <div class="upload-box">
-        <div class="sec-label">☁️ 오늘 전체 업무일지 — hadam-cloud 자동 분석용</div>
-        <textarea class="inp" id="jnl-full" placeholder="오늘 업무 내용을 자유롭게 입력하세요...&#10;카카오톡 대화, 현장 현황, 결제 내역, 할 일 등을 붙여넣으면&#10;매일 저녁 9시에 hadam-cloud 파일들이 자동 업데이트됩니다." style="min-height:160px;margin-bottom:8px"></textarea>
+        <div class="sec-label">☁️ 전체 업무일지 — hadam-cloud 자동 분석용</div>
+        <div class="row" style="margin-bottom:8px;gap:8px"><label style="font-size:12px;color:var(--muted);align-self:center;white-space:nowrap">📅 일지 날짜</label><input class="inp" id="jnl-target-date" type="date" style="max-width:180px"><span style="font-size:11px;color:var(--dim);align-self:center">과거 일지면 그 날짜로 선택</span></div>
+        <textarea class="inp" id="jnl-full" placeholder="업무 내용을 자유롭게 입력하세요...&#10;카카오톡 대화, 현장 현황, 결제 내역, 할 일 등을 붙여넣으면&#10;매일 저녁 9시에 hadam-cloud 파일들이 자동 업데이트됩니다." style="width:100%;box-sizing:border-box;min-height:340px;margin-bottom:8px;line-height:1.7;resize:vertical"></textarea>
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
           <button class="btn btn-g" onclick="uploadJournal()" id="jnl-upload-btn">☁️ hadam-cloud에 업로드</button>
           <span id="jnl-upload-status" style="font-size:12px"></span>
         </div>
+        <div class="divider" style="margin:12px 0"></div>
+        <div class="sec-label">📎 파일 첨부 (사진 · .md · 문서)</div>
+        <p style="font-size:11px;color:var(--muted);margin:0 0 8px;line-height:1.6">파일명에 날짜(예: <b>20260601</b>)가 있으면 자동으로 그 날짜 폴더에 저장됩니다. 없으면 위 <b>일지 날짜</b>로 저장돼요.</p>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+          <input type="file" id="jnl-files" multiple accept="image/*,.md,.txt,.pdf,.hwp,.docx,.xlsx" style="font-size:12px;flex:1;min-width:200px">
+          <button class="btn btn-g" onclick="uploadJnlFiles()" id="jnl-files-btn">📎 파일 업로드</button>
+          <span id="jnl-files-status" style="font-size:12px"></span>
+        </div>
+        <div id="jnl-files-list" style="margin-top:8px"></div>
       </div>
+      <div class="divider"></div>
+      <div id="jnl-uploaded"></div>
       <div class="divider"></div>
       <div class="sec-label" style="margin-top:0">빠른 메모</div>
       <div class="row"><input class="inp" id="jnl-date" type="date" style="max-width:140px"><input class="inp" id="jnl-inp" placeholder="짧은 업무 메모..." onkeydown="if(event.key==='Enter')addJnl()"><button class="btn btn-g" onclick="addJnl()">기록</button></div>
@@ -488,6 +630,8 @@
   <div class="modal wide">
     <div class="modal-hd"><h2>📸 인스타그램 관리</h2><button class="close-btn" onclick="closeModal('ins-modal')">✕</button></div>
     <div class="modal-bd">
+      <div class="auto-bar"><button class="btn btn-g" onclick="insCardnewsPanel()">⚡ 카드뉴스 지금 생성</button><button class="btn" onclick="openModal('cardnews-modal');renderCardnewsConfig()">⚙️ 자동생성 설정</button><button class="btn" onclick="openModal('cardnews-modal')">🖼️ 카드뉴스 보기</button><span class="auto-hint">매일 평일 오전 10시 자동 생성</span></div>
+      <div id="ins-genpanel"></div>
       <div class="ins-status-row"><span class="badge badge-green">발행 <span id="is-pub">0</span></span><span class="badge badge-blue">예약 <span id="is-sch">0</span></span><span class="badge badge-orange">작성중 <span id="is-drf">0</span></span><span class="badge badge-dim">아이디어 <span id="is-idea">0</span></span></div>
       <div class="row"><input class="inp" id="ins-cap" placeholder="캡션 / 주제 입력..."><select class="inp" id="ins-status" style="max-width:100px"><option>아이디어</option><option>작성중</option><option>예약</option><option>발행</option></select><input class="inp" id="ins-img" placeholder="이미지 URL (선택)" style="max-width:180px"><button class="btn btn-g" onclick="addIns()">추가</button></div>
       <div class="sec-label">피드 그리드 미리보기</div>
@@ -537,6 +681,26 @@
   <div class="modal-bd"><div id="cardnews-view"></div></div></div>
 </div>
 
+<div class="overlay" id="design-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>🎨 디자인 시안</h2><button class="close-btn" onclick="closeModal('design-modal')">✕</button></div>
+  <div class="modal-bd"><div id="design-view"></div></div></div>
+</div>
+
+<div class="overlay" id="kb-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>📚 지식베이스</h2><button class="close-btn" onclick="closeModal('kb-modal')">✕</button></div>
+  <div class="modal-bd"><div id="kb-view"></div></div></div>
+</div>
+
+<div class="overlay" id="proc-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>📐 공정과정</h2><button class="close-btn" onclick="closeModal('proc-modal')">✕</button></div>
+  <div class="modal-bd"><div id="proc-view"></div></div></div>
+</div>
+
+<div class="overlay" id="mat-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>📂 자료실</h2><button class="close-btn" onclick="closeModal('mat-modal')">✕</button></div>
+  <div class="modal-bd"><div id="mat-view"></div></div></div>
+</div>
+
 <div class="overlay" id="member-modal">
   <div class="modal"><div class="modal-hd"><h2>👥 멤버 관리</h2><button class="close-btn" onclick="closeModal('member-modal')">✕</button></div>
   <div class="modal-bd"><div class="sec-label">현재 멤버</div><div id="member-list"></div><div class="row" style="margin-top:12px"><input class="inp" id="member-inp" placeholder="멤버 이름 추가..." onkeydown="if(event.key==='Enter')addMember()"><button class="btn btn-g" onclick="addMember()">추가</button></div></div></div>
@@ -565,25 +729,63 @@
   </div>
 </div>
 
+<div class="overlay" id="secrets-modal">
+  <div class="modal" style="max-width:480px">
+    <div class="modal-hd"><h2>🔑 시크릿 키 / API</h2><button class="close-btn" onclick="closeModal('secrets-modal')">✕</button></div>
+    <div class="modal-bd">
+      <p style="font-size:11.5px;color:var(--muted);margin:0 0 14px;line-height:1.7">클라우드에 저장되어 <strong style="color:var(--text)">로그인한 모든 직원·기기</strong>에서 공유됩니다. 블로그 앱이 자동으로 사용합니다.</p>
+
+      <div class="sec-label">Claude (Anthropic) API Key</div>
+      <input class="inp sk-field" id="sk-ant" type="password" placeholder="sk-ant-..." autocomplete="off" style="width:100%;margin-bottom:12px">
+
+      <div class="sec-label">Pexels API Key</div>
+      <input class="inp sk-field" id="sk-pexels" type="password" placeholder="563492ad..." autocomplete="off" style="width:100%;margin-bottom:12px">
+
+      <div class="sec-label">GitHub PAT</div>
+      <input class="inp sk-field" id="sk-github" type="password" placeholder="ghp_..." autocomplete="off" style="width:100%;margin-bottom:12px">
+
+      <div class="divider"></div>
+      <div class="sec-label">블로그 자동화 (선택)</div>
+      <input class="inp sk-field" id="sk-make" type="password" placeholder="Make 웹훅 URL" autocomplete="off" style="width:100%;margin-bottom:8px">
+      <input class="inp sk-field" id="sk-dlid" type="password" placeholder="Dropbox Client ID" autocomplete="off" style="width:100%;margin-bottom:8px">
+      <input class="inp sk-field" id="sk-dlsec" type="password" placeholder="Dropbox Client Secret" autocomplete="off" style="width:100%;margin-bottom:12px">
+
+      <div class="divider"></div>
+      <div class="sec-label">사용자 지정 키</div>
+      <div id="sk-custom"></div>
+      <div class="row" style="margin-top:8px"><input class="inp" id="sk-ck" placeholder="이름 (예: OPENAI_KEY)"><input class="inp sk-field" id="sk-cv" type="password" placeholder="값"><button class="btn" onclick="addCustomSecret()">추가</button></div>
+
+      <div class="divider"></div>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);margin-bottom:12px;cursor:pointer"><input type="checkbox" id="sk-show" onchange="toggleSecretMask()"> 값 보기</label>
+      <button class="btn btn-g" style="width:100%" onclick="saveSecrets()">💾 클라우드에 저장</button>
+      <div id="sk-status" style="display:none;font-size:11.5px;padding:8px 12px;border-radius:8px;margin-top:8px"></div>
+    </div>
+  </div>
+</div>
+
 <div class="overlay" id="graph-modal">
   <div class="modal" style="width:960px;max-width:100%">
     <div class="modal-hd"><h2>🕸️ 그래프 뷰</h2><button class="close-btn" onclick="closeModal('graph-modal')">✕</button></div>
     <div class="modal-bd" style="padding:16px 18px">
       <div class="graph-controls">
         <button class="graph-ctrl-btn active" id="gf-all" onclick="graphFilter('all')">전체</button>
-        <button class="graph-ctrl-btn" id="gf-construction" onclick="graphFilter('construction')">🏗️ 현장</button>
-        <button class="graph-ctrl-btn" id="gf-calendar" onclick="graphFilter('calendar')">📅 일정</button>
+        <button class="graph-ctrl-btn" id="gf-project" onclick="graphFilter('project')">📁 프로젝트</button>
+        <button class="graph-ctrl-btn" id="gf-customer" onclick="graphFilter('customer')">🙋 고객</button>
+        <button class="graph-ctrl-btn" id="gf-process" onclick="graphFilter('process')">📋 프로세스</button>
         <button class="graph-ctrl-btn" id="gf-journal" onclick="graphFilter('journal')">📓 일지</button>
-        <button class="graph-ctrl-btn" style="margin-left:auto" onclick="resetGraphPhysics()">↺ 재배치</button>
+        <button class="graph-ctrl-btn" id="gf-member" onclick="graphFilter('member')">👤 팀원</button>
+        <button class="graph-ctrl-btn" style="margin-left:auto;background:var(--blue);color:#fff;border-color:transparent" onclick="graphAnalyzeNow(this)">🧠 지금 분석하기</button>
+        <button class="graph-ctrl-btn" onclick="resetGraphPhysics()">↺ 재배치</button>
       </div>
       <div class="graph-wrap">
         <div class="graph-main">
           <canvas id="graph-canvas" height="480"></canvas>
           <div class="graph-legend">
-            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#60a5fa"></div>현장</div>
-            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#4ade80"></div>일정</div>
-            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#a78bfa"></div>업무일지</div>
-            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#f472b6"></div>팀원</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#3182f6"></div>프로젝트</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#15c47e"></div>고객</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#ff9f43"></div>프로세스</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#a855f7"></div>일지</div>
+            <div class="graph-legend-item"><div class="graph-legend-dot" style="background:#f04452"></div>팀원</div>
           </div>
         </div>
         <div class="graph-sidebar-panel" id="graph-sidebar-panel">
@@ -595,12 +797,225 @@
   </div>
 </div>
 <div class="graph-tooltip" id="graph-tooltip"></div>
+<div id="content-popup" class="cpop" style="display:none" onclick="if(event.target===this)closeContentPopup()">
+  <div class="cpop-card">
+    <div class="cpop-hd"><h3 id="cpop-title"></h3><button class="close-btn" onclick="closeContentPopup()">✕</button></div>
+    <div class="cpop-bd"><pre id="cpop-body"></pre></div>
+    <div class="cpop-ft"><a id="cpop-edit" target="_blank" style="font-size:12px;color:var(--blue)">GitHub에서 편집 ›</a></div>
+  </div>
+</div>
 
+<style>
+  .auto-bar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .auto-hint{font-size:11.5px;color:var(--muted);margin-left:auto}
+  .gen-form{display:flex;gap:8px;flex-wrap:wrap;background:var(--card-hover);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:12px}
+  .gen-form .inp{flex:1;min-width:120px}
+  .gen-status{font-size:12px;color:var(--muted);line-height:1.7;margin-top:6px}
+  .post-chk{font-size:11px;padding:4px 10px;border-radius:20px;border:1px solid var(--border);color:var(--muted);background:var(--card);cursor:pointer;white-space:nowrap;flex-shrink:0}
+  .post-chk.on{background:var(--green-dim);color:var(--green);border-color:transparent;font-weight:600}
+  .cfg-form{margin-top:12px}
+  .cfg-form .inp{width:100%;box-sizing:border-box;margin-bottom:4px;font-family:inherit}
+  .cfg-row{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text);margin-bottom:10px;cursor:pointer}
+  .cp-btn{float:right;padding:3px 10px;font-size:11px}
+  .btn.btn-on{background:var(--blue);color:#fff;border-color:transparent}
+  .proc-group{margin-bottom:16px}
+  .proc-gh{font-size:13px;font-weight:700;color:var(--text);margin-bottom:6px}
+  .proc-row{display:flex;align-items:center;gap:10px;padding:8px 11px;border:1px solid var(--border);border-radius:8px;margin-bottom:5px;background:var(--card)}
+  .proc-date{font-size:11px;color:var(--muted);min-width:84px;flex-shrink:0}
+  .proc-stage{flex:1;font-size:13px;color:var(--text)}
+  .proc-mgr{font-size:12px;color:var(--blue);min-width:70px;text-align:right;flex-shrink:0}
+  .proc-site{border:1px solid var(--border);border-radius:14px;padding:14px 16px;margin-bottom:14px;background:var(--card)}
+  .proc-sitehd{display:flex;align-items:center;gap:6px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border)}
+  .proc-sitename{font-size:15px;font-weight:700;color:var(--text);display:flex;align-items:center}
+  .proc-rows{margin-bottom:10px}
+  .proc-addrow{display:flex;gap:8px;flex-wrap:wrap;background:var(--card-hover);border-radius:10px;padding:10px}
+  .proc-addrow .pa-stage{flex:1;min-width:160px}
+  .proc-addrow .pa-date{max-width:160px}
+  .proc-addrow .pa-mgr{max-width:140px}
+  .proc-editrow{gap:8px;flex-wrap:wrap;background:var(--blue-dim)}
+  .proc-editrow .inp{flex:1;min-width:120px}
+  .mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-bottom:6px}
+  .mat-item{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--card);display:flex;flex-direction:column;gap:8px}
+  .mat-name{font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mat-acts{display:flex;gap:6px;align-items:center}
+  .mat-acts .btn{padding:4px 10px;font-size:11px}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 (function(){const d=new Date(),days=['일','월','화','수','목','금','토'];document.getElementById('hd-date').textContent=`${d.getMonth()+1}월 ${d.getDate()}일`;document.getElementById('hd-day').textContent=`${d.getFullYear()} · ${days[d.getDay()]}요일`;})();
 
-function G(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch{return[]}}
-async function S(k,v){localStorage.setItem(k,JSON.stringify(v))}
+// ── Firebase 실시간 클라우드 저장 ──
+const firebaseConfig={apiKey:"AIzaSyBvzNeaUuzuvnI9pAKe4VBII56XApL2gqw",authDomain:"hadam-fa01a.firebaseapp.com",projectId:"hadam-fa01a",storageBucket:"hadam-fa01a.firebasestorage.app",messagingSenderId:"809077194187",appId:"1:809077194187:web:7c48e00620f1d29ce34a4e"};
+const FB_KEYS=['chk','jnl','ins','ord','inv','cal-events','sites','thread','members','posted','process','tasks'];
+const CLOUD={};
+FB_KEYS.forEach(k=>{try{CLOUD[k]=JSON.parse(localStorage.getItem(k)||'[]');}catch(e){CLOUD[k]=[];}});
+let db=null,_listening=false;
+function initCloud(){
+  try{ if(!firebase.apps.length) firebase.initializeApp(firebaseConfig); db=firebase.firestore(); }
+  catch(e){ console.warn('Firebase init 실패',e); setSyncStatus('err'); return; }
+  setSyncStatus('syncing');
+  // 로그인한 직원만 접근 (외부 차단)
+  firebase.auth().onAuthStateChanged(function(user){
+    if(user){ hideLogin(); startListeners(); }
+    else{ showLogin(); }
+  });
+  wireLogin();
+}
+function showLogin(){ var o=document.getElementById('login-overlay'); if(o)o.style.display='flex'; setSyncStatus('off'); }
+function hideLogin(){ var o=document.getElementById('login-overlay'); if(o)o.style.display='none'; }
+function logout(){ try{ firebase.auth().signOut().then(function(){ location.reload(); }); }catch(e){ location.reload(); } }
+function loginErrMsg(err){
+  var c=(err&&err.code)||'';
+  if(c.indexOf('wrong-password')>=0||c.indexOf('invalid-credential')>=0)return '이메일 또는 비밀번호가 올바르지 않습니다.';
+  if(c.indexOf('user-not-found')>=0)return '등록되지 않은 계정입니다.';
+  if(c.indexOf('too-many-requests')>=0)return '시도가 많습니다. 잠시 후 다시 시도하세요.';
+  if(c.indexOf('invalid-email')>=0)return '이메일 형식이 올바르지 않습니다.';
+  return '로그인 실패: '+((err&&err.message)||c);
+}
+function wireLogin(){
+  var btn=document.getElementById('login-btn'),em=document.getElementById('login-email'),pw=document.getElementById('login-pw'),er=document.getElementById('login-err');
+  if(!btn||btn._wired)return; btn._wired=true;
+  function doLogin(){
+    er.textContent='';
+    var e=(em.value||'').trim(),p=pw.value||'';
+    if(!e||!p){ er.textContent='이메일과 비밀번호를 입력하세요.'; return; }
+    btn.disabled=true; btn.textContent='로그인 중...';
+    firebase.auth().signInWithEmailAndPassword(e,p)
+      .then(function(){ pw.value=''; })
+      .catch(function(err){ er.textContent=loginErrMsg(err); })
+      .finally(function(){ btn.disabled=false; btn.textContent='로그인'; });
+  }
+  btn.onclick=doLogin;
+  [em,pw].forEach(function(i){ i.addEventListener('keydown',function(ev){ if(ev.key==='Enter')doLogin(); }); });
+}
+function startListeners(){
+  if(_listening)return; _listening=true;
+  FB_KEYS.forEach(k=>{
+    db.collection('appdata').doc(k).onSnapshot(snap=>{
+      if(snap.exists){
+        CLOUD[k]=(snap.data()&&snap.data().items)||[];
+        try{localStorage.setItem(k,JSON.stringify(CLOUD[k]));}catch(e){}
+      } else if(CLOUD[k] && CLOUD[k].length){
+        db.collection('appdata').doc(k).set({items:CLOUD[k],updated:Date.now()}); // 최초 로컬→클라우드 이관
+      }
+      setSyncStatus('ok'); onCloudUpdate(k);
+    }, err=>{ console.warn('snapshot',k,err); setSyncStatus('err'); });
+  });
+  startSecrets();
+  // 임베드 체크리스트(오늘 할일) 진행률을 홈 대시보드에 반영
+  db.collection('appdata').doc('checklist_state').onSnapshot(function(snap){CHKSTATE=snap.exists?(snap.data().payload||null):null;try{statChk();}catch(e){}},function(e){});
+  refreshJournalCount();
+}
+let CHKSTATE=null,JNLCOUNT=null;
+async function refreshJournalCount(){
+  if(!localStorage.getItem('gh_pat'))return;
+  try{var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1&t='+Date.now(),{headers:ghHeaders()});var j=await r.json();
+    var ym=td().slice(0,7).replace('-','');var days=new Set();
+    (j.tree||[]).forEach(function(t){var m=t.path.match(/^daily\/(\d{8})\//);if(m&&m[1].indexOf(ym)===0)days.add(m[1]);});
+    JNLCOUNT=days.size;try{statJnl();}catch(e){}
+  }catch(e){}
+}
+
+// ── 시크릿 키 / API (클라우드 공유) ──
+let SECRETS={}, customSecrets=[];
+function gatherLocalSecrets(){
+  return {
+    ant:localStorage.getItem('ant_key')||'', pexels:localStorage.getItem('pexels_key')||'',
+    github:localStorage.getItem('gh_pat')||'', make:localStorage.getItem('make_url')||'',
+    dlid:localStorage.getItem('dl_id')||'', dlsec:localStorage.getItem('dl_sec')||'', custom:[]
+  };
+}
+function applySecretsToLocal(s){
+  if(!s)return;
+  var map={ant:'ant_key',pexels:'pexels_key',github:'gh_pat',make:'make_url',dlid:'dl_id',dlsec:'dl_sec'};
+  Object.keys(map).forEach(function(k){ if(s[k]!=null)try{localStorage.setItem(map[k],s[k]);}catch(e){} });
+  (s.custom||[]).forEach(function(c){ if(c&&c.k)try{localStorage.setItem(c.k,c.v||'');}catch(e){} });
+}
+function startSecrets(){
+  db.collection('appdata').doc('secrets').onSnapshot(function(snap){
+    if(snap.exists&&snap.data()&&snap.data().payload){
+      SECRETS=snap.data().payload; applySecretsToLocal(SECRETS);
+      var m=document.getElementById('secrets-modal'); if(m&&m.classList.contains('open'))renderSecrets();
+    } else {
+      SECRETS=gatherLocalSecrets(); // 최초 로컬→클라우드 이관
+      db.collection('appdata').doc('secrets').set({payload:SECRETS,updated:Date.now()});
+    }
+  }, function(e){ console.warn('secrets snap',e); });
+}
+function renderSecrets(){
+  var s=SECRETS||{};
+  document.getElementById('sk-ant').value=s.ant||'';
+  document.getElementById('sk-pexels').value=s.pexels||'';
+  document.getElementById('sk-github').value=s.github||'';
+  document.getElementById('sk-make').value=s.make||'';
+  document.getElementById('sk-dlid').value=s.dlid||'';
+  document.getElementById('sk-dlsec').value=s.dlsec||'';
+  customSecrets=(s.custom||[]).map(function(c){return {k:c.k,v:c.v};});
+  renderCustomSecrets();
+}
+function renderCustomSecrets(){
+  var wrap=document.getElementById('sk-custom');
+  if(!customSecrets.length){ wrap.innerHTML='<p style="font-size:11px;color:var(--dim);margin:0 0 4px">추가된 키 없음</p>'; return; }
+  wrap.innerHTML=customSecrets.map(function(c,i){
+    return '<div class="row" style="margin-bottom:6px"><input class="inp" value="'+(c.k||'').replace(/"/g,'&quot;')+'" oninput="customSecrets['+i+'].k=this.value"><input class="inp sk-field" type="'+(document.getElementById('sk-show')&&document.getElementById('sk-show').checked?'text':'password')+'" value="'+(c.v||'').replace(/"/g,'&quot;')+'" oninput="customSecrets['+i+'].v=this.value"><button class="btn" onclick="removeCustomSecret('+i+')">✕</button></div>';
+  }).join('');
+}
+function addCustomSecret(){
+  var k=document.getElementById('sk-ck').value.trim(), v=document.getElementById('sk-cv').value;
+  if(!k)return;
+  customSecrets.push({k:k,v:v});
+  document.getElementById('sk-ck').value=''; document.getElementById('sk-cv').value='';
+  renderCustomSecrets();
+}
+function removeCustomSecret(i){ customSecrets.splice(i,1); renderCustomSecrets(); }
+function toggleSecretMask(){
+  var show=document.getElementById('sk-show').checked;
+  document.querySelectorAll('.sk-field').forEach(function(el){ el.type=show?'text':'password'; });
+}
+async function saveSecrets(){
+  var payload={
+    ant:document.getElementById('sk-ant').value.trim(),
+    pexels:document.getElementById('sk-pexels').value.trim(),
+    github:document.getElementById('sk-github').value.trim(),
+    make:document.getElementById('sk-make').value.trim(),
+    dlid:document.getElementById('sk-dlid').value.trim(),
+    dlsec:document.getElementById('sk-dlsec').value.trim(),
+    custom:customSecrets.filter(function(c){return c.k&&c.k.trim();}).map(function(c){return {k:c.k.trim(),v:c.v||''};})
+  };
+  var st=document.getElementById('sk-status');
+  applySecretsToLocal(payload);
+  try{
+    if(db)await db.collection('appdata').doc('secrets').set({payload:payload,updated:Date.now()});
+    SECRETS=payload;
+    st.style.display='block'; st.style.background='var(--green-dim)'; st.style.color='var(--green)'; st.textContent='✓ 저장 완료 — 모든 직원·기기에 동기화됩니다.';
+  }catch(e){
+    st.style.display='block'; st.style.background='#fdeaec'; st.style.color='var(--red)'; st.textContent='저장 실패: '+(e.message||e);
+  }
+  setTimeout(function(){ if(st)st.style.display='none'; },3500);
+}
+function onCloudUpdate(k){
+  try{ allStats(); }catch(e){}
+  const open=document.querySelector('.overlay.open'); if(!open)return;
+  const id=open.id;
+  try{
+    if(id==='ord-modal')renderOrd();
+    else if(id==='cal-modal')renderCal();
+    else if(id==='con-modal')renderCon();
+    else if(id==='ins-modal'){renderIns();renderInsGrid();}
+    else if(id==='jnl-modal')renderJnl();
+    else if(id==='member-modal')renderMemberList();
+  }catch(e){}
+}
+
+// 메모리 캐시(G) + 클라우드 저장(S) — 렌더 코드는 그대로 사용
+function G(k){ return CLOUD[k]||[]; }
+async function S(k,v){
+  CLOUD[k]=v;
+  try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
+  if(db){ try{ await db.collection('appdata').doc(k).set({items:v,updated:Date.now()}); }catch(e){ console.warn('cloud save',k,e); } }
+}
 function td(){return new Date().toISOString().slice(0,10)}
 function tdCompact(){const n=new Date();return`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`}
 
@@ -608,33 +1023,46 @@ function tdCompact(){const n=new Date();return`${n.getFullYear()}${String(n.getM
 let sbCollapsed=false;
 function toggleSidebar(){sbCollapsed=!sbCollapsed;document.getElementById('sidebar').classList.toggle('collapsed',sbCollapsed);document.getElementById('app-content').classList.toggle('sb-collapsed',sbCollapsed);}
 function setSbActive(el){document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));if(el)el.classList.add('active');}
-function scrollToTop(){document.getElementById('app-content').scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));document.getElementById('sb-home').classList.add('active');}
+function scrollToTop(){document.querySelectorAll('.overlay.open').forEach(o=>{o.classList.remove('open');if(o.id==='graph-modal'){try{stopGraph();}catch(e){}}});document.getElementById('app-content').scrollTo({top:0,behavior:'smooth'});document.querySelectorAll('.sb-item').forEach(i=>i.classList.remove('active'));document.getElementById('sb-home').classList.add('active');}
 
 // ── Feature page (full-screen panel)
-function openModal(id){
+function openModal(id,_fromHistory){
+  var _wasOpen=document.querySelector('.overlay.open');
   // 한 번에 하나의 기능 페이지만 표시 — 다른 열린 패널은 닫기
   document.querySelectorAll('.overlay.open').forEach(o=>{
     if(o.id!==id){o.classList.remove('open');if(o.id==='graph-modal')stopGraph();}
   });
   document.getElementById(id).classList.add('open');
   document.getElementById('app-content').scrollTo({top:0});
+  try{var _sb=document.querySelector('.sb-item[onclick*="'+id+'"]');if(_sb)setSbActive(_sb);}catch(e){}
   // 임베드 앱은 처음 열 때만 로드
   var _fr=document.querySelector('#'+id+' iframe.embed-frame');
   if(_fr && !_fr.getAttribute('src')) _fr.setAttribute('src', _fr.getAttribute('data-src'));
-  if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();}
+  if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();var _td=document.getElementById('jnl-target-date');if(_td&&!_td.value)_td.value=td();renderJnlUploaded();}
   if(id==='ins-modal'){renderIns();renderInsGrid();}
   if(id==='ord-modal')renderOrd();
   if(id==='cal-modal')renderCal();
   if(id==='con-modal')renderCon();
   if(id==='member-modal')renderMemberList();
   if(id==='settings-modal'){const s=localStorage.getItem('gh_pat');if(s)document.getElementById('gh-pat-inp').value=s;}
+  if(id==='secrets-modal')renderSecrets();
   if(id==='graph-modal')startGraph();
   if(id==='thread-modal')renderThreadView();
   if(id==='notes-modal')renderNotesView();
   if(id==='cardnews-modal')renderCardnewsView();
+  if(id==='design-modal')renderDesignView();
+  if(id==='kb-modal')renderKbView();
+  if(id==='proc-modal')renderProc();
+  if(id==='mat-modal')renderMatView();
+  // 뒤로가기(브라우저·휴대폰) 지원: 모달 열기를 히스토리에 기록
+  if(!_fromHistory){try{if(_wasOpen&&history.state&&history.state.hadamModal)history.replaceState({hadamModal:id},'','#'+id);else history.pushState({hadamModal:id},'','#'+id);}catch(e){}}
 }
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));}
-document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
+function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));try{if(history.state&&history.state.hadamModal)history.back();}catch(e){}}
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id)}));
+window.addEventListener('popstate',function(ev){
+  var open=document.querySelectorAll('.overlay.open');
+  if(open.length){open.forEach(function(o){o.classList.remove('open');if(o.id==='graph-modal'){try{stopGraph();}catch(e){}}});setSbActive(document.getElementById('sb-home'));document.getElementById('app-content').scrollTo({top:0});}
+});
 
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label');dot.className='sync-dot '+s;label.textContent=s==='ok'?'연결됨':s==='syncing'?'업로드 중...':s==='err'?'오류':'설정';}
 
@@ -648,7 +1076,8 @@ async function uploadJournal(){
   const content=document.getElementById('jnl-full').value.trim();
   if(!content){alert('일지 내용을 입력해주세요');return;}
   const author=jnlActiveMember||getMembers()[0]||'나';
-  const dateStr=tdCompact();
+  const _tdv=document.getElementById('jnl-target-date');
+  const dateStr=(_tdv&&_tdv.value)?_tdv.value.replace(/-/g,''):tdCompact();
   const apiPath=`daily/${dateStr}/${encodeURIComponent(author)}.md`;
   const btn=document.getElementById('jnl-upload-btn'),status=document.getElementById('jnl-upload-status');
   btn.textContent='업로드 중...';btn.disabled=true;status.textContent='';setSyncStatus('syncing');
@@ -658,10 +1087,65 @@ async function uploadJournal(){
     const body={message:`일지: ${author} ${dateStr}`,content:btoa(unescape(encodeURIComponent(content))),branch:'main'};
     if(sha)body.sha=sha;
     const putRes=await fetch(`https://api.github.com/repos/designhadam-commits/hadam-cloud/contents/${apiPath}`,{method:'PUT',headers:{'Authorization':`token ${token}`,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify(body)});
-    if(putRes.ok){status.textContent='✅ 업로드 완료! 오늘 저녁 9시에 자동 분석됩니다.';status.style.color='var(--green)';setSyncStatus('ok');}
+    if(putRes.ok){status.textContent='✅ 업로드 완료! 오늘 저녁 9시에 자동 분석됩니다.';status.style.color='var(--green)';setSyncStatus('ok');try{notesTree=null;refreshJournalCount();renderJnlUploaded();}catch(e){}}
     else{const err=await putRes.json();throw new Error(err.message||'업로드 실패');}
   }catch(e){status.textContent='❌ '+e.message;status.style.color='var(--red)';setSyncStatus('err');}
   finally{btn.textContent='☁️ hadam-cloud에 업로드';btn.disabled=false;}
+}
+
+function fileToB64(file){return new Promise(function(res,rej){var r=new FileReader();r.onload=function(){var s=r.result;res(s.substring(s.indexOf(',')+1));};r.onerror=rej;r.readAsDataURL(file);});}
+function compressImageToB64(file,maxDim,quality){return new Promise(function(res,rej){var url=URL.createObjectURL(file);var img=new Image();img.onload=function(){try{var w=img.naturalWidth,h=img.naturalHeight;var scale=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;cv.getContext('2d').drawImage(img,0,0,cw,ch);var du=cv.toDataURL('image/jpeg',quality);URL.revokeObjectURL(url);res(du.substring(du.indexOf(',')+1));}catch(e){URL.revokeObjectURL(url);rej(e);}};img.onerror=function(e){URL.revokeObjectURL(url);rej(e);};img.src=url;});}
+function isCompressibleImg(name){return /\.(jpe?g|png|webp|bmp)$/i.test(name);}
+function jnlDateFromName(name){var m=name.match(/(20\d{2})[-.]?(\d{2})[-.]?(\d{2})/);if(!m)return null;var mm=+m[2],dd=+m[3];if(mm<1||mm>12||dd<1||dd>31)return null;return m[1]+m[2]+m[3];}
+async function uploadJnlFiles(){
+  var token=localStorage.getItem('gh_pat');if(!token){openModal('settings-modal');return;}
+  var inp=document.getElementById('jnl-files'),files=inp.files;
+  if(!files||!files.length){alert('파일을 선택하세요');return;}
+  var author=jnlActiveMember||getMembers()[0]||'나';
+  var _tdv=document.getElementById('jnl-target-date');var selDate=(_tdv&&_tdv.value)?_tdv.value.replace(/-/g,''):tdCompact();
+  var btn=document.getElementById('jnl-files-btn'),status=document.getElementById('jnl-files-status'),list=document.getElementById('jnl-files-list');
+  btn.disabled=true;btn.textContent='업로드 중...';status.textContent='';var ok=0,fail=0,links=[];
+  for(var i=0;i<files.length;i++){var f=files[i];
+    try{
+      var dateForFile=jnlDateFromName(f.name)||selDate;
+      var isImg=/\.(jpe?g|png|gif|webp|heic)$/i.test(f.name);
+      var safe=f.name.replace(/[^\w.\-가-힣 ]/g,'_').replace(/\s+/g,' ').trim();
+      var b64;
+      if(isCompressibleImg(f.name)){try{b64=await compressImageToB64(f,1600,0.72);safe=safe.replace(/\.[^.]+$/,'')+'.jpg';}catch(e){b64=await fileToB64(f);}}
+      else{if(f.size>9*1024*1024){fail++;links.push('<div style="font-size:12px;color:var(--red)">⚠️ '+ghEsc(f.name)+' — 9MB 초과로 건너뜀</div>');continue;}b64=await fileToB64(f);}
+      var path=isImg?('daily/'+dateForFile+'/files/'+author+'-'+safe):('daily/'+dateForFile+'/'+safe);
+      var url='https://api.github.com/repos/designhadam-commits/hadam-cloud/contents/'+encodeURI(path);
+      var sha=null;try{var g=await fetch(url+'?ref=main',{headers:{'Authorization':'token '+token,'Accept':'application/vnd.github+json'}});if(g.ok)sha=(await g.json()).sha;}catch(_){}
+      var body={message:'일지 업로드: '+f.name+' ('+dateForFile+')',content:b64,branch:'main'};if(sha)body.sha=sha;
+      var r=await fetch(url,{method:'PUT',headers:{'Authorization':'token '+token,'Accept':'application/vnd.github+json','Content-Type':'application/json'},body:JSON.stringify(body)});
+      if(r.ok){ok++;var d=await r.json();links.push('<a href="'+((d.content&&d.content.html_url)||'#')+'" target="_blank" style="color:var(--blue);font-size:12px;display:block;padding:2px 0">📎 '+ghEsc(dateForFile)+' › '+ghEsc(f.name)+'</a>');}
+      else{fail++;var e=await r.json();links.push('<div style="font-size:12px;color:var(--red)">❌ '+ghEsc(f.name)+' — '+ghEsc((e&&e.message)||'실패')+'</div>');}
+    }catch(err){fail++;links.push('<div style="font-size:12px;color:var(--red)">❌ '+ghEsc(f.name)+'</div>');}
+  }
+  btn.disabled=false;btn.textContent='📎 파일 업로드';inp.value='';
+  status.textContent='✅ '+ok+'개 저장'+(fail?' / ❌ '+fail+'개 실패':'');status.style.color=fail?'var(--red)':'var(--green)';
+  list.innerHTML=links.join('');
+  try{notesTree=null;renderJnlUploaded();refreshJournalCount();}catch(e){}
+}
+async function renderJnlUploaded(){
+  var el=document.getElementById('jnl-uploaded');if(!el)return;
+  if(!localStorage.getItem('gh_pat')){el.innerHTML='';return;}
+  el.innerHTML='<div class="sec-label">📋 올라온 업무일지</div><div style="font-size:11px;color:var(--dim)">불러오는 중…</div>';
+  try{
+    var tree=await loadNotesTree(true);
+    var items=[];
+    tree.forEach(function(t){var m=t.path.match(/^daily\/(\d{8})\/([^\/]+)\.md$/);if(m)items.push({date:m[1],name:m[2],path:t.path});});
+    items.sort(function(a,b){return b.date.localeCompare(a.date)||a.name.localeCompare(b.name);});
+    items=items.slice(0,40);
+    el.innerHTML='<div class="sec-label">📋 올라온 업무일지 <span style="font-weight:400;color:var(--dim);font-size:11px">'+items.length+'건</span></div>'+(items.length?'<div class="gh-list">'+items.map(function(it){var dd=it.date.slice(0,4)+'-'+it.date.slice(4,6)+'-'+it.date.slice(6,8);return '<div class="gh-row" onclick="jnlViewUploaded(\''+encodeURIComponent(it.path)+'\')"><span class="gh-name" style="flex:1">📝 '+dd+' · '+ghEsc(it.name)+'</span><span class="gh-sub">보기 ›</span></div>';}).join('')+'</div>':'<div class="gh-need">아직 올라온 일지가 없습니다.</div>');
+  }catch(e){el.innerHTML='<div class="sec-label">📋 올라온 업무일지</div><div class="gh-need">'+((e&&e.message)||e)+'</div>';}
+}
+async function jnlViewUploaded(pathEnc){
+  var path=decodeURIComponent(pathEnc);var el=document.getElementById('jnl-uploaded');if(!el)return;
+  el.innerHTML='<div style="font-size:11px;color:var(--dim)">불러오는 중…</div>';
+  try{var txt=await ghText('hadam-cloud',path);
+    el.innerHTML='<button class="gh-back" onclick="renderJnlUploaded()">‹ 목록</button><div class="gh-post"><h4>📝 '+ghEsc(path.replace(/^daily\//,'').replace(/\.md$/,''))+'</h4><pre style="white-space:pre-wrap;max-height:360px;overflow:auto">'+ghEsc(txt)+'</pre></div>';
+  }catch(e){el.innerHTML=ghErr(e);}
 }
 
 function getMembers(){return G('members').length?G('members'):['나']}
@@ -674,7 +1158,19 @@ async function addChk(){const v=document.getElementById('chk-inp').value.trim(),
 async function togChk(id){const a=G('chk'),i=a.findIndex(x=>x.id===id);if(i>-1)a[i].done=!a[i].done;await S('chk',a);renderChk();statChk();}
 async function delChk(id){await S('chk',G('chk').filter(x=>x.id!==id));renderChk();statChk();}
 function renderChk(){const a=G('chk'),el=document.getElementById('chk-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">📋</div>할일이 없습니다</div>';return;}const PC={'긴급':'badge-red','중요':'badge-orange','보통':'badge-dim'};el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="chk-item${x.done?' done':''}"><input type="checkbox" ${x.done?'checked':''} onchange="togChk(${x.id})"><label class="chk-label" onclick="togChk(${x.id})">${x.text}</label><span class="badge ${PC[x.priority]||'badge-dim'}">${x.priority||'보통'}</span><button class="del" onclick="delChk(${x.id})">×</button></div>`).join('')+'</div>';}
-function statChk(){const a=G('chk'),done=a.filter(x=>x.done).length,total=a.length,pct=total?Math.round(done/total*100):0;document.getElementById('sv-chk').textContent=total-done;document.getElementById('sv-chk-bar').style.width=pct+'%';document.getElementById('sv-chk-sub').textContent=`완료 ${done}건 / ${total}건`;document.getElementById('fc-chk').innerHTML=`전체 <span class="cnt">${total}건</span> 완료 <span class="gcnt">${done}</span>`;}
+function statChk(){
+  var done=0,total=0;
+  if(CHKSTATE&&Array.isArray(CHKSTATE.dailySecs)){
+    var ts=(function(){var d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();})();
+    var daily=(CHKSTATE.dailyDate===ts)?(CHKSTATE.daily||{}):{};
+    CHKSTATE.dailySecs.forEach(function(sec,si){(sec.items||[]).forEach(function(it,ii){total++;var key=(sec.id||String(si))+'_'+ii;if(daily[key])done++;});});
+  }else{var a=G('chk');done=a.filter(x=>x.done).length;total=a.length;}
+  var pct=total?Math.round(done/total*100):0;
+  document.getElementById('sv-chk').textContent=total-done;
+  document.getElementById('sv-chk-bar').style.width=pct+'%';
+  document.getElementById('sv-chk-sub').textContent='완료 '+done+'건 / '+total+'건';
+  document.getElementById('fc-chk').innerHTML='오늘 <span class="cnt">'+total+'건</span> 완료 <span class="gcnt">'+done+'</span>';
+}
 
 let jnlActiveMember='';
 function renderJnlMemberChips(){const members=getMembers();if(!jnlActiveMember||!members.includes(jnlActiveMember))jnlActiveMember=members[0];document.getElementById('jnl-member-chips').innerHTML=members.map(m=>`<div class="member-chip${m===jnlActiveMember?' active':''}" onclick="setJnlMember('${m}')">${m}</div>`).join('');}
@@ -682,7 +1178,7 @@ function setJnlMember(m){jnlActiveMember=m;renderJnlMemberChips();renderJnl();lo
 async function addJnl(){const v=document.getElementById('jnl-inp').value.trim(),dt=document.getElementById('jnl-date').value||td();if(!v)return;const a=G('jnl');a.unshift({id:Date.now(),text:v,date:dt,member:jnlActiveMember||'나'});await S('jnl',a);document.getElementById('jnl-inp').value='';renderJnl();statJnl();}
 async function delJnl(id){await S('jnl',G('jnl').filter(x=>x.id!==id));renderJnl();statJnl();}
 function renderJnl(){const a=G('jnl'),el=document.getElementById('jnl-list');const filtered=jnlActiveMember?a.filter(x=>x.member===jnlActiveMember):a;if(!filtered.length){el.innerHTML='<div class="empty"><div class="ei">📓</div>메모가 없습니다</div>';return;}el.innerHTML=filtered.map(x=>`<div class="jnl-item"><div class="jnl-meta"><span class="jnl-date">${x.date}</span><span class="jnl-member">${x.member||'나'}</span><button class="del" onclick="delJnl(${x.id})" style="margin-left:auto">×</button></div><div class="jnl-txt">${x.text}</div></div>`).join('');}
-function statJnl(){const a=G('jnl'),ym=td().slice(0,7),mo=a.filter(x=>x.date&&x.date.startsWith(ym)).length;document.getElementById('sv-jnl').textContent=mo;document.getElementById('fc-jnl').innerHTML=`이번 달 <span class="cnt">${mo}건</span> 전체 <span class="cnt">${a.length}</span>`;}
+function statJnl(){const a=G('jnl'),ym=td().slice(0,7),memo=a.filter(x=>x.date&&x.date.startsWith(ym)).length;var days=(JNLCOUNT!=null)?JNLCOUNT:0;document.getElementById('sv-jnl').textContent=days;document.getElementById('fc-jnl').innerHTML=`이번 달 <span class="cnt">${days}일 작성</span> 메모 <span class="cnt">${memo}</span>`;}
 
 async function addIns(){const cap=document.getElementById('ins-cap').value.trim(),st=document.getElementById('ins-status').value,img=document.getElementById('ins-img').value.trim();if(!cap)return;const a=G('ins');a.unshift({id:Date.now(),cap,status:st,img,date:td()});await S('ins',a);document.getElementById('ins-cap').value='';document.getElementById('ins-img').value='';renderIns();renderInsGrid();statIns();}
 async function delIns(id){await S('ins',G('ins').filter(x=>x.id!==id));renderIns();renderInsGrid();statIns();}
@@ -706,7 +1202,41 @@ function statInv(){document.getElementById('fc-inv').innerHTML=`전체 <span cla
 let calY,calM,calSelectedDate=null;
 function calSelectDate(date){calSelectedDate=calSelectedDate===date?null:date;renderCal();}
 async function saveCalEv(){const title=document.getElementById('cal-ev-inp')?.value.trim();if(!title||!calSelectedDate)return;const a=G('cal-events');a.push({id:Date.now(),date:calSelectedDate,title});await S('cal-events',a);calSelectedDate=null;renderCal();}
-function renderCal(){const now=new Date();if(!calY){calY=now.getFullYear();calM=now.getMonth();}const events=G('cal-events'),first=new Date(calY,calM,1).getDay(),days=new Date(calY,calM+1,0).getDate();const today=now.getDate(),isThis=calY===now.getFullYear()&&calM===now.getMonth();const ym=`${calY}-${String(calM+1).padStart(2,'0')}`;let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px"><button class="btn" onclick="calNav(-1)">←</button><span style="font-size:15px;font-weight:700">${calY}년 ${calM+1}월</span><button class="btn" onclick="calNav(1)">→</button></div><div class="cal-grid" style="margin-bottom:6px">${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="cal-day-name" style="color:${i===0?'#f87171':i===6?'#60a5fa':'var(--muted)'}">${d}</div>`).join('')}</div><div class="cal-grid">${'<div></div>'.repeat(first)}${Array.from({length:days},(_,i)=>{const day=i+1,isToday=isThis&&day===today;const evKey=`${calY}-${String(calM+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;const hasEv=events.some(e=>e.date===evKey),isSelected=evKey===calSelectedDate;return`<div class="cal-day ${isToday?'today':''} ${hasEv?'has-event':''} ${isSelected?'selected':''}" onclick="calSelectDate('${evKey}')">${day}</div>`;}).join('')}</div>`;if(calSelectedDate)html+=`<div class="cal-add-form"><div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div></div>`;const thisEvs=events.filter(e=>e.date.startsWith(ym));if(thisEvs.length)html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:75px">${e.date}</span><span class="item-txt">${e.title}</span><button class="del" onclick="delCalEv(${e.id})">×</button></div>`).join('')}</div></div>`;document.getElementById('cal-bd').innerHTML=html;document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;}
+const SITE_PALETTE=['#3182f6','#15c47e','#ff9f43','#a855f7','#f04452','#06b6d4','#eab308','#ec4899'];
+function siteColor(s){let h=0;for(let i=0;i<(s||'').length;i++)h=(h*31+s.charCodeAt(i))>>>0;return SITE_PALETTE[h%SITE_PALETTE.length];}
+function renderCal(){
+  const now=new Date();if(!calY){calY=now.getFullYear();calM=now.getMonth();}
+  const pad=n=>String(n).padStart(2,'0');
+  const ym=`${calY}-${pad(calM+1)}`;
+  const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+  const proc=(G('process')||[]).filter(function(p){return p.date;}),manual=G('cal-events');
+  // 공정은 시작일~종료일 기간만큼 막대로 표시
+  const spans=[];
+  proc.forEach(function(e){var end=(e.end&&e.end>=e.date)?e.end:e.date;spans.push({start:e.date,end:end,label:e.site+'·'+e.stage+(e.manager?' ('+e.manager+')':''),color:siteColor(e.site)});});
+  manual.forEach(e=>spans.push({start:e.date,end:e.date,label:e.title,color:'#3182f6',id:e.id}));
+  // 격자
+  const startDay=new Date(calY,calM,1).getDay(),daysIn=new Date(calY,calM+1,0).getDate();
+  const cells=[];for(let i=0;i<startDay;i++)cells.push(null);for(let d=1;d<=daysIn;d++)cells.push({day:d,date:`${calY}-${pad(calM+1)}-${pad(d)}`});while(cells.length%7)cells.push(null);
+  const weeks=[];for(let i=0;i<cells.length;i+=7)weeks.push(cells.slice(i,i+7));
+  let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><button class="btn" onclick="calNav(-1)">←</button><span style="font-size:15px;font-weight:700">${calY}년 ${calM+1}월</span><button class="btn" onclick="calNav(1)">→</button></div>`;
+  html+=`<div class="cal-grid">${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="cal-day-name" style="color:${i===0?'#f87171':i===6?'#60a5fa':'var(--muted)'}">${d}</div>`).join('')}</div>`;
+  const MAXLANE=4;
+  weeks.forEach(week=>{
+    const real=week.filter(Boolean);if(!real.length)return;
+    const wStart=real[0].date,wEnd=real[real.length-1].date,firstCol=week.findIndex(Boolean),lastCol=6-[...week].reverse().findIndex(Boolean);
+    const ws=spans.filter(s=>s.end>=wStart&&s.start<=wEnd).map(s=>{let sc=week.findIndex(c=>c&&c.date===s.start),ec=week.findIndex(c=>c&&c.date===s.end);if(s.start<wStart)sc=firstCol;if(s.end>wEnd)ec=lastCol;if(sc<0)sc=firstCol;if(ec<0)ec=lastCol;return Object.assign({},s,{sc,ec});}).sort((a,b)=>a.sc-b.sc||(b.ec-b.sc)-(a.ec-a.sc));
+    const lanes=[];ws.forEach(s=>{let L=0;while(lanes[L]&&lanes[L].some(o=>!(s.ec<o.sc||s.sc>o.ec)))L++;(lanes[L]=lanes[L]||[]).push(s);});
+    html+='<div class="cal-week"><div class="cal-grid cal-dnum-row">'+week.map(c=>c?`<div class="cal-dcell ${c.date===todayStr?'today':''} ${c.date===calSelectedDate?'selected':''}" onclick="calSelectDate('${c.date}')"><span class="cal-dnum">${c.day}</span></div>`:'<div></div>').join('')+'</div>';
+    for(let L=0;L<Math.min(lanes.length,MAXLANE);L++)html+='<div class="cal-grid cal-lane">'+lanes[L].map(s=>`<span class="cal-bar2" style="grid-column:${s.sc+1}/${s.ec+2};background:${s.color}" title="${ghEsc(s.label)} (${s.start.slice(5)}${s.end!==s.start?'~'+s.end.slice(5):''})">${ghEsc(s.label)}</span>`).join('')+'</div>';
+    if(lanes.length>MAXLANE){const extra={};for(let L=MAXLANE;L<lanes.length;L++)lanes[L].forEach(s=>{for(let c=s.sc;c<=s.ec;c++)extra[c]=(extra[c]||0)+1;});html+='<div class="cal-grid cal-lane">'+week.map((c,ci)=>extra[ci]?`<span class="cal-more" style="grid-column:${ci+1}/${ci+2}">+${extra[ci]}</span>`:'').join('')+'</div>';}
+    html+='</div>';
+  });
+  if(calSelectedDate)html+=`<div class="cal-add-form"><div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div></div>`;
+  const allEv=manual.map(e=>({date:e.date,title:e.title,id:e.id,_proc:false})).concat(proc.map(p=>({date:p.date,title:p.site+'·'+p.stage+(p.manager?' ('+p.manager+')':''),_proc:true})));
+  const thisEvs=allEv.filter(e=>e.date.startsWith(ym)).sort((a,b)=>a.date.localeCompare(b.date));
+  if(thisEvs.length)html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:62px">${e.date.slice(5)}</span><span class="item-txt">${e._proc?'🏗️ ':''}${e.title}</span>${e._proc?'<span style="font-size:10px;color:var(--blue);flex-shrink:0">공정</span>':`<button class="del" onclick="delCalEv(${e.id})">×</button>`}</div>`).join('')}</div></div>`;
+  document.getElementById('cal-bd').innerHTML=html;const fc=document.getElementById('fc-cal');if(fc)fc.innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;
+}
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--;}else if(calM>11){calM=0;calY++;}renderCal();}
 async function delCalEv(id){await S('cal-events',G('cal-events').filter(x=>x.id!==id));renderCal();}
 
@@ -714,8 +1244,77 @@ const STAGES=['가구배치','철거','설비','목공','도장','바닥','타�
 async function addSite(){const n=document.getElementById('con-name').value.trim();if(!n)return;const a=G('sites');a.unshift({id:Date.now(),name:n,stages:[]});await S('sites',a);document.getElementById('con-name').value='';renderCon();statCon();}
 async function togStage(siteId,stage){const a=G('sites'),i=a.findIndex(x=>x.id===siteId);if(i<0)return;const s=a[i].stages,si=s.indexOf(stage);si>-1?s.splice(si,1):s.push(stage);await S('sites',a);renderCon();statCon();}
 async function delSite(id){await S('sites',G('sites').filter(x=>x.id!==id));renderCon();statCon();}
-function renderCon(){const a=G('sites'),el=document.getElementById('con-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🏗️</div>등록된 현장이 없습니다</div>';return;}el.innerHTML=a.map(site=>{const pct=Math.round(site.stages.length/STAGES.length*100);return`<div class="site-card"><div class="site-hd"><span class="site-name">${site.name}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--muted)">${pct}%</span><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;}).join('');}
-function statCon(){const a=G('sites'),prog=a.filter(x=>x.stages.length>0&&x.stages.length<STAGES.length).length;document.getElementById('fc-con').innerHTML=`현장 <span class="cnt">${a.length}개</span> 진행중 <span class="cnt">${prog}</span>`;}
+function renderCon(){const a=G('sites'),el=document.getElementById('con-list');let html='';
+  if(a.length)html+=a.map(site=>{const pct=Math.round(site.stages.length/STAGES.length*100);return`<div class="site-card"><div class="site-hd"><span class="site-name">${ghEsc(site.name)}</span><div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--muted)">${pct}%</span><button class="del" onclick="delSite(${site.id})">×</button></div></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%"></div></div><div class="stages">${STAGES.map(s=>`<button class="stage ${site.stages.includes(s)?'done-s':'pend-s'}" onclick="togStage(${site.id},'${s}')">${s}</button>`).join('')}</div></div>`;}).join('');
+  const proc=G('process');
+  if(proc.length){const today=td();const sites=[...new Set(proc.map(p=>p.site))].sort();
+    html+='<div class="sec-label" style="margin:'+(a.length?'18px':'2px')+' 0 8px">📐 공정 진행 현황 <span style="font-weight:400;color:var(--dim);font-size:11px">(공정과정 기반)</span></div>';
+    html+=sites.map(s=>{const items=proc.filter(p=>p.site===s).sort((x,y)=>x.date.localeCompare(y.date));const done=items.filter(p=>p.date<=today).length;const pct=Math.round(done/items.length*100);const cur=items.filter(p=>p.date<=today).slice(-1)[0];const nxt=items.find(p=>p.date>today);const col=siteColor(s);return`<div class="site-card" onclick="procView='site';openModal('proc-modal')" style="cursor:pointer"><div class="site-hd"><span class="site-name"><span style="display:inline-block;width:9px;height:9px;border-radius:50%;background:${col};margin-right:6px"></span>${ghEsc(s)}</span><span style="font-size:11px;color:var(--muted)">${pct}% · ${done}/${items.length}</span></div><div class="site-prog"><div class="site-prog-fill" style="width:${pct}%;background:${col}"></div></div><div style="font-size:11px;color:var(--muted);margin-top:7px;line-height:1.7">${cur?`최근 <b style="color:var(--text)">${ghEsc(cur.stage)}</b> (${cur.date.slice(5)})`:'시작 전'}${nxt?` · 다음 <b style="color:var(--blue)">${ghEsc(nxt.stage)}</b> (${nxt.date.slice(5)})`:' · ✅ 완료'}</div></div>`;}).join('');
+  }
+  el.innerHTML=html||'<div class="empty"><div class="ei">🏗️</div>등록된 현장이 없습니다</div>';
+}
+function statCon(){const manual=G('sites'),proc=G('process'),today=td();const procSites=[...new Set(proc.map(p=>p.site))];const total=new Set([...manual.map(s=>s.name),...procSites]).size;const prog=procSites.filter(s=>{const items=proc.filter(p=>p.site===s);const done=items.filter(p=>p.date<=today).length;return done>0&&done<items.length;}).length;document.getElementById('fc-con').innerHTML=`현장 <span class="cnt">${total}개</span> 진행중 <span class="cnt">${prog}</span>`;}
+
+// ── 공정과정 (현장별 단계·날짜, 캘린더 자동 표시) ──
+const PROC_STAGES=['전체철거','마루철거','설비공사','전기기초','목공사','타일공사','필름공사','도배공사','마루공사','가구공사','도장공사','창호공사','데코타일','시스템에어컨','도기셋팅','욕실돔/탄성','문짝/조명','덕트마감','실리콘마감','기타마감','준공청소'];
+const DEFAULT_PROCESS=['전체철거','설비공사','전기기초','목공사','타일공사','도장공사','필름공사','도배공사','마루공사','가구공사','조명/문짝','준공청소'];
+function procRow(p){
+  var e=function(s){return (s||'').replace(/"/g,'&quot;');};
+  return '<div class="proc-row">'
+    +'<span class="proc-stage" style="flex:1.1;min-width:0">'+ghEsc(p.stage)+'</span>'
+    +'<input class="inp" type="date" title="시작일" value="'+(p.date||'')+'" onchange="procField('+p.id+',\'date\',this.value)" style="max-width:160px">'
+    +'<span style="color:var(--muted);flex-shrink:0">~</span>'
+    +'<input class="inp" type="date" title="종료일" value="'+(p.end||'')+'" onchange="procField('+p.id+',\'end\',this.value)" style="max-width:160px">'
+    +'<input class="inp" value="'+e(p.manager)+'" placeholder="담당자" onchange="procField('+p.id+',\'manager\',this.value)" style="max-width:120px">'
+    +'<button class="del" title="삭제" onclick="procDel('+p.id+')">×</button>'
+    +'</div>';
+}
+function procField(id,field,val){
+  var a=G('process').slice();var i=a.findIndex(function(x){return x.id===id;});if(i<0)return;
+  var o={};o[field]=val;a[i]=Object.assign({},a[i],o);
+  S('process',a).then(function(){try{if(document.getElementById('cal-bd'))renderCal();statCon();}catch(e){}});
+}
+function renderProc(){
+  const proc=G('process');
+  const siteSet=new Set(G('sites').map(s=>s.name).filter(Boolean));proc.forEach(p=>siteSet.add(p.site));
+  const sites=[...siteSet];const today=td();
+  let html='<div class="auto-bar"><input class="inp" id="proc-newsite" placeholder="새 현장명 입력 (예: 해운대 자이)" style="max-width:260px" onkeydown="if(event.key===\'Enter\')procAddSite()"><button class="btn btn-g" onclick="procAddSite()">+ 현장 추가</button><span class="auto-hint">현장 추가 시 표준 공정이 자동 생성됩니다 · 날짜 입력하면 캘린더 자동 반영 · 현장 '+sites.length+'곳</span></div>';
+  if(!sites.length){html+='<div class="gh-need">현장을 추가하면 표준 공정과정이 자동으로 만들어집니다. 각 칸에 날짜·담당자만 채우세요.</div>';}
+  else html+=sites.map(function(s){
+    const items=proc.filter(p=>p.site===s).sort((a,b)=>(a.date||'~').localeCompare(b.date||'~'));
+    const dated=items.filter(p=>p.date);const done=items.filter(p=>p.date&&p.date<=today).length;const pct=items.length?Math.round(done/items.length*100):0;const col=siteColor(s);
+    return '<div class="proc-site">'
+      +'<div class="proc-sitehd"><span class="proc-sitename"><span style="display:inline-block;width:11px;height:11px;border-radius:50%;background:'+col+';margin-right:8px"></span>'+ghEsc(s)+'</span><span style="font-size:11px;color:var(--muted);margin-left:auto">'+pct+'% · 일정 '+dated.length+'/'+items.length+'</span><button class="del" title="현장 삭제" onclick="procDelSite(\''+encodeURIComponent(s)+'\')">×</button></div>'
+      +(items.length?'<div class="proc-rows">'+items.map(procRow).join('')+'</div>':'')
+      +'<div class="proc-addrow"><input class="inp pa-stage" list="proc-stages" placeholder="공정 직접 추가 (예: 단열공사)"><input class="inp pa-date" type="date" title="시작일"><span style="color:var(--muted);align-self:center">~</span><input class="inp pa-end" type="date" title="종료일"><input class="inp pa-mgr" placeholder="담당자"><button class="btn btn-g" onclick="procAddEntry(\''+encodeURIComponent(s)+'\',this)">+ 추가</button></div>'
+      +'</div>';
+  }).join('');
+  html+='<datalist id="proc-stages">'+PROC_STAGES.map(s=>'<option value="'+s+'">').join('')+'</datalist>';
+  document.getElementById('proc-view').innerHTML=html;
+}
+async function procAddSite(){
+  const inp=document.getElementById('proc-newsite');const name=inp.value.trim();if(!name)return;
+  const sites=G('sites').slice();const proc=G('process').slice();
+  if(sites.some(s=>s.name===name)||proc.some(p=>p.site===name)){inp.value='';renderProc();return;}
+  sites.unshift({id:Date.now(),name:name,stages:[]});
+  const base=Date.now();
+  DEFAULT_PROCESS.forEach(function(st,i){proc.push({id:base+i+1,site:name,stage:st,manager:'',date:'',end:''});});
+  await S('sites',sites);await S('process',proc);
+  inp.value='';renderProc();try{statCon();}catch(e){}
+}
+async function procAddEntry(siteEnc,btn){
+  const site=decodeURIComponent(siteEnc);const card=btn.closest('.proc-site');
+  const stage=card.querySelector('.pa-stage').value.trim(),date=card.querySelector('.pa-date').value,end=card.querySelector('.pa-end').value,mgr=card.querySelector('.pa-mgr').value.trim();
+  if(!stage){alert('공정명을 입력하세요');return;}
+  const a=G('process').slice();a.push({id:Date.now(),site:site,stage:stage,manager:mgr,date:date,end:end});
+  await S('process',a);renderProc();try{if(document.getElementById('cal-bd'))renderCal();statCon();}catch(e){}
+}
+async function procDelSite(siteEnc){
+  const site=decodeURIComponent(siteEnc);if(!confirm('"'+site+'" 현장과 그 공정을 모두 삭제할까요?'))return;
+  await S('sites',G('sites').filter(s=>s.name!==site));await S('process',G('process').filter(p=>p.site!==site));
+  renderProc();try{if(document.getElementById('cal-bd'))renderCal();statCon();}catch(e){}
+}
+async function procDel(id){await S('process',G('process').filter(x=>x.id!==id));renderProc();try{if(document.getElementById('cal-bd'))renderCal();statCon();}catch(e){}}
 
 function genSEO(){const kw=document.getElementById('seo-kw').value.trim(),tone=document.getElementById('seo-tone').value,loc=document.getElementById('seo-loc').value.trim()||'부산';if(!kw)return;const el=document.getElementById('seo-out');el.classList.add('visible');el.textContent='생성 중...';const tm={'전문가':'전문적이고 신뢰감 있는','고객':'실제 고객 경험 기반','친근':'친근하고 공감가는'};setTimeout(()=>{el.textContent=`[${tm[tone]} 화자 · ${kw} · ${loc}]\n\n안녕하세요, 디자인하담입니다 😊\n\n「${kw}」에 대해 꼼꼼하게 알려드릴게요.\n\n✅ 포인트 1\n${kw}에서 가장 중요한 것은 전체적인 밸런스입니다.\n\n✅ 포인트 2\n예산 설정부터 시작하세요. ${loc} 기준 평균 단가를 사전에 파악하세요.\n\n✅ 포인트 3\n시공 전 3D 시뮬레이션으로 후회 없는 결과를 만들어보세요.\n\n디자인하담에서 더 자세한 상담을 받아보세요 🏡\n\n#${kw.replace(/ /g,'')} #${loc}인테리어 #인테리어디자인 #홈인테리어 #디자인하담`;},400);}
 
@@ -758,30 +1357,64 @@ function showImportStatus(type,msg){
 // ── Graph view
 let graphNodes=[],graphEdges=[],graphFilter_='all';
 let graphDrag=null,graphHover=null,graphSelected=null,graphAF=null,graphCanvas=null,graphCtx=null,graphPhysicsOn=true;
-const GRAPH_COLORS={construction:'#60a5fa',calendar:'#4ade80',journal:'#a78bfa',member:'#f472b6'};
-const GRAPH_RADIUS={construction:14,calendar:10,journal:9,member:12};
+const GRAPH_COLORS={project:'#3182f6',customer:'#15c47e',process:'#ff9f43',journal:'#a855f7',member:'#f04452',system:'#6b7684',note:'#8b95a1'};
+const GRAPH_RADIUS={project:15,customer:12,process:10,journal:8,member:13,system:16,note:9};
 
-function buildGraph(){
-  const sites=G('sites'),events=G('cal-events'),journals=G('journal');
-  const members=getMembers?getMembers():[];
-  graphNodes=[];graphEdges=[];
-  const nodeMap={};
-  const addNode=(id,type,label,sub)=>{const n={id,type,label,sub:sub||'',x:0,y:0,vx:0,vy:0,pinned:false};graphNodes.push(n);nodeMap[id]=n;return n;};
-  sites.forEach(s=>addNode('con_'+s.id,'construction',s.name,Math.round((s.stages?.length||0)/10*100)+'%'));
-  events.slice(0,30).forEach(e=>{
-    addNode('cal_'+e.id,'calendar',e.title,e.date);
-    const m=sites.find(s=>e.title&&e.title.includes(s.name.slice(0,3)));
-    if(m)graphEdges.push({a:'con_'+m.id,b:'cal_'+e.id});
+async function buildGraphCloud(){
+  graphNodes=[];graphEdges=[];graphSelected=null;
+  const nm={};
+  const addNode=(id,type,label,sub)=>{if(nm[id])return nm[id];const n={id,type,label,sub:sub||'',x:0,y:0,vx:0,vy:0,pinned:false};graphNodes.push(n);nm[id]=n;return n;};
+  // 1) 레포 트리 → 파일 노드
+  let tree=[];
+  try{const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1',{headers:ghHeaders()});const j=await r.json();tree=(j.tree||[]).filter(t=>t.type==='blob'&&/\.md$/.test(t.path));}catch(e){}
+  function ftype(path){
+    if(path.indexOf('프로젝트/')===0)return 'project';
+    if(path.indexOf('고객-상담/')===0)return 'customer';
+    if(path.indexOf('견적-계약/')===0)return 'process';
+    if(path.indexOf('daily/')===0)return 'journal';
+    if(path.indexOf('_system/')===0)return 'system';
+    return 'note';
+  }
+  tree.forEach(t=>{if(/README\.md$/.test(t.path))return;const type=ftype(t.path);if(type==='system')return;const name=t.path.split('/').pop().replace(/\.md$/,'');addNode('f:'+t.path,type,name,'');});
+  const projNodes=()=>graphNodes.filter(n=>n.type==='project');
+  // 2) 인덱스 표 파싱 → 프로젝트 상태 + 담당자 연결
+  let idx='';try{idx=await ghText('hadam-cloud','_system/index.md');}catch(e){}
+  var inProj=false;
+  idx.split('\n').forEach(line=>{
+    if(line.indexOf('|')!==0){inProj=false;return;}
+    const cols=line.split('|').map(c=>c.trim());
+    const c1=cols[1]||'';
+    if(c1==='현장명'||(cols[3]||'')==='담당'){inProj=true;return;} // 프로젝트 표 헤더
+    if(/^-+$/.test(c1))return;
+    if(!inProj)return; // 결제내역 등 다른 표는 무시 (담당자 오인 방지)
+    const site=c1,status=cols[2]||'',dam=cols[3]||'';
+    if(!site)return;
+    const key=site.replace(/\s/g,'').slice(0,4);
+    const pn=projNodes().find(n=>{const nl=n.label.replace(/\s/g,'');return nl.indexOf(key)>=0||site.replace(/\s/g,'').indexOf(nl.slice(0,4))>=0;});
+    const names=dam.split(/[·,\/]/).map(s=>s.trim()).filter(s=>/^[가-힣]{2,4}$/.test(s));
+    if(pn){if(status)pn.sub=status;names.forEach(nme=>{const pid='p:'+nme;addNode(pid,'member',nme,'팀원');graphEdges.push({a:pn.id,b:pid});});}
   });
-  journals.slice(0,20).forEach(j=>{
-    addNode('jnl_'+j.id,'journal',j.title||'일지',j.member||'');
-    const ms=sites.find(s=>j.title&&j.title.includes(s.name.slice(0,3)));
-    if(ms)graphEdges.push({a:'con_'+ms.id,b:'jnl_'+j.id});
-    if(j.member){const mid='mbr_'+j.member;if(!nodeMap[mid])addNode(mid,'member',j.member,'팀원');graphEdges.push({a:mid,b:'jnl_'+j.id});}
+  // 앱 멤버도 노드로
+  (getMembers()||[]).forEach(nme=>{if(/^[가-힣]{2,4}$/.test(nme))addNode('p:'+nme,'member',nme,'팀원');});
+  // 3) 일지(daily/날짜/작성자.md) → 작성자 연결
+  graphNodes.filter(n=>n.type==='journal').forEach(jn=>{
+    const parts=jn.id.slice(2).split('/');const date=parts[1]||'';const author=(parts[2]||'').replace(/\.md$/,'');
+    jn.label=(author||'일지')+' '+date;jn.sub=date;
+    if(/^[가-힣]{2,4}$/.test(author)){const pid='p:'+author;addNode(pid,'member',author,'팀원');graphEdges.push({a:pid,b:jn.id});}
   });
-  graphEdges=graphEdges.filter(e=>nodeMap[e.a]&&nodeMap[e.b]);
+  // 4) 인덱스 허브 → 모든 프로젝트
+  const idxNode=nm['f:_system/index.md'];
+  if(idxNode)projNodes().forEach(pn=>graphEdges.push({a:idxNode.id,b:pn.id}));
+  // 5) 고객 ↔ 프로젝트 (이름 토큰 매칭)
+  graphNodes.filter(n=>n.type==='customer').forEach(cn=>{
+    const tok=cn.label.replace(/[0-9동호\-\s]/g,'').slice(0,3);
+    if(tok.length<2)return;
+    const pn=projNodes().find(n=>n.label.replace(/\s/g,'').indexOf(tok)>=0);
+    if(pn)graphEdges.push({a:cn.id,b:pn.id});
+  });
+  graphEdges=graphEdges.filter(e=>nm[e.a]&&nm[e.b]);
   const cx=graphCanvas.width/2,cy=graphCanvas.height/2,r=Math.min(cx,cy)*0.7;
-  graphNodes.forEach((n,i)=>{const a=(i/graphNodes.length)*Math.PI*2;n.x=cx+r*Math.cos(a)*(0.5+Math.random()*0.5);n.y=cy+r*Math.sin(a)*(0.5+Math.random()*0.5);});
+  graphNodes.forEach((n,i)=>{const a=(i/Math.max(1,graphNodes.length))*Math.PI*2;n.x=cx+r*Math.cos(a)*(0.5+Math.random()*0.5);n.y=cy+r*Math.sin(a)*(0.5+Math.random()*0.5);});
 }
 
 function graphFilter(f){
@@ -817,37 +1450,133 @@ function drawGraph(){
   const nodes=graphNodes.filter(n=>visible.has(n.id));
   const edges=graphEdges.filter(e=>visible.has(e.a)&&visible.has(e.b));
   const nm={};nodes.forEach(n=>nm[n.id]=n);
-  ctx.clearRect(0,0,W,H);ctx.fillStyle='#0a0a0a';ctx.fillRect(0,0,W,H);
-  edges.forEach(e=>{const a=nm[e.a],b=nm[e.b];if(!a||!b)return;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=a===graphSelected||b===graphSelected?'rgba(255,255,255,0.4)':'#eef1f4';ctx.lineWidth=a===graphSelected||b===graphSelected?1.5:0.8;ctx.stroke();});
-  nodes.forEach(n=>{const r=GRAPH_RADIUS[n.type]||10,col=GRAPH_COLORS[n.type]||'#888',isHov=n===graphHover,isSel=n===graphSelected;if(isSel){ctx.beginPath();ctx.arc(n.x,n.y,r+8,0,Math.PI*2);ctx.fillStyle=col+'22';ctx.fill();}ctx.beginPath();ctx.arc(n.x,n.y,isHov?r+3:r,0,Math.PI*2);ctx.fillStyle=isSel?col:isHov?col+'cc':col+'99';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=isSel?2:1;ctx.stroke();if(isHov||isSel||nodes.length<30){ctx.fillStyle=isHov||isSel?'#fff':'rgba(255,255,255,0.6)';ctx.font=isSel?'600 11px sans-serif':'10px sans-serif';ctx.textAlign='center';const label=n.label.length>12?n.label.slice(0,11)+'…':n.label;ctx.fillText(label,n.x,n.y+r+13);}});
+  ctx.clearRect(0,0,W,H);ctx.fillStyle='#f7f8fa';ctx.fillRect(0,0,W,H);
+  edges.forEach(e=>{const a=nm[e.a],b=nm[e.b];if(!a||!b)return;const hot=a===graphSelected||b===graphSelected;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=hot?'rgba(49,130,246,0.55)':'rgba(120,130,140,0.22)';ctx.lineWidth=hot?1.6:0.8;ctx.stroke();});
+  nodes.forEach(n=>{const r=GRAPH_RADIUS[n.type]||10,col=GRAPH_COLORS[n.type]||'#888',isHov=n===graphHover,isSel=n===graphSelected;if(isSel){ctx.beginPath();ctx.arc(n.x,n.y,r+8,0,Math.PI*2);ctx.fillStyle=col+'22';ctx.fill();}ctx.beginPath();ctx.arc(n.x,n.y,isHov?r+3:r,0,Math.PI*2);ctx.fillStyle=isSel?col:isHov?col+'dd':col+'cc';ctx.fill();ctx.strokeStyle=col;ctx.lineWidth=isSel?2:1;ctx.stroke();if(isHov||isSel||n.type!=='journal'){ctx.fillStyle=isHov||isSel?'#191f28':'rgba(25,31,40,0.72)';ctx.font=(isHov||isSel)?'700 12px sans-serif':'600 11px sans-serif';ctx.textAlign='center';const label=n.label.length>16?n.label.slice(0,15)+'…':n.label;ctx.fillText(label,n.x,n.y+r+14);}});
 }
 
 function graphLoop(){if(graphPhysicsOn)runGraphPhysics();drawGraph();graphAF=requestAnimationFrame(graphLoop);}
 
-function startGraph(){
+async function startGraph(){
   graphCanvas=document.getElementById('graph-canvas');
   graphCtx=graphCanvas.getContext('2d');
   const rect=graphCanvas.parentElement.getBoundingClientRect();
   graphCanvas.width=Math.floor(rect.width)||700;
-  graphCanvas.height=480;
-  buildGraph();
+  graphCanvas.height=Math.max(560,Math.floor(window.innerHeight-210));
+  const W=graphCanvas.width,H=graphCanvas.height;
+  graphCtx.fillStyle='#f7f8fa';graphCtx.fillRect(0,0,W,H);
+  graphCtx.fillStyle='#6b7684';graphCtx.font='13px sans-serif';graphCtx.textAlign='center';
+  graphCtx.fillText(localStorage.getItem('gh_pat')?'지식그래프 불러오는 중…':'GitHub 토큰(PAT)이 필요합니다 — 🔑 시크릿 키에서 입력',W/2,H/2);
+  if(!localStorage.getItem('gh_pat'))return;
+  await buildGraphCloud();
   if(graphAF)cancelAnimationFrame(graphAF);
   graphPhysicsOn=true;
   graphLoop();
   setTimeout(()=>graphPhysicsOn=false,8000);
-  graphCanvas.onmousemove=e=>{const rect=graphCanvas.getBoundingClientRect();const mx=(e.clientX-rect.left)*(graphCanvas.width/rect.width),my=(e.clientY-rect.top)*(graphCanvas.height/rect.height);const visible=new Set(visibleNodes().map(n=>n.id));graphHover=graphNodes.filter(n=>visible.has(n.id)).find(n=>{const r=GRAPH_RADIUS[n.type]||10;return Math.hypot(n.x-mx,n.y-my)<r+4;})||null;if(graphDrag){graphDrag.x=mx;graphDrag.y=my;graphDrag.pinned=true;drawGraph();}const tip=document.getElementById('graph-tooltip');if(graphHover){tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';tip.innerHTML=`<strong>${graphHover.label}</strong>${graphHover.sub?'<br>'+graphHover.sub:''}`;}else tip.style.display='none';};
+  graphCanvas.onmousemove=e=>{const rect=graphCanvas.getBoundingClientRect();const mx=(e.clientX-rect.left)*(graphCanvas.width/rect.width),my=(e.clientY-rect.top)*(graphCanvas.height/rect.height);const visible=new Set(visibleNodes().map(n=>n.id));graphHover=graphNodes.filter(n=>visible.has(n.id)).find(n=>{const r=GRAPH_RADIUS[n.type]||10;return Math.hypot(n.x-mx,n.y-my)<r+4;})||null;if(graphDrag){graphDrag.x=mx;graphDrag.y=my;graphDrag.pinned=true;drawGraph();}const tip=document.getElementById('graph-tooltip');if(graphHover){tip.style.display='block';tip.style.left=(e.clientX+14)+'px';tip.style.top=(e.clientY-10)+'px';tip.innerHTML=`<div class="tt-type">${GRAPH_ICON[graphHover.type]||'•'} ${({project:'프로젝트',customer:'고객',process:'프로세스',journal:'일지',member:'팀원',system:'시스템',note:'노트'}[graphHover.type]||'')}</div><strong>${ghEsc(graphHover.label)}</strong>${graphHover.sub?'<br><span style="color:#cdd3da">'+ghEsc(graphHover.sub)+'</span>':''}`;}else tip.style.display='none';};
   graphCanvas.onmousedown=e=>{const rect=graphCanvas.getBoundingClientRect();const mx=(e.clientX-rect.left)*(graphCanvas.width/rect.width),my=(e.clientY-rect.top)*(graphCanvas.height/rect.height);const visible=new Set(visibleNodes().map(n=>n.id));graphDrag=graphNodes.filter(n=>visible.has(n.id)).find(n=>{const r=GRAPH_RADIUS[n.type]||10;return Math.hypot(n.x-mx,n.y-my)<r+4;})||null;if(!graphDrag){graphPhysicsOn=true;setTimeout(()=>graphPhysicsOn=false,5000);}};
   graphCanvas.onmouseup=()=>{if(graphDrag)graphDrag.pinned=false;graphDrag=null;};
   graphCanvas.onclick=e=>{const rect=graphCanvas.getBoundingClientRect();const mx=(e.clientX-rect.left)*(graphCanvas.width/rect.width),my=(e.clientY-rect.top)*(graphCanvas.height/rect.height);const visible=new Set(visibleNodes().map(n=>n.id));const hit=graphNodes.filter(n=>visible.has(n.id)).find(n=>{const r=GRAPH_RADIUS[n.type]||10;return Math.hypot(n.x-mx,n.y-my)<r+4;})||null;graphSelected=hit===graphSelected?null:hit;showGraphDetail(graphSelected);drawGraph();};
 }
 
+const GRAPH_ICON={project:'📁',customer:'🙋',process:'📋',journal:'📓',member:'👤',system:'⚙️',note:'📄'};
 function showGraphDetail(node){
   const el=document.getElementById('graph-detail');
   if(!node){el.innerHTML='노드를 클릭하면 상세 정보가 표시됩니다.';return;}
   const connIds=graphEdges.filter(e=>e.a===node.id||e.b===node.id).map(e=>e.a===node.id?e.b:e.a);
   const connNodes=connIds.map(id=>graphNodes.find(n=>n.id===id)).filter(Boolean);
-  const typeLabel={construction:'🏗️ 현장',calendar:'📅 일정',journal:'📓 일지',member:'👤 팀원'}[node.type]||node.type;
-  el.innerHTML=`<strong>${node.label}</strong><div style="margin-bottom:6px;font-size:11px;color:var(--dim)">${typeLabel}${node.sub?' · '+node.sub:''}</div>${connNodes.length?`<div style="font-size:11px;color:var(--muted);margin-bottom:6px">연결 ${connNodes.length}개</div>`+connNodes.map(n=>`<div class="graph-conn-item" onclick="graphSelected=graphNodes.find(x=>x.id==='${n.id}');showGraphDetail(graphSelected);drawGraph()">${({construction:'🏗️',calendar:'📅',journal:'📓',member:'👤'}[n.type]||'•')} ${n.label}</div>`).join(''):'<div style="font-size:11px;color:var(--dim)">연결된 노드 없음</div>'}`;}
+  const typeLabel=(GRAPH_ICON[node.type]||'•')+' '+({project:'프로젝트',customer:'고객',process:'프로세스',journal:'일지',member:'팀원',system:'시스템',note:'노트'}[node.type]||node.type);
+  const isFile=node.id.indexOf('f:')===0;
+  const isMember=node.type==='member';
+  el.innerHTML=`<strong>${ghEsc(node.label)}</strong><div style="margin-bottom:6px;font-size:11px;color:var(--dim)">${typeLabel}${node.sub?' · '+ghEsc(node.sub):''}</div>`
+    +(isFile?`<button class="btn" style="width:100%;margin-bottom:8px" onclick="graphOpenFile('${node.id.slice(2).replace(/'/g,"\\'")}')">📄 내용 보기</button>`:'')
+    +(isMember?`<button class="btn btn-g" style="width:100%;margin-bottom:8px" onclick="graphOpenPerson('${node.label.replace(/'/g,"\\'")}')">📋 업무 계획·노트 보기</button>`:'')
+    +((isFile||isMember)?'<div id="graph-filebody"></div>':'')
+    +(connNodes.length?`<div style="font-size:11px;color:var(--muted);margin:6px 0 6px">연결 ${connNodes.length}개</div>`+connNodes.map(n=>`<div class="graph-conn-item" onclick="graphSelected=graphNodes.find(x=>x.id==='${n.id}');showGraphDetail(graphSelected);drawGraph()">${GRAPH_ICON[n.type]||'•'} ${ghEsc(n.label)}</div>`).join(''):'<div style="font-size:11px;color:var(--dim)">연결된 노드 없음</div>');
+}
+async function graphAnalyzeNow(btn){
+  if(!localStorage.getItem('gh_pat')){alert('GitHub 토큰이 필요합니다 (🔑 시크릿 키)');return;}
+  if(!confirm('지금 업무일지를 분석할까요? hadam-cloud의 일지를 읽어 프로젝트·개인 노트를 갱신합니다 (몇 분 소요).'))return;
+  var o=btn?btn.textContent:'';if(btn){btn.disabled=true;btn.textContent='요청 중...';}
+  try{await ghDispatch('hadam-notes','parse-reports.yml',{});alert('✅ 분석을 시작했습니다. 몇 분 뒤 갱신됩니다.\\n진행 상황: github.com/'+GH_ORG+'/hadam-notes/actions');}
+  catch(e){alert('실패: '+((e&&e.message)||e));}
+  if(btn){btn.disabled=false;btn.textContent=o;}
+}
+async function graphOpenPerson(name){
+  var body=document.getElementById('graph-filebody');if(body)body.innerHTML='<div style="font-size:11px;color:var(--dim)">불러오는 중…</div>';
+  try{
+    var files=(await ghContents('hadam-notes','daily/'+name)).filter(x=>x.type==='file'&&/\.md$/.test(x.name)).sort((a,b)=>b.name.localeCompare(a.name));
+    if(!files.length){if(body)body.innerHTML='<div style="font-size:11px;color:var(--dim)">아직 분석된 개인 노트가 없습니다. 🧠 지금 분석하기로 생성하세요.</div>';return;}
+    var txt=await ghText('hadam-notes','daily/'+name+'/'+files[0].name);
+    showContentPopup(name+' · '+files[0].name.replace(/\.md$/,'')+' (최신)',txt,'https://github.com/'+GH_ORG+'/hadam-notes/blob/main/daily/'+encodeURIComponent(name)+'/'+encodeURIComponent(files[0].name));
+    if(body){
+      if(files.length>1)body.innerHTML='<div style="font-size:11px;color:var(--muted);margin-bottom:4px">다른 날짜 노트</div><div>'+files.slice(0,12).map(function(f){return '<a href="#" onclick="graphOpenPersonFile(\''+encodeURIComponent(name)+'\',\''+encodeURIComponent(f.name)+'\');return false" style="color:var(--blue);font-size:11px;display:inline-block;margin:0 10px 4px 0">📅 '+ghEsc(f.name.replace(/\.md$/,''))+'</a>';}).join('')+'</div>';
+      else body.innerHTML='';
+    }
+  }catch(e){if(body)body.innerHTML='<div style="font-size:11px;color:var(--dim)">개인 노트 폴더가 없습니다 (분석 후 생성됨).</div>';}
+}
+async function graphOpenPersonFile(nameEnc,fileEnc){
+  var name=decodeURIComponent(nameEnc),file=decodeURIComponent(fileEnc);
+  try{var txt=await ghText('hadam-notes','daily/'+name+'/'+file);showContentPopup(name+' · '+file.replace(/\.md$/,''),txt,'https://github.com/'+GH_ORG+'/hadam-notes/blob/main/daily/'+encodeURIComponent(name)+'/'+encodeURIComponent(file));}catch(e){}
+}
+function showContentPopup(title,text,editUrl){
+  document.getElementById('cpop-title').textContent=title;
+  document.getElementById('cpop-body').textContent=text;
+  var e=document.getElementById('cpop-edit');if(editUrl){e.href=editUrl;e.style.display='';}else{e.style.display='none';}
+  document.getElementById('content-popup').style.display='flex';
+}
+function closeContentPopup(){document.getElementById('content-popup').style.display='none';}
+async function graphOpenFile(path){
+  const body=document.getElementById('graph-filebody');if(body)body.innerHTML='<div style="font-size:11px;color:var(--dim)">불러오는 중…</div>';
+  try{const txt=await ghText('hadam-cloud',path);
+    if(body)body.innerHTML='';
+    showContentPopup(path.split('/').pop().replace(/\.md$/,''),txt,'https://github.com/'+GH_ORG+'/hadam-cloud/blob/main/'+path.split('/').map(encodeURIComponent).join('/'));
+  }catch(e){if(body)body.innerHTML='<div style="font-size:11px;color:var(--red)">'+((e&&e.message)||e)+'</div>';}
+}
+
+// ── 지식베이스 브라우저 (hadam-cloud 열람/편집) ──
+let kbTree=null, kbCurPrefix='', kbCur={path:null,sha:null};
+const KB_FOLDERS=[['프로젝트/','📁 프로젝트'],['고객-상담/','🙋 고객 상담'],['견적-계약/','📋 견적·계약·프로세스'],['daily/','📓 업무일지'],['_system/','⚙️ 시스템']];
+async function kbLoadTree(force){
+  if(kbTree&&!force)return kbTree;
+  const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1&t='+Date.now(),{headers:ghHeaders()});
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const j=await r.json();kbTree=(j.tree||[]).filter(t=>t.type==='blob'&&/\.md$/.test(t.path)&&!/README\.md$/.test(t.path));
+  return kbTree;
+}
+async function renderKbView(){
+  const v=document.getElementById('kb-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  v.innerHTML=ghLoading();
+  try{const tree=await kbLoadTree();
+    v.innerHTML='<p style="font-size:11.5px;color:var(--muted);margin:0 0 12px;line-height:1.7">hadam-cloud 업무 지식베이스 — 매일 저녁 9시 일지 분석으로 자동 갱신됩니다.</p><div class="gh-list">'+KB_FOLDERS.map(function(f){var cnt=tree.filter(function(t){return t.path.indexOf(f[0])===0;}).length;return '<div class="gh-row" onclick="kbFolder(\''+f[0]+'\')"><span class="gh-name" style="flex:1">'+f[1]+'</span><span class="gh-sub">'+cnt+'개 ›</span></div>';}).join('')+'</div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function kbFolder(prefix){
+  kbCurPrefix=prefix;
+  const v=document.getElementById('kb-view');v.innerHTML=ghLoading();
+  try{const tree=await kbLoadTree();var files=tree.filter(function(t){return t.path.indexOf(prefix)===0;}).sort(function(a,b){return b.path.localeCompare(a.path);});
+    v.innerHTML='<button class="gh-back" onclick="renderKbView()">‹ 폴더</button>'+(files.length?'<div class="gh-list">'+files.map(function(t){var name=t.path.slice(prefix.length).replace(/\.md$/,'');return '<div class="gh-row" onclick="kbOpen(\''+t.path.replace(/'/g,"\\'")+'\')"><span class="gh-name" style="flex:1">📄 '+ghEsc(name)+'</span><span class="gh-sub">›</span></div>';}).join('')+'</div>':'<div class="gh-need">파일이 없습니다.</div>');
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function kbOpen(path){
+  const v=document.getElementById('kb-view');v.innerHTML=ghLoading();
+  try{var f=await ghGetRaw('hadam-cloud',path);kbCur={path:path,sha:f.sha};
+    v.innerHTML='<button class="gh-back" onclick="kbFolder(kbCurPrefix)">‹ 목록</button><div class="gh-post"><h4>'+ghEsc(path.split('/').pop().replace(/\.md$/,''))+'<button class="btn cp-btn" onclick="kbEdit()">✏️ 편집</button></h4><pre id="kb-pre" style="white-space:pre-wrap">'+ghEsc(f.text)+'</pre></div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+function kbEdit(){
+  var pre=document.getElementById('kb-pre');if(!pre)return;
+  var cur=pre.textContent;
+  pre.outerHTML='<textarea id="kb-edit" class="inp" style="width:100%;box-sizing:border-box;min-height:340px;font-family:monospace;font-size:12px;line-height:1.6"></textarea><div class="row" style="margin-top:8px"><button class="btn btn-g" onclick="kbSave()">💾 저장</button><button class="btn" onclick="kbOpen(kbCur.path)">취소</button></div><div id="kb-savestatus" class="gen-status"></div>';
+  document.getElementById('kb-edit').value=cur;
+}
+async function kbSave(){
+  var st=document.getElementById('kb-savestatus');st.textContent='저장 중…';
+  var txt=document.getElementById('kb-edit').value;
+  try{var res=await ghPutFile('hadam-cloud',kbCur.path,txt,'portal: 지식베이스 편집',kbCur.sha);kbCur.sha=res.content.sha;kbTree=null;st.innerHTML='✅ 저장 완료';}
+  catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+}
 
 function stopGraph(){if(graphAF){cancelAnimationFrame(graphAF);graphAF=null;}const tip=document.getElementById('graph-tooltip');if(tip)tip.style.display='none';}
 
@@ -860,45 +1589,230 @@ function ghNeedPat(){return '<div class="gh-need">GitHub 토큰(PAT)이 필요�
 function ghLoading(){return '<div class="gh-need">불러오는 중…</div>';}
 function ghErr(e){return '<div class="gh-need">불러오지 못했습니다.<br><span style="font-size:12px">'+((e&&e.message)||e)+'</span></div>';}
 function ghEsc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-async function ghContents(repo,path){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now(),{headers:ghHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
-async function ghText(repo,path){const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now(),{headers:ghHeaders()})).json();return decodeURIComponent(escape(atob((d.content||'').replace(/\s/g,''))));}
+const CN_BRANCH='claude/admiring-gates-hMIvX'; // 카드뉴스 워크플로가 푸시하는 브랜치
+async function ghContents(repo,path,ref){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now()+(ref?'&ref='+ref:''),{headers:ghHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+async function ghText(repo,path,ref){const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now()+(ref?'&ref='+ref:''),{headers:ghHeaders()})).json();return decodeURIComponent(escape(atob((d.content||'').replace(/\s/g,''))));}
+
+// ── 콘텐츠 자동화 공통 헬퍼 ──
+async function ghDispatch(repo,wf,inputs){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/actions/workflows/'+wf+'/dispatches',{method:'POST',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({ref:'main',inputs:inputs||{}})});if(r.status!==204)throw new Error('HTTP '+r.status);}
+async function ghGetRaw(repo,path){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now(),{headers:ghHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);const d=await r.json();return {text:decodeURIComponent(escape(atob((d.content||'').replace(/\s/g,'')))),sha:d.sha};}
+function ghB64(t){return btoa(unescape(encodeURIComponent(t)));}
+async function ghPutFile(repo,path,text,message,sha){const body={message:message,content:ghB64(text),branch:'main'};if(sha)body.sha=sha;const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify(body)});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+function isPosted(id){return (G('posted')||[]).indexOf(id)>=0;}
+function togglePosted(id,el){var arr=(G('posted')||[]).slice();var i=arr.indexOf(id);if(i>=0)arr.splice(i,1);else arr.push(id);S('posted',arr);if(el){var on=arr.indexOf(id)>=0;el.className='post-chk'+(on?' on':'');el.textContent=on?'✓ 게시됨':'게시 체크';}}
+function copyText(btn){var pre=btn.closest('.gh-post').querySelector('pre,.md-body');if(!pre)return;var t=pre.textContent;if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t);}else{var ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');}catch(e){}ta.remove();}var o=btn.textContent;btn.textContent='복사됨 ✓';setTimeout(function(){btn.textContent=o;},1500);}
+
+// ── 개인별 할 일 / 일정 (업무노트) ──
+function renderPersonTasks(name){
+  var enc=encodeURIComponent(name);
+  var tasks=(G('tasks')||[]).filter(function(t){return t.person===name;}).sort(function(a,b){return (a.done?1:0)-(b.done?1:0)||(a.due||'~').localeCompare(b.due||'~');});
+  var open=tasks.filter(function(t){return !t.done;}).length;
+  var html='<div class="sec-label" style="margin-top:8px;display:flex;align-items:center;gap:8px">✅ 할 일 / 일정 <span style="font-weight:400;color:var(--dim);font-size:11px">남은 '+open+'건</span><button class="btn" id="extract-btn" style="margin-left:auto;font-size:11px;padding:4px 10px" onclick="extractTasks(\''+enc+'\')">🤖 일지에서 할 일 추출</button></div>';
+  html+='<div class="row" style="margin-bottom:8px;gap:6px"><input class="inp" id="ptask-inp" placeholder="할 일 입력..." onkeydown="if(event.key===\'Enter\')addTask(\''+enc+'\')"><input class="inp" id="ptask-due" type="date" title="마감일" style="max-width:160px"><button class="btn btn-g" onclick="addTask(\''+enc+'\')">추가</button></div>';
+  if(tasks.length){
+    html+='<div class="list-wrap">'+tasks.map(function(t){var overdue=t.due&&!t.done&&t.due<td();return '<div class="chk-item'+(t.done?' done':'')+'"><input type="checkbox" '+(t.done?'checked':'')+' onchange="togTask('+t.id+')"><label class="chk-label" onclick="togTask('+t.id+')">'+ghEsc(t.text)+'</label>'+(t.due?'<span class="badge '+(overdue?'badge-red':'badge-dim')+'">📅 '+t.due.slice(5)+'</span>':'')+'<button class="del" onclick="delTask('+t.id+')">×</button></div>';}).join('')+'</div>';
+  }else html+='<div style="font-size:12px;color:var(--dim);margin-bottom:4px">등록된 할 일이 없습니다.</div>';
+  return html;
+}
+function refreshPersonTasks(name){var el=document.getElementById('person-tasks');if(el)el.innerHTML=renderPersonTasks(name);}
+async function addTask(nameEnc){var name=decodeURIComponent(nameEnc);var inp=document.getElementById('ptask-inp'),due=document.getElementById('ptask-due');var v=inp.value.trim();if(!v)return;var a=(G('tasks')||[]).slice();a.unshift({id:Date.now(),person:name,text:v,done:false,due:due.value||''});await S('tasks',a);refreshPersonTasks(name);}
+async function togTask(id){var a=(G('tasks')||[]).slice();var i=a.findIndex(function(x){return x.id===id;});if(i<0)return;a[i]=Object.assign({},a[i],{done:!a[i].done});await S('tasks',a);refreshPersonTasks(a[i].person);}
+async function delTask(id){var t=(G('tasks')||[]).find(function(x){return x.id===id;});await S('tasks',(G('tasks')||[]).filter(function(x){return x.id!==id;}));if(t)refreshPersonTasks(t.person);}
+async function extractTasks(nameEnc){
+  var name=decodeURIComponent(nameEnc);
+  var key=localStorage.getItem('ant_key');
+  if(!key){alert('Claude API 키가 필요합니다 (🔑 시크릿 키에서 입력)');return;}
+  var btn=document.getElementById('extract-btn');if(btn){btn.disabled=true;btn.textContent='분석 중…';}
+  try{
+    var tree=await loadNotesTree(true);
+    var paths=tree.filter(function(t){var m=t.path.match(/^daily\/(\d{8})\/([^\/]+)\.md$/);return m&&m[2]===name;}).map(function(t){return t.path;}).sort().reverse().slice(0,6);
+    var corpus='';
+    for(var i=0;i<paths.length;i++){try{corpus+='\n\n=== '+paths[i]+' ===\n'+await ghText('hadam-cloud',paths[i]);}catch(e){}}
+    try{var nf=(await ghContents('hadam-notes','daily/'+name)).filter(function(x){return /\.md$/.test(x.name);}).map(function(x){return x.name;}).sort().reverse().slice(0,2);for(var k=0;k<nf.length;k++){corpus+='\n\n=== 분석노트 '+nf[k]+' ===\n'+await ghText('hadam-notes','daily/'+name+'/'+nf[k]);}}catch(e){}
+    if(!corpus.trim()){alert('분석할 일지가 없습니다. 먼저 업무일지를 올려주세요.');if(btn){btn.disabled=false;btn.textContent='🤖 일지에서 할 일 추출';}return;}
+    var today=td();
+    var prompt='아래는 "'+name+'"의 업무일지/분석노트야. 여기서 앞으로 처리해야 할 할 일(action item)만 뽑아줘.\n규칙:\n- 이미 완료된 일은 제외\n- 각 할 일은 짧고 명확한 한 문장 (한국어)\n- 마감일이 본문에 있으면 due에 YYYY-MM-DD로, 없으면 빈 문자열\n- 오늘은 '+today+'\n- 최대 12개\nJSON 배열만 출력(설명 없이): [{"text":"...","due":""}]\n\n'+corpus.slice(0,14000);
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    var d=await r.json();
+    if(!r.ok)throw new Error((d.error&&d.error.message)||('HTTP '+r.status));
+    var txt=(d.content&&d.content[0]&&d.content[0].text)||'';
+    var js=txt.slice(txt.indexOf('['),txt.lastIndexOf(']')+1);
+    var items=JSON.parse(js);
+    var a=(G('tasks')||[]).slice();var existing={};a.filter(function(t){return t.person===name;}).forEach(function(t){existing[t.text]=1;});
+    var added=0,base=Date.now();
+    items.forEach(function(it,idx){if(it&&it.text&&!existing[it.text]){a.unshift({id:base+idx,person:name,text:String(it.text),done:false,due:(it.due&&/^\d{4}-\d{2}-\d{2}$/.test(it.due))?it.due:''});added++;}});
+    await S('tasks',a);refreshPersonTasks(name);
+    alert('✅ '+name+'의 일지에서 할 일 '+added+'개를 추가했습니다.'+(added===0?' (새로 추출된 항목 없음)':''));
+  }catch(e){alert('추출 실패: '+((e&&e.message)||e));}
+  var b2=document.getElementById('extract-btn');if(b2){b2.disabled=false;b2.textContent='🤖 일지에서 할 일 추출';}
+}
+
+// ── 자료실 (현장별 사진·견적서·마감재 업로드/다운로드) ──
+const MAT_CATS=['현장 전 사진','현장 후 사진','견적서','마감재 상세','도면','기타'];
+function matSites(){var s=new Set(G('sites').map(x=>x.name).filter(Boolean));(G('process')||[]).forEach(p=>s.add(p.site));return [...s];}
+async function renderMatView(){
+  var v=document.getElementById('mat-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  var sites=matSites();
+  var html='<div class="gen-form" style="margin-bottom:14px"><input class="inp" id="mat-site" list="mat-sites" placeholder="현장명" style="flex:1;min-width:160px"><datalist id="mat-sites">'+sites.map(s=>'<option value="'+ghEsc(s)+'">').join('')+'</datalist>'
+    +'<select class="inp" id="mat-cat" style="max-width:160px">'+MAT_CATS.map(c=>'<option>'+c+'</option>').join('')+'</select>'
+    +'<input class="inp" id="mat-files" type="file" multiple style="flex:1;min-width:180px;font-size:12px">'
+    +'<button class="btn btn-g" onclick="matUpload()" id="mat-up-btn">📤 업로드</button></div>'
+    +'<div id="mat-up-status" class="gen-status" style="margin:-8px 0 10px"></div>'
+    +'<div id="mat-list">'+ghLoading()+'</div>';
+  v.innerHTML=html;
+  matRefreshList();
+}
+async function matRefreshList(){
+  var el=document.getElementById('mat-list');if(!el)return;el.innerHTML=ghLoading();
+  try{
+    var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1&t='+Date.now(),{headers:ghHeaders()});
+    var j=await r.json();
+    var files=(j.tree||[]).filter(function(t){return t.type==='blob'&&t.path.indexOf('자료/')===0;});
+    if(!files.length){el.innerHTML='<div class="gh-need">업로드된 자료가 없습니다. 위에서 현장·분류 선택 후 파일을 올리세요.</div>';return;}
+    var bySite={};
+    files.forEach(function(t){var m=t.path.match(/^자료\/([^\/]+)\/([^\/]+)\/(.+)$/);if(!m)return;var site=m[1],cat=m[2],name=m[3].replace(/^\d+-/,'');bySite[site]=bySite[site]||{};(bySite[site][cat]=bySite[site][cat]||[]).push({sha:t.sha,name:name,path:t.path});});
+    var html='';
+    Object.keys(bySite).sort().forEach(function(site){
+      html+='<div class="proc-site"><div class="proc-sitehd"><span class="proc-sitename">🏗️ '+ghEsc(site)+'</span></div>';
+      Object.keys(bySite[site]).forEach(function(cat){
+        html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:8px 0 4px">'+ghEsc(cat)+' <span style="color:var(--dim);font-weight:400">'+bySite[site][cat].length+'</span></div><div class="mat-grid">';
+        bySite[site][cat].forEach(function(f){
+          var img=/\.(jpe?g|png|gif|webp|heic)$/i.test(f.name);
+          var fn=f.name.replace(/'/g,'');
+          html+='<div class="mat-item"><div class="mat-name" title="'+ghEsc(f.name)+'">'+(img?'🖼️':'📄')+' '+ghEsc(f.name)+'</div><div class="mat-acts">'+(img?'<button class="btn" onclick="matViewImg(\''+f.sha+'\',\''+ghEsc(fn)+'\')">보기</button>':'')+'<button class="btn" onclick="matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">다운로드</button><button class="del" onclick="matDel(\''+encodeURIComponent(f.path)+'\')" title="삭제">×</button></div></div>';
+        });
+        html+='</div>';
+      });
+      html+='</div>';
+    });
+    el.innerHTML=html;
+  }catch(e){el.innerHTML=ghErr(e);}
+}
+async function matUpload(){
+  var token=localStorage.getItem('gh_pat');if(!token){openModal('settings-modal');return;}
+  var site=document.getElementById('mat-site').value.trim(),cat=document.getElementById('mat-cat').value,inp=document.getElementById('mat-files');
+  if(!site){alert('현장명을 입력하세요');return;}
+  if(!inp.files||!inp.files.length){alert('파일을 선택하세요');return;}
+  var btn=document.getElementById('mat-up-btn'),st=document.getElementById('mat-up-status');
+  btn.disabled=true;btn.textContent='업로드 중...';var ok=0,fail=0;
+  var saved=0;
+  for(var i=0;i<inp.files.length;i++){var f=inp.files[i];
+    try{
+      var b64,safe=f.name.replace(/[^\w.\-가-힣 ]/g,'_').trim();
+      if(isCompressibleImg(f.name)){try{b64=await compressImageToB64(f,1600,0.72);safe=safe.replace(/\.[^.]+$/,'')+'.jpg';saved+=Math.max(0,f.size-Math.round(b64.length*0.75));}catch(e){b64=await fileToB64(f);}}
+      else{if(f.size>9*1024*1024){fail++;continue;}b64=await fileToB64(f);}
+      var path='자료/'+site+'/'+cat+'/'+Date.now()+'-'+safe;
+      var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/contents/'+path.split('/').map(encodeURIComponent).join('/'),{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'자료 업로드: '+site+'/'+cat+'/'+f.name,content:b64,branch:'main'})});
+      if(r.ok)ok++;else fail++;
+    }catch(e){fail++;}
+  }
+  btn.disabled=false;btn.textContent='📤 업로드';inp.value='';
+  st.textContent='✅ '+ok+'개 업로드'+(saved>0?' (사진 압축으로 약 '+(saved/1048576).toFixed(1)+'MB 절약)':'')+(fail?' / ❌ '+fail+'개 실패(9MB 초과 등)':'');st.style.color=fail?'var(--red)':'var(--green)';
+  matRefreshList();
+}
+async function matBlob(sha){var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/blobs/'+sha,{headers:ghHeaders()});var d=await r.json();return (d.content||'').replace(/\s/g,'');}
+async function matDownload(sha,fname){try{var b64=await matBlob(sha);var bin=atob(b64);var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);var blob=new Blob([arr]);var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},3000);}catch(e){alert('다운로드 실패: '+((e&&e.message)||e));}}
+async function matViewImg(sha,fname){try{var b64=await matBlob(sha);showImagePopup(fname,'data:image/png;base64,'+b64);}catch(e){alert('불러오기 실패');}}
+async function matDel(pathEnc){var path=decodeURIComponent(pathEnc);if(!confirm('이 자료를 삭제할까요?\\n'+path.split('/').pop()))return;try{var url='https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/contents/'+path.split('/').map(encodeURIComponent).join('/');var g=await fetch(url+'?ref=main',{headers:ghHeaders()});var sha=(await g.json()).sha;await fetch(url,{method:'DELETE',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'자료 삭제',sha:sha,branch:'main'})});matRefreshList();}catch(e){alert('삭제 실패');}}
+function showImagePopup(title,src){document.getElementById('cpop-title').textContent=title;document.getElementById('cpop-body').innerHTML='<img src="'+src+'" style="max-width:100%;border-radius:8px;display:block;margin:0 auto">';var e=document.getElementById('cpop-edit');if(e)e.style.display='none';document.getElementById('content-popup').style.display='flex';}
 
 async function renderThreadView(){
   const v=document.getElementById('thr-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
   v.innerHTML=ghLoading();
   try{const dirs=(await ghContents('hadam-thread','posts')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));
-    v.innerHTML=dirs.length?'<div class="gh-list">'+dirs.map(d=>'<div class="gh-row" onclick="threadOpen(\''+d.name+'\')"><span class="gh-name">📅 '+ghEsc(d.name)+'</span><span class="gh-sub">아침 · 저녁 ›</span></div>').join('')+'</div>':'<div class="gh-need">쓰레드 글이 없습니다.</div>';
+    let html='<div class="auto-bar"><button class="btn btn-g" onclick="threadGenPanel()">⚡ 지금 생성</button><button class="btn" onclick="renderThreadConfig()">⚙️ 자동생성 설정</button><span class="auto-hint">매일 아침 8시 · 저녁 8시 자동</span></div><div id="thr-genpanel"></div>';
+    html+=dirs.length?'<div class="gh-list">'+dirs.map(function(d){var pid='thread:'+d.name;var on=isPosted(pid);return '<div class="gh-row"><span class="gh-name" style="flex:1;cursor:pointer" onclick="threadOpen(\''+d.name+'\')">📅 '+ghEsc(d.name)+'</span><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';}).join('')+'</div>':'<div class="gh-need">쓰레드 글이 없습니다.</div>';
+    v.innerHTML=html;
   }catch(e){v.innerHTML=ghErr(e);}
+}
+function threadGenPanel(){
+  var el=document.getElementById('thr-genpanel');if(!el)return;
+  if(el.innerHTML){el.innerHTML='';return;}
+  el.innerHTML='<div class="gen-form"><select class="inp" id="thr-slot"><option value="">현재 시각 기준</option><option value="아침">아침</option><option value="저녁">저녁</option><option value="both">아침+저녁</option></select><input class="inp" id="thr-theme" placeholder="소재 직접 지정 (비우면 자동)"><button class="btn btn-g" onclick="threadGenRun()">생성 실행</button></div><div id="thr-genstatus" class="gen-status"></div>';
+}
+async function threadGenRun(){
+  var slot=document.getElementById('thr-slot').value,theme=document.getElementById('thr-theme').value.trim();
+  var st=document.getElementById('thr-genstatus');st.textContent='워크플로 실행 요청 중…';
+  try{await ghDispatch('hadam-thread','daily-thread.yml',{slot:slot,theme:theme});
+    st.innerHTML='✅ 실행됨! 1~2분 뒤 새 글이 올라옵니다. <a href="https://github.com/'+GH_ORG+'/hadam-thread/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a><br><button class="btn" style="margin-top:8px" onclick="renderThreadView()">목록 새로고침</button>';
+  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+}
+async function renderThreadConfig(){
+  const v=document.getElementById('thr-view');v.innerHTML=ghLoading();
+  try{var f=await ghGetRaw('hadam-thread','thread_config.json');var cfg=JSON.parse(f.text);window._thrCfgSha=f.sha;
+    v.innerHTML='<button class="gh-back" onclick="renderThreadView()">‹ 목록</button><div class="cfg-form">'
+      +'<label class="cfg-row"><input type="checkbox" id="cfg-enabled" '+(cfg.enabled?'checked':'')+'> 자동생성 켜기</label>'
+      +'<div class="sec-label">말투</div><textarea class="inp" id="cfg-tone" rows="3">'+ghEsc(cfg.tone||'')+'</textarea>'
+      +'<div class="sec-label">아침 가이드</div><textarea class="inp" id="cfg-morning" rows="2">'+ghEsc(cfg.morning_guide||'')+'</textarea>'
+      +'<div class="sec-label">저녁 가이드</div><textarea class="inp" id="cfg-evening" rows="2">'+ghEsc(cfg.evening_guide||'')+'</textarea>'
+      +'<div class="sec-label">소재 풀 (한 줄에 하나)</div><textarea class="inp" id="cfg-themes" rows="9">'+ghEsc((cfg.themes||[]).join('\n'))+'</textarea>'
+      +'<button class="btn btn-g" style="width:100%;margin-top:12px" onclick="saveThreadConfig()">💾 설정 저장 (레포 반영)</button><div id="cfg-status" class="gen-status"></div></div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function saveThreadConfig(){
+  var st=document.getElementById('cfg-status');st.textContent='저장 중…';
+  var cfg={enabled:document.getElementById('cfg-enabled').checked,tone:document.getElementById('cfg-tone').value.trim(),morning_guide:document.getElementById('cfg-morning').value.trim(),evening_guide:document.getElementById('cfg-evening').value.trim(),themes:document.getElementById('cfg-themes').value.split('\n').map(function(s){return s.trim();}).filter(Boolean)};
+  try{await ghPutFile('hadam-thread','thread_config.json',JSON.stringify(cfg,null,2)+'\n','portal: update thread config',window._thrCfgSha);st.innerHTML='✅ 저장 완료 — 다음 자동생성부터 반영됩니다.';}
+  catch(e){st.textContent='실패: '+((e&&e.message)||e);}
 }
 async function threadOpen(date){
   const v=document.getElementById('thr-view');v.innerHTML=ghLoading();
   try{const files=(await ghContents('hadam-thread','posts/'+date)).filter(x=>x.type==='file');
     let html='<button class="gh-back" onclick="renderThreadView()">‹ 날짜 목록</button>';
     for(const f of files){const txt=await ghText('hadam-thread','posts/'+date+'/'+f.name);
-      html+='<div class="gh-post"><h4>'+ghEsc(f.name.replace(/\.txt$/,''))+' — '+ghEsc(date)+'</h4><pre>'+ghEsc(txt)+'</pre></div>';}
+      html+='<div class="gh-post"><h4>'+ghEsc(f.name.replace(/\.txt$/,''))+' — '+ghEsc(date)+'<button class="btn cp-btn" onclick="copyText(this)">복사</button></h4><pre>'+ghEsc(txt)+'</pre></div>';}
     v.innerHTML=html;
   }catch(e){v.innerHTML=ghErr(e);}
 }
 
+let notesTree=null;
+async function loadNotesTree(force){
+  if(notesTree&&!force)return notesTree;
+  var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/trees/main?recursive=1&t='+Date.now(),{headers:ghHeaders()});
+  var j=await r.json();notesTree=(j.tree||[]).filter(function(t){return t.type==='blob';});return notesTree;
+}
 async function renderNotesView(){
   const v=document.getElementById('notes-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
   v.innerHTML=ghLoading();
-  try{const people=(await ghContents('hadam-notes','daily')).filter(x=>x.type==='dir');
-    v.innerHTML=people.length?'<div class="gh-list">'+people.map(p=>'<div class="gh-row" onclick="notesPerson(\''+p.name+'\')"><span class="gh-name">👤 '+ghEsc(p.name)+'</span><span class="gh-sub">일지 보기 ›</span></div>').join('')+'</div>':'<div class="gh-need">노트가 없습니다.</div>';
+  try{
+    var tree=await loadNotesTree(true);
+    var authors={};
+    tree.forEach(function(t){var m=t.path.match(/^daily\/(\d{8})\/([^\/]+)\.md$/);if(m&&!/^\d/.test(m[2]))(authors[m[2]]=authors[m[2]]||[]).push(m[1]);});
+    var noteFolders=[];try{noteFolders=(await ghContents('hadam-notes','daily')).filter(x=>x.type==='dir').map(x=>x.name);}catch(e){}
+    var people=[].concat(Object.keys(authors),noteFolders,getMembers());
+    people=people.filter(function(x,i){return x&&people.indexOf(x)===i;}).sort();
+    v.innerHTML='<p style="font-size:11.5px;color:var(--muted);margin:0 0 12px">직원이 작성한 업무일지(원본)와 AI 분석 노트를 직원별로 봅니다.</p>'+(people.length?'<div class="gh-list">'+people.map(function(p){var c=(authors[p]||[]).length;return '<div class="gh-row" onclick="notesPerson(\''+encodeURIComponent(p)+'\')"><span class="gh-name" style="flex:1">👤 '+ghEsc(p)+'</span><span class="gh-sub">'+(c?c+'개 일지 ':'')+'›</span></div>';}).join('')+'</div>':'<div class="gh-need">작성된 일지가 없습니다.</div>');
   }catch(e){v.innerHTML=ghErr(e);}
 }
-async function notesPerson(name){
-  const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
-  try{const files=(await ghContents('hadam-notes','daily/'+name)).filter(x=>x.type==='file'&&x.name.endsWith('.md')).sort((a,b)=>b.name.localeCompare(a.name));
-    v.innerHTML='<button class="gh-back" onclick="renderNotesView()">‹ 멤버 목록</button>'+(files.length?'<div class="gh-list">'+files.map(f=>'<div class="gh-row" onclick="notesOpen(\''+name+'\',\''+f.name+'\')"><span class="gh-name">'+ghEsc(f.name.replace(/\.md$/,''))+'</span><span class="gh-sub">'+ghEsc(name)+' ›</span></div>').join('')+'</div>':'<div class="gh-need">일지가 없습니다.</div>');
+async function notesPerson(nameEnc){
+  var name=decodeURIComponent(nameEnc);const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
+  try{
+    var tree=await loadNotesTree();
+    var raw=tree.filter(function(t){var m=t.path.match(/^daily\/(\d{8})\/([^\/]+)\.md$/);return m&&m[2]===name;}).map(function(t){return t.path.match(/^daily\/(\d{8})\//)[1];}).sort().reverse();
+    var notes=[];try{notes=(await ghContents('hadam-notes','daily/'+name)).filter(x=>x.type==='file'&&/\.md$/.test(x.name)).map(x=>x.name).sort().reverse();}catch(e){}
+    var html='<button class="gh-back" onclick="renderNotesView()">‹ 직원 목록</button>';
+    html+='<div id="person-tasks">'+renderPersonTasks(name)+'</div>';
+    html+='<div class="divider" style="margin:14px 0"></div>';
+    html+='<div class="sec-label" style="margin-top:8px">✍️ 작성한 일지 (원본)</div>';
+    html+=raw.length?'<div class="gh-list">'+raw.map(function(d){return '<div class="gh-row" onclick="notesOpenRaw(\''+d+'\',\''+encodeURIComponent(name)+'\')"><span class="gh-name" style="flex:1">📝 '+d.slice(0,4)+'-'+d.slice(4,6)+'-'+d.slice(6,8)+'</span><span class="gh-sub">›</span></div>';}).join('')+'</div>':'<div class="gh-need">작성한 일지 없음</div>';
+    html+='<div class="sec-label" style="margin-top:14px">🧠 AI 분석 노트</div>';
+    html+=notes.length?'<div class="gh-list">'+notes.map(function(f){return '<div class="gh-row" onclick="notesOpen(\''+encodeURIComponent(name)+'\',\''+encodeURIComponent(f)+'\')"><span class="gh-name" style="flex:1">'+ghEsc(f.replace(/\.md$/,''))+'</span><span class="gh-sub">›</span></div>';}).join('')+'</div>':'<div class="gh-need">분석 노트 없음 — 🧠 그래프 뷰의 "지금 분석하기"로 생성</div>';
+    v.innerHTML=html;
   }catch(e){v.innerHTML=ghErr(e);}
 }
-async function notesOpen(name,file){
-  const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
+async function notesOpenRaw(date,nameEnc){
+  var name=decodeURIComponent(nameEnc);const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
+  try{var txt=await ghText('hadam-cloud','daily/'+date+'/'+name+'.md');
+    v.innerHTML='<button class="gh-back" onclick="notesPerson(\''+encodeURIComponent(name)+'\')">‹ '+ghEsc(name)+'</button><div class="gh-post"><h4>📝 '+date.slice(0,4)+'-'+date.slice(4,6)+'-'+date.slice(6,8)+' · '+ghEsc(name)+' (원본)</h4><pre style="white-space:pre-wrap">'+ghEsc(txt)+'</pre></div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function notesOpen(nameEnc,fileEnc){
+  var name=decodeURIComponent(nameEnc),file=decodeURIComponent(fileEnc);const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
   try{const txt=await ghText('hadam-notes','daily/'+name+'/'+file);
-    v.innerHTML='<button class="gh-back" onclick="notesPerson(\''+name+'\')">‹ '+ghEsc(name)+'</button><div class="gh-post"><h4>'+ghEsc(file.replace(/\.md$/,''))+' · '+ghEsc(name)+'</h4><div class="md-body">'+ghEsc(txt)+'</div></div>';
+    v.innerHTML='<button class="gh-back" onclick="notesPerson(\''+encodeURIComponent(name)+'\')">‹ '+ghEsc(name)+'</button><div class="gh-post"><h4>🧠 '+ghEsc(file.replace(/\.md$/,''))+' · '+ghEsc(name)+'</h4><div class="md-body">'+ghEsc(txt)+'</div></div>';
   }catch(e){v.innerHTML=ghErr(e);}
 }
 
@@ -906,24 +1820,130 @@ async function renderCardnewsView(){
   const v=document.getElementById('cardnews-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
   v.innerHTML=ghLoading();
-  try{const sets=(await ghContents('hadam-cardnews','cardnews')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));
-    v.innerHTML=sets.length?'<div class="gh-list">'+sets.map(s=>'<div class="gh-row" onclick="cardnewsOpen(\''+s.name+'\')"><span class="gh-name">🖼️ '+ghEsc(s.name)+'</span><span class="gh-sub">카드 보기 ›</span></div>').join('')+'</div>':'<div class="gh-need">카드뉴스가 없습니다.</div>';
+  try{const sets=(await ghContents('hadam-cardnews','cardnews',CN_BRANCH)).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));
+    let html='<div class="auto-bar"><button class="btn btn-g" onclick="cardnewsGenPanel()">⚡ 지금 생성</button><button class="btn" onclick="renderCardnewsConfig()">⚙️ 자동생성 설정</button><span class="auto-hint">매일 오전 10시 자동</span></div><div id="cn-genpanel"></div>';
+    html+=sets.length?'<div class="gh-list">'+sets.map(function(s){var pid='cardnews:'+s.name;var on=isPosted(pid);return '<div class="gh-row"><span class="gh-name" style="flex:1;cursor:pointer" onclick="cardnewsOpen(\''+s.name+'\')">🖼️ '+ghEsc(s.name)+'</span><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';}).join('')+'</div>':'<div class="gh-need">카드뉴스가 없습니다.</div>';
+    v.innerHTML=html;
   }catch(e){v.innerHTML=ghErr(e);}
+}
+function cardnewsGenPanel(){
+  var el=document.getElementById('cn-genpanel');if(!el)return;
+  if(el.innerHTML){el.innerHTML='';return;}
+  el.innerHTML='<div class="gen-form"><input class="inp" id="cn-topic" placeholder="주제 직접 지정 (비우면 요일 자동)"><button class="btn btn-g" onclick="cardnewsGenRun()">생성 실행</button></div><div id="cn-genstatus" class="gen-status"></div>';
+}
+async function cardnewsGenRun(){
+  var topic=document.getElementById('cn-topic').value.trim();
+  var st=document.getElementById('cn-genstatus');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~5분 소요)';
+  try{await ghDispatch('hadam-cardnews','daily-cardnews.yml',{topic:topic});
+    st.innerHTML='✅ 실행됨! 콘텐츠+이미지 생성에 몇 분 걸립니다. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a><br><button class="btn" style="margin-top:8px" onclick="renderCardnewsView()">목록 새로고침</button>';
+  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+}
+function insCardnewsPanel(){
+  var el=document.getElementById('ins-genpanel');if(!el)return;
+  if(el.innerHTML){el.innerHTML='';return;}
+  el.innerHTML='<div class="gen-form"><input class="inp" id="ins-cn-topic" placeholder="주제 직접 지정 (비우면 요일 자동)"><button class="btn btn-g" onclick="insCardnewsRun()">생성 실행</button></div><div id="ins-cn-status" class="gen-status"></div>';
+}
+async function insCardnewsRun(){
+  var topic=document.getElementById('ins-cn-topic').value.trim();
+  var st=document.getElementById('ins-cn-status');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~6분 소요)';
+  try{await ghDispatch('hadam-cardnews','daily-cardnews.yml',{topic:topic});
+    st.innerHTML='✅ 실행됨! 콘텐츠+이미지 생성에 몇 분 걸립니다. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a> · <a href="#" onclick="openModal(\'cardnews-modal\');return false" style="color:var(--blue)">카드뉴스 보기</a>';
+  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+}
+async function renderCardnewsConfig(){
+  const v=document.getElementById('cardnews-view');v.innerHTML=ghLoading();
+  try{var f=await ghGetRaw('hadam-cardnews','config.json');var cfg=JSON.parse(f.text);window._cnCfgSha=f.sha;
+    var WD=['월','화','수','목','금','토','일'];
+    var slugs=Object.keys(cfg.topic_pool||{});
+    var html='<button class="gh-back" onclick="renderCardnewsView()">‹ 목록</button><div class="cfg-form">';
+    html+='<div class="sec-label">요일별 카테고리</div>';
+    for(var d=0;d<7;d++){var wc=(cfg.weekday_category&&cfg.weekday_category[d])||['',slugs[0]||''];
+      html+='<div class="cfg-row" style="gap:6px"><span style="width:24px">'+WD[d]+'</span><input class="inp cn-wd-name" data-d="'+d+'" value="'+ghEsc(wc[0]||'').replace(/"/g,'&quot;')+'" placeholder="카테고리명" style="flex:1"><select class="inp cn-wd-slug" data-d="'+d+'" style="flex:1">'+slugs.map(function(s){return '<option value="'+ghEsc(s)+'"'+(s===wc[1]?' selected':'')+'>'+ghEsc(s)+'</option>';}).join('')+'</select></div>';
+    }
+    html+='<div class="sec-label" style="margin-top:14px">주제 풀 (한 줄에 하나)</div>';
+    slugs.forEach(function(s){html+='<div style="font-size:12px;font-weight:600;color:var(--blue);margin:8px 0 4px">'+ghEsc(s)+'</div><textarea class="inp cn-pool" data-slug="'+ghEsc(s)+'" rows="4">'+ghEsc((cfg.topic_pool[s]||[]).join('\n'))+'</textarea>';});
+    html+='<button class="btn btn-g" style="width:100%;margin-top:12px" onclick="saveCardnewsConfig()">💾 설정 저장 (레포 반영)</button><div id="cncfg-status" class="gen-status"></div></div>';
+    v.innerHTML=html;
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function saveCardnewsConfig(){
+  var st=document.getElementById('cncfg-status');st.textContent='저장 중…';
+  var wc={};document.querySelectorAll('.cn-wd-name').forEach(function(el){var d=el.getAttribute('data-d');var slug=document.querySelector('.cn-wd-slug[data-d="'+d+'"]').value;wc[d]=[el.value.trim(),slug];});
+  var pool={};document.querySelectorAll('.cn-pool').forEach(function(el){pool[el.getAttribute('data-slug')]=el.value.split('\n').map(function(s){return s.trim();}).filter(Boolean);});
+  var cfg={weekday_category:wc,topic_pool:pool};
+  try{await ghPutFile('hadam-cardnews','config.json',JSON.stringify(cfg,null,2)+'\n','portal: update cardnews config',window._cnCfgSha);st.innerHTML='✅ 저장 완료 — 다음 생성부터 반영됩니다.';}
+  catch(e){st.textContent='실패: '+((e&&e.message)||e);}
 }
 async function cardnewsOpen(name){
   const v=document.getElementById('cardnews-view');v.innerHTML=ghLoading();
-  try{const files=(await ghContents('hadam-cardnews','cardnews/'+name)).filter(x=>x.type==='file'&&/\.(jpg|jpeg|png)$/i.test(x.name)).sort((a,b)=>a.name.localeCompare(b.name));
-    v.innerHTML='<button class="gh-back" onclick="renderCardnewsView()">‹ 날짜 목록</button><div class="cn-grid" id="cn-grid"></div>';
+  try{const all=(await ghContents('hadam-cardnews','cardnews/'+name,CN_BRANCH));
+    const files=all.filter(x=>x.type==='file'&&/\.(jpg|jpeg|png)$/i.test(x.name)).sort((a,b)=>a.name.localeCompare(b.name));
+    const hasCap=all.some(x=>x.name==='caption.txt');
+    var pid='cardnews:'+name, on=isPosted(pid);
+    let html='<div class="auto-bar"><button class="gh-back" onclick="renderCardnewsView()" style="margin:0">‹ 날짜 목록</button><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';
+    if(hasCap){const cap=await ghText('hadam-cardnews','cardnews/'+name+'/caption.txt',CN_BRANCH);
+      html+='<div class="gh-post"><h4>📝 캡션<button class="btn cp-btn" onclick="copyText(this)">복사</button></h4><pre>'+ghEsc(cap)+'</pre></div>';}
+    html+='<div class="cn-grid" id="cn-grid"></div>';
+    v.innerHTML=html;
     const grid=document.getElementById('cn-grid');
     for(const f of files){
       const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/git/blobs/'+f.sha,{headers:ghHeaders()})).json();
-      const img=document.createElement('img');img.loading='lazy';img.alt=f.name;
-      img.src='data:image/jpeg;base64,'+(d.content||'').replace(/\s/g,'');grid.appendChild(img);
+      const url='data:image/jpeg;base64,'+(d.content||'').replace(/\s/g,'');
+      const a=document.createElement('a');a.href=url;a.download=name+'-'+f.name;a.title='클릭하면 다운로드';
+      const img=document.createElement('img');img.loading='lazy';img.alt=f.name;img.src=url;
+      a.appendChild(img);grid.appendChild(a);
+    }
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+
+// ── 디자인 시안 ──
+const DESIGN_STYLES=['모던 미니멀','스칸디나비안','모던 럭셔리','내추럴','프렌치 클래식','인더스트리얼','재패니즈 젠','미드센추리 모던'];
+const DESIGN_ROOMS=['거실','침실','주방','욕실','홈오피스','현관'];
+async function renderDesignView(){
+  const v=document.getElementById('design-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  v.innerHTML=ghLoading();
+  try{var sets=[];try{sets=(await ghContents('hadam-cardnews','design')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
+    let html='<div class="auto-bar"><button class="btn btn-g" onclick="designGenPanel()">⚡ 시안 생성</button><span class="auto-hint">스타일·공간 선택 → Higgsfield 콘셉트 렌더</span></div><div id="dz-genpanel"></div>';
+    html+=sets.length?'<div class="gh-list">'+sets.map(function(s){var pid='design:'+s.name;var on=isPosted(pid);return '<div class="gh-row"><span class="gh-name" style="flex:1;cursor:pointer" onclick="designOpen(\''+s.name+'\')">🎨 '+ghEsc(s.name)+'</span><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';}).join('')+'</div>':'<div class="gh-need">아직 생성된 시안이 없습니다. 위 ⚡ 시안 생성으로 시작하세요.</div>';
+    v.innerHTML=html;
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+function designGenPanel(){
+  var el=document.getElementById('dz-genpanel');if(!el)return;
+  if(el.innerHTML){el.innerHTML='';return;}
+  el.innerHTML='<div class="gen-form"><select class="inp" id="dz-style">'+DESIGN_STYLES.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select><select class="inp" id="dz-room">'+DESIGN_ROOMS.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select><select class="inp" id="dz-count"><option>2</option><option selected>4</option><option>6</option><option>8</option></select><button class="btn btn-g" onclick="designGenRun()">생성 실행</button></div><div id="dz-genstatus" class="gen-status"></div>';
+}
+async function designGenRun(){
+  var style=document.getElementById('dz-style').value,room=document.getElementById('dz-room').value,count=document.getElementById('dz-count').value;
+  var st=document.getElementById('dz-genstatus');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~6분 소요)';
+  try{await ghDispatch('hadam-cardnews','design-proposal.yml',{style:style,room:room,count:count});
+    st.innerHTML='✅ 실행됨! '+ghEsc(style)+' / '+ghEsc(room)+' '+ghEsc(count)+'장 생성 중. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a><br><button class="btn" style="margin-top:8px" onclick="renderDesignView()">목록 새로고침</button>';
+  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+}
+async function designOpen(name){
+  const v=document.getElementById('design-view');v.innerHTML=ghLoading();
+  try{const all=(await ghContents('hadam-cardnews','design/'+name));
+    const files=all.filter(x=>x.type==='file'&&/\.(jpg|jpeg|png)$/i.test(x.name)).sort((a,b)=>a.name.localeCompare(b.name));
+    var pid='design:'+name, on=isPosted(pid);
+    let meta=null;if(all.some(x=>x.name==='meta.json')){try{meta=JSON.parse(await ghText('hadam-cardnews','design/'+name+'/meta.json'));}catch(e){}}
+    let html='<div class="auto-bar"><button class="gh-back" onclick="renderDesignView()" style="margin:0">‹ 목록</button><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';
+    if(meta)html+='<div class="gh-post"><h4>'+ghEsc(meta.style||'')+' · '+ghEsc(meta.room||'')+' · '+(meta.count||files.length)+'장</h4></div>';
+    html+='<div class="cn-grid" id="dz-grid"></div>';
+    v.innerHTML=html;
+    const grid=document.getElementById('dz-grid');
+    for(const f of files){
+      const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/git/blobs/'+f.sha,{headers:ghHeaders()})).json();
+      const url='data:image/png;base64,'+(d.content||'').replace(/\s/g,'');
+      const a=document.createElement('a');a.href=url;a.download=name+'-'+f.name;a.title='클릭하면 다운로드';
+      const img=document.createElement('img');img.loading='lazy';img.alt=f.name;img.src=url;
+      a.appendChild(img);grid.appendChild(a);
     }
   }catch(e){v.innerHTML=ghErr(e);}
 }
 
 (async function init(){
+  initCloud();
   document.getElementById('jnl-date')&&(document.getElementById('jnl-date').value=td());
   const members=getMembers();
   if(!members.length)saveMembers(['나']);
