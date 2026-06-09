@@ -357,6 +357,9 @@
 
 <div class="toast-container" id="toastContainer"></div>
 
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
 const TODAY = new Date('2026-06-02');
 TODAY.setHours(0,0,0,0);
@@ -413,6 +416,7 @@ function save() {
   localStorage.setItem('tangbisil_v2_items', JSON.stringify(items));
   localStorage.setItem('tangbisil_v2_updated', new Date().toISOString());
   updateLastUpdate();
+  cloudSave();
 }
 
 function updateLastUpdate() {
@@ -743,6 +747,27 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 load();
 updateLastUpdate();
 render();
+
+// ── Firebase 실시간 동기화 ──
+const firebaseConfig={apiKey:"AIzaSyBvzNeaUuzuvnI9pAKe4VBII56XApL2gqw",authDomain:"hadam-fa01a.firebaseapp.com",projectId:"hadam-fa01a",storageBucket:"hadam-fa01a.firebasestorage.app",messagingSenderId:"809077194187",appId:"1:809077194187:web:7c48e00620f1d29ce34a4e"};
+let _db=null,_mute=false;
+function cloudSave(){ if(_db&&!_mute){ _db.collection('appdata').doc('breakroom_items').set({payload:items,updated:Date.now()}).catch(e=>console.warn('cloud',e)); } }
+(function(){
+  try{ if(!firebase.apps.length)firebase.initializeApp(firebaseConfig); _db=firebase.firestore(); }
+  catch(e){ console.warn('fb init',e); return; }
+  var started=false;
+  // 포털에서 로그인한 세션을 공유(같은 출처). 로그인된 경우에만 동기화
+  firebase.auth().onAuthStateChanged(function(user){ if(user&&!started){ started=true; startSync(); } });
+  function startSync(){
+    _db.collection('appdata').doc('breakroom_items').onSnapshot(function(snap){
+      if(snap.exists&&snap.data()&&Array.isArray(snap.data().payload)){
+        _mute=true; items=snap.data().payload; _mute=false;
+        try{localStorage.setItem('tangbisil_v2_items',JSON.stringify(items));}catch(e){}
+        render();
+      } else { cloudSave(); } // 최초 로컬→클라우드 이관
+    }, function(e){ console.warn('snap',e); });
+  }
+})();
 </script>
 </body>
 </html>
