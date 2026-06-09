@@ -1597,7 +1597,7 @@ function ghNeedPat(){return '<div class="gh-need">GitHub 토큰(PAT)이 필요�
 function ghLoading(){return '<div class="gh-need">불러오는 중…</div>';}
 function ghErr(e){return '<div class="gh-need">불러오지 못했습니다.<br><span style="font-size:12px">'+((e&&e.message)||e)+'</span></div>';}
 function ghEsc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
-const CN_BRANCH='claude/admiring-gates-hMIvX'; // 카드뉴스 워크플로가 푸시하는 브랜치
+const CN_BRANCH='main'; // 카드뉴스: 이제 워크플로가 main에 직접 푸시
 async function ghContents(repo,path,ref){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now()+(ref?'&ref='+ref:''),{headers:ghHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
 async function ghText(repo,path,ref){const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now()+(ref?'&ref='+ref:''),{headers:ghHeaders()})).json();return decodeURIComponent(escape(atob((d.content||'').replace(/\s/g,''))));}
 
@@ -1950,8 +1950,34 @@ async function designOpen(name){
   }catch(e){v.innerHTML=ghErr(e);}
 }
 
+// ===== 대시보드 카드 드래그앤드롭 (순서 저장) =====
+function dashCardKey(c){var oc=c.getAttribute('onclick')||'';var m=oc.match(/openModal\('([^']+)'\)/);return m?m[1]:'';}
+function saveDashOrder(){try{var g=document.querySelector('.feat-grid');if(!g)return;var order=[].slice.call(g.querySelectorAll('.feat-card')).map(dashCardKey).filter(Boolean);localStorage.setItem('dash_order',JSON.stringify(order));}catch(e){}}
+function applyDashOrder(){try{var g=document.querySelector('.feat-grid');if(!g)return;var order=JSON.parse(localStorage.getItem('dash_order')||'[]');if(!order.length)return;var cards=[].slice.call(g.querySelectorAll('.feat-card')),map={};cards.forEach(function(c){map[dashCardKey(c)]=c;});var seq=[];order.forEach(function(k){if(map[k]){seq.push(map[k]);delete map[k];}});cards.forEach(function(c){var k=dashCardKey(c);if(map[k]){seq.push(c);delete map[k];}});seq.forEach(function(c){g.appendChild(c);});}catch(e){}}
+function initDashDnD(){
+  var g=document.querySelector('.feat-grid');if(!g||g._dnd)return;g._dnd=true;
+  if(!document.getElementById('dnd-style')){var st=document.createElement('style');st.id='dnd-style';st.textContent='.feat-card{cursor:grab}.feat-card.dragging{opacity:.4;outline:2px dashed #3b82f6;transform:none!important}.feat-card.drop-hint{outline:2px solid #3b82f6}';document.head.appendChild(st);}
+  applyDashOrder();
+  [].slice.call(g.querySelectorAll('.feat-card')).forEach(function(c){
+    c.setAttribute('draggable','true');
+    c.addEventListener('dragstart',function(e){c.classList.add('dragging');e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain','x');}catch(_){}});
+    c.addEventListener('dragend',function(){c.classList.remove('dragging');[].slice.call(g.querySelectorAll('.drop-hint')).forEach(function(x){x.classList.remove('drop-hint');});saveDashOrder();});
+    c.addEventListener('dragover',function(e){e.preventDefault();e.dataTransfer.dropEffect='move';});
+    c.addEventListener('dragenter',function(){if(!c.classList.contains('dragging'))c.classList.add('drop-hint');});
+    c.addEventListener('dragleave',function(){c.classList.remove('drop-hint');});
+    c.addEventListener('drop',function(e){
+      e.preventDefault();e.stopPropagation();c.classList.remove('drop-hint');
+      var dragging=g.querySelector('.feat-card.dragging');if(!dragging||dragging===c)return;
+      var kids=[].slice.call(g.children);
+      if(kids.indexOf(dragging)<kids.indexOf(c))c.after(dragging);else c.before(dragging);
+      saveDashOrder();
+    });
+  });
+}
+
 (async function init(){
   initCloud();
+  try{initDashDnD();}catch(e){}
   document.getElementById('jnl-date')&&(document.getElementById('jnl-date').value=td());
   const members=getMembers();
   if(!members.length)saveMembers(['나']);
