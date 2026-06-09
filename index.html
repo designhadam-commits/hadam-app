@@ -132,6 +132,9 @@
     .close-btn:hover{color:var(--text)}
     .modal-bd{padding:24px 28px;overflow-y:auto;flex:1}
     .modal-bd>*{max-width:1180px}
+    .modal-bd.embed-bd{padding:0;overflow:hidden}
+    .modal-bd.embed-bd>*{max-width:none}
+    .embed-frame{width:100%;height:100%;border:0;display:block;background:var(--card)}
     .row{display:flex;gap:8px;margin-bottom:10px}
     .inp{flex:1;background:#eef1f4;border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
     .inp:focus{border-color:var(--blue)}
@@ -331,8 +334,8 @@
     <div class="feat-grid">
       <div class="feat-card" onclick="openModal('chk-modal')">
         <div class="feat-top"><div class="feat-icon">📋</div><div class="arr-btn">↗</div></div>
-        <div class="feat-title">할일 체크리스트</div>
-        <div class="feat-desc">팀 공유 체크리스트. 완료 여부를 실시간으로 관리합니다.</div>
+        <div class="feat-title">업무 체크리스트</div>
+        <div class="feat-desc">매일·주간·신규현장·상담까지 한 화면에서 관리합니다.</div>
         <div class="tags"><span class="tag">공유</span><span class="tag">실시간</span></div>
         <div class="feat-status" id="fc-chk">—</div>
       </div>
@@ -359,8 +362,8 @@
       </div>
       <div class="feat-card" onclick="openModal('inv-modal')">
         <div class="feat-top"><div class="feat-icon">🗂️</div><div class="arr-btn">↗</div></div>
-        <div class="feat-title">재고 관리</div>
-        <div class="feat-desc">사무용품·소모품 재고를 카테고리별로 정리합니다.</div>
+        <div class="feat-title">탕비실 재고</div>
+        <div class="feat-desc">품목별 재고·구매 일정을 관리하고 CSV로 내보냅니다.</div>
         <div class="tags"><span class="tag">재고</span><span class="tag">카테고리</span></div>
         <div class="feat-status" id="fc-inv">—</div>
       </div>
@@ -380,8 +383,8 @@
       </div>
       <div class="feat-card" onclick="openModal('seo-modal')">
         <div class="feat-top"><div class="feat-icon">✍️</div><div class="arr-btn">↗</div></div>
-        <div class="feat-title">블로그 SEO 생성기</div>
-        <div class="feat-desc">키워드 기반 블로그 초안을 자동 생성합니다.</div>
+        <div class="feat-title">SEO 블로그 자동화</div>
+        <div class="feat-desc">화자 선택·키워드·이미지까지 블로그 글을 자동 생성합니다.</div>
         <div class="tags"><span class="tag">SEO</span><span class="tag">블로그</span></div>
         <div class="feat-status">키워드 → 포스팅 초안</div>
       </div>
@@ -407,12 +410,9 @@
 
 <!-- MODALS -->
 <div class="overlay" id="chk-modal">
-  <div class="modal">
-    <div class="modal-hd"><h2>📋 할일 체크리스트</h2><button class="close-btn" onclick="closeModal('chk-modal')">✕</button></div>
-    <div class="modal-bd">
-      <div class="row"><input class="inp" id="chk-inp" placeholder="할일 입력..." onkeydown="if(event.key==='Enter')addChk()"><select class="inp" id="chk-priority" style="max-width:90px"><option value="보통">보통</option><option value="중요">중요</option><option value="긴급">긴급</option></select><button class="btn btn-g" onclick="addChk()">추가</button></div>
-      <div id="chk-list"></div>
-    </div>
+  <div class="modal embed">
+    <div class="modal-hd"><h2>📋 업무 체크리스트</h2><button class="close-btn" onclick="closeModal('chk-modal')">✕</button></div>
+    <div class="modal-bd embed-bd"><iframe class="embed-frame" data-src="checklist/" title="업무 체크리스트"></iframe></div>
   </div>
 </div>
 
@@ -457,8 +457,8 @@
 </div>
 
 <div class="overlay" id="inv-modal">
-  <div class="modal"><div class="modal-hd"><h2>🗂️ 재고 관리</h2><button class="close-btn" onclick="closeModal('inv-modal')">✕</button></div>
-  <div class="modal-bd"><div class="row"><input class="inp" id="inv-name" placeholder="품목명..."><input class="inp" id="inv-qty" placeholder="수량" style="max-width:80px"><select class="inp" id="inv-cat" style="max-width:110px"><option>사무용품</option><option>청소용품</option><option>시공재료</option><option>전산장비</option><option>기타</option></select><button class="btn btn-g" onclick="addInv()">추가</button></div><div id="inv-list"></div></div></div>
+  <div class="modal embed"><div class="modal-hd"><h2>🗂️ 탕비실 재고</h2><button class="close-btn" onclick="closeModal('inv-modal')">✕</button></div>
+  <div class="modal-bd embed-bd"><iframe class="embed-frame" data-src="breakroom/" title="탕비실 재고"></iframe></div></div>
 </div>
 
 <div class="overlay" id="cal-modal">
@@ -471,8 +471,8 @@
 </div>
 
 <div class="overlay" id="seo-modal">
-  <div class="modal"><div class="modal-hd"><h2>✍️ 블로그 SEO 생성기</h2><button class="close-btn" onclick="closeModal('seo-modal')">✕</button></div>
-  <div class="modal-bd"><div class="row"><input class="inp" id="seo-kw" placeholder="키워드 (예: 부산 거실 인테리어)"><select class="inp" id="seo-tone" style="max-width:100px"><option value="전문가">전문가</option><option value="고객">고객후기</option><option value="친근">친근</option></select></div><div class="row"><input class="inp" id="seo-loc" placeholder="지역 (기본: 부산)"><button class="btn btn-g" onclick="genSEO()">생성</button></div><div class="seo-out" id="seo-out"></div></div></div>
+  <div class="modal embed"><div class="modal-hd"><h2>✍️ SEO 블로그 자동화</h2><button class="close-btn" onclick="closeModal('seo-modal')">✕</button></div>
+  <div class="modal-bd embed-bd"><iframe class="embed-frame" data-src="blog/" title="SEO 블로그 자동화"></iframe></div></div>
 </div>
 
 <div class="overlay" id="thread-modal">
@@ -561,11 +561,12 @@ function openModal(id){
   });
   document.getElementById(id).classList.add('open');
   document.getElementById('app-content').scrollTo({top:0});
-  if(id==='chk-modal')renderChk();
+  // 임베드 앱은 처음 열 때만 로드
+  var _fr=document.querySelector('#'+id+' iframe.embed-frame');
+  if(_fr && !_fr.getAttribute('src')) _fr.setAttribute('src', _fr.getAttribute('data-src'));
   if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();}
   if(id==='ins-modal'){renderIns();renderInsGrid();}
   if(id==='ord-modal')renderOrd();
-  if(id==='inv-modal')renderInv();
   if(id==='cal-modal')renderCal();
   if(id==='con-modal')renderCon();
   if(id==='member-modal')renderMemberList();

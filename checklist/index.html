@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>디자인하담 업무 체크</title>
+<style>
+  :root{
+    --bg:#f4f1ea; --surface:#fffefb; --ink:#2b2823; --muted:#8a8479;
+    --line:#e3ddd0; --line2:#d3cbba; --accent:#5b6e57; --accent-soft:#e8ede4;
+    --done-bg:#5b6e57; --shadow:0 1px 2px rgba(43,40,35,.04);
+    --radius:14px; --danger:#c0392b; --danger-soft:#fdf0ef;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:'Pretendard',-apple-system,'Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;
+    -webkit-font-smoothing:antialiased;padding:0 0 80px;
+  }
+  .wrap{max-width:760px;margin:0 auto;padding:0 18px}
+  header{padding:34px 0 22px;border-bottom:1px solid var(--line)}
+  .brand{font-size:13px;letter-spacing:.22em;color:var(--accent);font-weight:600;text-transform:uppercase}
+  h1{font-family:Georgia,'Nanum Myeongjo',serif;font-size:30px;font-weight:600;margin:6px 0 2px;letter-spacing:-.01em}
+  .date{font-size:14px;color:var(--muted)}
+  .overall{display:flex;align-items:center;gap:16px;margin:22px 0 8px;
+    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 20px;box-shadow:var(--shadow)}
+  .overall .num{font-family:Georgia,serif;font-size:26px;font-weight:600}
+  .overall .lbl{font-size:13px;color:var(--muted)}
+  .bar{flex:1;height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+  .bar > i{display:block;height:100%;background:var(--accent);border-radius:99px;transition:width .3s}
+  .tabs{display:flex;gap:8px;margin:22px 0 18px;flex-wrap:wrap}
+  .tab{padding:9px 16px;border:1px solid var(--line2);background:var(--surface);
+    border-radius:99px;font-size:14px;color:var(--muted);cursor:pointer;font-weight:500;transition:all .15s}
+  .tab:hover{border-color:var(--accent)}
+  .tab.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .panel{display:none}
+  .panel.on{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .card-h{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+  .card-h h2{font-size:16px;font-weight:600;flex:1}
+  .card-h .cnt{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+  .item{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-top:1px solid var(--line);user-select:none}
+  .item:first-of-type{border-top:none}
+  .check{width:21px;height:21px;border-radius:6px;border:1.6px solid var(--line2);
+    flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;
+    transition:all .15s;cursor:pointer}
+  .check svg{width:13px;height:13px;opacity:0}
+  .item.done .check{background:var(--done-bg);border-color:var(--done-bg)}
+  .item.done .check svg{opacity:1}
+  .item .txt{font-size:15px;transition:color .15s;flex:1;cursor:pointer;min-width:0}
+  .item.done .txt{color:var(--muted);text-decoration:line-through}
+  .item .sub{display:block;font-size:12.5px;color:var(--muted);margin-top:1px}
+  /* 편집 모드 바 */
+  .edit-mode-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;gap:8px}
+  .edit-toggle{display:flex;align-items:center;gap:7px;padding:7px 13px;
+    border:1px solid var(--line2);background:var(--surface);border-radius:99px;
+    font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;transition:all .15s;white-space:nowrap}
+  .edit-toggle:hover{border-color:var(--accent);color:var(--accent)}
+  .edit-toggle.active{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+  /* 항목 인라인 편집 */
+  .item-edit-wrap{flex:1;display:flex;flex-direction:column;gap:5px;padding:2px 0}
+  .item-edit-wrap input{padding:7px 10px;border:1px solid var(--accent);border-radius:7px;
+    font-size:14px;font-family:inherit;background:#fff;color:var(--ink);width:100%}
+  .item-edit-wrap input:focus{outline:none}
+  .item-edit-wrap .sub-hint{font-size:11.5px;color:var(--muted)}
+  .item-edit-wrap .row-btns{display:flex;gap:6px;flex-wrap:wrap}
+  .item-edit-wrap .row-btns button{padding:5px 11px;border:none;border-radius:6px;
+    font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+  .btn-save{background:var(--accent);color:#fff}
+  .btn-cancel{background:var(--surface);color:var(--muted);border:1px solid var(--line2) !important}
+  .btn-del{background:var(--danger-soft);color:var(--danger);border:1px solid #f5c6c2 !important}
+  /* 섹션명 편집 */
+  .sec-edit-wrap{flex:1;display:flex;gap:7px;align-items:center}
+  .sec-edit-wrap input{flex:1;padding:6px 10px;border:1px solid var(--accent);border-radius:7px;
+    font-size:15px;font-weight:600;font-family:inherit;background:#fff;color:var(--ink)}
+  .sec-edit-wrap input:focus{outline:none}
+  .sec-edit-wrap button{padding:5px 11px;border:none;border-radius:6px;font-size:13px;font-weight:500;cursor:pointer;font-family:inherit}
+  .sec-del-btn{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;
+    border-radius:5px;display:flex;flex-shrink:0;transition:all .15s}
+  .sec-del-btn:hover{background:var(--danger-soft);color:var(--danger)}
+  /* 항목 추가 행 */
+  .add-item-row{display:flex;gap:8px;margin-top:10px;padding-top:10px;border-top:1px dashed var(--line2)}
+  .add-item-row input{flex:1;padding:8px 12px;border:1px solid var(--line2);border-radius:8px;
+    font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink)}
+  .add-item-row input:focus{outline:none;border-color:var(--accent)}
+  .add-item-row .add-btn{padding:8px 14px;border:none;background:var(--accent);color:#fff;
+    border-radius:8px;font-size:13px;font-weight:500;cursor:pointer;white-space:nowrap;font-family:inherit}
+  /* 섹션 추가 */
+  .add-sec-btn{width:100%;padding:12px;border:1.5px dashed var(--line2);background:transparent;
+    color:var(--muted);border-radius:var(--radius);font-size:14px;font-weight:500;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:7px;transition:all .15s;font-family:inherit;margin-bottom:14px}
+  .add-sec-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+  .add-sec-form{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
+    padding:16px 18px;margin-bottom:14px}
+  .add-sec-form p{font-size:13px;font-weight:600;margin-bottom:9px}
+  .add-sec-form input{width:100%;padding:9px 12px;border:1px solid var(--line2);border-radius:8px;
+    font-size:14px;font-family:inherit;background:var(--bg);color:var(--ink);margin-bottom:8px}
+  .add-sec-form input:focus{outline:none;border-color:var(--accent)}
+  .add-sec-form .btns{display:flex;gap:8px}
+  .add-sec-form .btns button{flex:1;padding:9px;border:none;border-radius:8px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+  .reset{padding:8px 14px;border:1px solid var(--line2);background:var(--surface);
+    border-radius:9px;font-size:13px;color:var(--muted);cursor:pointer;font-weight:500;
+    display:inline-flex;align-items:center;gap:6px;font-family:inherit}
+  .reset:hover{border-color:var(--accent);color:var(--accent)}
+  .site-bar{display:flex;gap:8px;margin-bottom:14px}
+  .site-bar input{flex:1;padding:11px 14px;border:1px solid var(--line2);border-radius:10px;
+    font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink)}
+  .site-bar input:focus{outline:none;border-color:var(--accent)}
+  .site-bar button{padding:0 18px;border:none;background:var(--accent);color:#fff;
+    border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+  .site-empty{text-align:center;color:var(--muted);font-size:14px;padding:30px 0}
+  .site-row{display:flex;align-items:center;gap:14px;background:var(--surface);
+    border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px;
+    margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .15s}
+  .site-row:hover{border-color:var(--accent)}
+  .site-row .rname{flex:1;font-size:15.5px;font-weight:600}
+  .site-row .rname small{display:block;font-size:12.5px;color:var(--muted);font-weight:400;margin-top:2px}
+  .site-row .rbar{width:90px;height:7px;background:var(--line);border-radius:99px;overflow:hidden;flex-shrink:0}
+  .site-row .rbar > i{display:block;height:100%;background:var(--accent);border-radius:99px}
+  .site-row .rpct{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;width:38px;text-align:right;flex-shrink:0}
+  .site-row .rdone{color:var(--accent)}
+  .site-row .chev{color:var(--line2);flex-shrink:0}
+  .site-row .rdel{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;flex-shrink:0;display:flex}
+  .site-row .rdel:hover{color:#a33}
+  .site-row .rdel svg,.c-row .cdel svg{pointer-events:none}
+  .back-btn{display:inline-flex;align-items:center;gap:6px;background:none;border:none;
+    color:var(--accent);font-size:14px;font-weight:500;cursor:pointer;padding:0;margin-bottom:14px;font-family:inherit}
+  .detail-head{font-family:Georgia,serif;font-size:22px;font-weight:600;margin-bottom:16px;line-height:1.3}
+  .field{margin-bottom:14px}
+  .field:last-child{margin-bottom:0}
+  .field label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:5px}
+  .field .num-tag{display:inline-block;width:20px;height:20px;line-height:20px;text-align:center;
+    background:var(--accent-soft);color:var(--accent);border-radius:5px;font-size:11px;margin-right:7px;font-weight:600}
+  .field input,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--line2);
+    border-radius:9px;font-size:14px;font-family:inherit;background:var(--surface);color:var(--ink)}
+  .field input:focus,.field textarea:focus{outline:none;border-color:var(--accent)}
+  .field textarea{resize:vertical;min-height:54px}
+  .field .hint{font-size:12px;color:var(--muted);margin-top:4px;line-height:1.5}
+  .c-row{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--line);
+    border-radius:var(--radius);padding:15px 18px;margin-bottom:10px;cursor:pointer;box-shadow:var(--shadow);transition:border-color .15s}
+  .c-row:hover{border-color:var(--accent)}
+  .c-row .cn{flex:1}
+  .c-row .cn b{font-size:15.5px;font-weight:600}
+  .c-row .cn small{display:block;font-size:12.5px;color:var(--muted);margin-top:2px}
+  .c-row .cdel{background:none;border:none;color:var(--muted);cursor:pointer;padding:4px;display:flex;flex-shrink:0}
+  .c-row .cdel:hover{color:#a33}
+  .c-row .chev{color:var(--line2);flex-shrink:0}
+  .dview-row{display:flex;padding:9px 0;border-top:1px solid var(--line);font-size:14px}
+  .dview-row:first-child{border-top:none}
+  .dview-row .k{width:96px;flex-shrink:0;color:var(--muted);font-weight:500}
+  .dview-row .v{flex:1;white-space:pre-wrap}
+  .dview-row .v.empty{color:var(--line2)}
+  .site-edit-note{font-size:12.5px;color:var(--muted);padding:9px 14px;
+    background:var(--accent-soft);border-radius:9px;margin-bottom:12px;line-height:1.6}
+  footer{text-align:center;color:var(--muted);font-size:12px;margin-top:30px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand">Design Hadam</div>
+    <h1>업무 체크리스트</h1>
+    <div class="date" id="today"></div>
+  </header>
+
+  <div class="overall">
+    <div>
+      <div class="num"><span id="ov-done">0</span><span style="font-size:18px;color:var(--muted)">/<span id="ov-total">0</span></span></div>
+      <div class="lbl">현재 탭 진행률</div>
+    </div>
+    <div class="bar"><i id="ov-bar" style="width:0%"></i></div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" data-tab="daily">매일</div>
+    <div class="tab" data-tab="weekly">주간·월간</div>
+    <div class="tab" data-tab="sites">신규 현장</div>
+    <div class="tab" data-tab="consult">상담 기록</div>
+  </div>
+
+  <!-- DAILY -->
+  <div class="panel on" id="panel-daily">
+    <div class="edit-mode-bar">
+      <button class="reset" id="reset-daily">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        오늘 리셋
+      </button>
+      <button class="edit-toggle" id="daily-edit-toggle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+        편집하기
+      </button>
+    </div>
+    <div id="daily-root"></div>
+  </div>
+
+  <!-- WEEKLY -->
+  <div class="panel" id="panel-weekly">
+    <div class="edit-mode-bar">
+      <button class="reset" id="reset-weekly">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+        주간 리셋
+      </button>
+      <button class="edit-toggle" id="weekly-edit-toggle">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+        편집하기
+      </button>
+    </div>
+    <div id="weekly-root"></div>
+  </div>
+
+  <!-- SITES -->
+  <div class="panel" id="panel-sites">
+    <div id="sites-list-view">
+      <div class="site-bar">
+        <input type="text" id="site-input" placeholder="현장명 입력 (예: OO아파트 101동 1503호)">
+        <button id="site-add">현장 추가</button>
+      </div>
+      <div id="sites-root"></div>
+    </div>
+    <div id="sites-detail-view" style="display:none">
+      <button class="back-btn" id="site-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        현장 목록으로
+      </button>
+      <div class="edit-mode-bar" style="margin-bottom:12px">
+        <div class="detail-head" id="detail-name" style="margin-bottom:0;font-size:19px"></div>
+        <button class="edit-toggle" id="site-edit-toggle">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+          편집하기
+        </button>
+      </div>
+      <div id="detail-root"></div>
+    </div>
+  </div>
+
+  <!-- CONSULT -->
+  <div class="panel" id="panel-consult">
+    <div id="consult-list-view">
+      <div style="text-align:right;margin-bottom:14px">
+        <button id="consult-new" style="padding:10px 18px;border:none;background:var(--accent);color:#fff;border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit">
+          + 새 상담 작성
+        </button>
+      </div>
+      <div id="consult-root"></div>
+    </div>
+    <div id="consult-form-view" style="display:none">
+      <button class="back-btn" id="consult-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        상담 목록으로
+      </button>
+      <div class="detail-head" id="consult-form-title">새 상담 기록</div>
+      <div class="card" id="consult-form-card"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button id="consult-save" style="flex:1;padding:12px;border:none;background:var(--accent);color:#fff;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;font-family:inherit">저장</button>
+      </div>
+    </div>
+    <div id="consult-detail-view" style="display:none">
+      <button class="back-btn" id="consult-detail-back">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg>
+        상담 목록으로
+      </button>
+      <div class="detail-head" id="consult-detail-name"></div>
+      <div class="card" id="consult-detail-card"></div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button id="consult-edit" style="flex:1;padding:11px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit">수정</button>
+        <button id="consult-copy" style="flex:1;padding:11px;border:none;background:#fee500;color:#3c1e1e;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">복사 + 카카오톡 열기</button>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <footer>체크 상태 및 항목 수정사항은 이 PC의 브라우저에 자동 저장됩니다.</footer>
+</div>
+
+<script>
+const CHECK_SVG='<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+const TRASH_SVG='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/></svg>';
+
+// 기본 데이터
+const DEFAULT_DAILY=[
+  {id:'morning',title:'출근 직후',items:[
+    {text:'현관 비밀번호 0306#',sub:''},
+    {text:'불 켜기',sub:'상단 2개 + 좌하단 1개'},
+    {text:'노래 켜기',sub:''},
+    {text:'에어컨 켜기',sub:''},
+    {text:'쓰레기통 비우기',sub:''},
+    {text:'바닥 청소 한 번',sub:''},
+    {text:'탕비실 점검',sub:''},
+    {text:'착신전환 → 회사 유선으로',sub:''}
+  ]},
+  {id:'monitor',title:'수시 — 문의 모니터링',items:[
+    {text:'자사 이메일',sub:''},
+    {text:'홈페이지 문의란',sub:''},
+    {text:'온라인폼 신청자 → 전화 상담',sub:''},
+    {text:'네이버 톡톡 파트너센터',sub:''},
+    {text:'네이버 플레이스',sub:''},
+    {text:'상담 내용 → 대표님 개인톡 전달',sub:''}
+  ]},
+  {id:'content',title:'콘텐츠',items:[
+    {text:'블로그 글 1개',sub:'1,500자 / 키워드 5개 × 5회'},
+    {text:'블로그 이웃 좋아요 + 댓글',sub:''}
+  ]},
+  {id:'evening',title:'퇴근 직전',items:[
+    {text:'착신전환모드 → "착신전환"',sub:'회사 → 대표님 휴대폰'}
+  ]}
+];
+
+const DEFAULT_WEEKLY=[
+  {id:'office',title:'사무실 관리 (주 1회)',items:[
+    {text:'탕비실 커피머신 청소',sub:''},
+    {text:'얼음정수기 청소',sub:''},
+    {text:'커피머신 물통에 생수 채우기',sub:''},
+    {text:'화장실 청소',sub:''},
+    {text:'식물 물주기 + 썩은 부분 정리',sub:''},
+    {text:'커피 찌꺼기 / 폐지 / 우편물 확인',sub:''},
+    {text:'비품 체크표 확인 → 부족분 구매',sub:''}
+  ]},
+  {id:'monthly',title:'월 1회',items:[
+    {text:'마케팅 단톡방 원고 작성',sub:'브랜드 아파트명 + 키워드'},
+    {text:'원고 사진 15~20장',sub:'마이박스 → 포토스케이프 보정'}
+  ]},
+  {id:'project',title:'프로젝트 완료 시',items:[
+    {text:'홈페이지 포트폴리오 업데이트',sub:''},
+    {text:'사진 포토샵 웹용 저장',sub:'품질 69 / 가로 1400px / JPEG'},
+    {text:'카테고리 선택 확인 후 업로드',sub:''}
+  ]}
+];
+
+const DEFAULT_SITE=[
+  {title:'카카오톡 방 생성',items:[
+    {text:'방 만들기 + 썸네일에 아파트명/동/호수',sub:''},
+    {text:'인원 초대: 나·대표님·이민기소장·홍팀장',sub:''},
+    {text:'클라이언트는 대표님이 초대 (내가 안 함)',sub:''},
+    {text:'비밀번호 4123으로 변경',sub:''},
+    {text:'"비밀번호 변경했습니다" 방에 올리기',sub:''}
+  ]},
+  {title:'실측 외근 준비물',items:[
+    {text:'줄자',sub:''},{text:'레이저 줄자',sub:''},{text:'샤프 / 볼펜',sub:''},
+    {text:'네이버 부동산 평면도 (출력)',sub:''},{text:'네임펜 (철거 표시용)',sub:''}
+  ]},
+  {title:'현장에서',items:[
+    {text:'평면도에 실측 치수 기입',sub:''},
+    {text:'사진 촬영 (방향 일관되게)',sub:''},
+    {text:'관리사무소에 건축 도면 요청',sub:''},
+    {text:'공사 신고 시 관리실 점심시간 피하기',sub:''}
+  ]},
+  {title:'돌아와서 + 백업',items:[
+    {text:'실측 자료로 도면 작업',sub:''},
+    {text:'컴퓨터 저장: 디자인하담 > 연도 > 현장',sub:''},
+    {text:'마이박스: 월 폴더 안에 현장 폴더 생성',sub:''},
+    {text:'공사 전 사진 (단톡방) → 마이박스',sub:''},
+    {text:'철거 후 사진 (단톡방) → 마이박스',sub:''}
+  ]}
+];
+
+// storage
+const KEY='hadam_v2';
+function todayStr(){const d=new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function load(){
+  let s={};
+  try{s=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){s={};}
+  if(!s.daily)s.daily={};
+  if(!s.weekly)s.weekly={};
+  if(!s.sites)s.sites=[];
+  if(!s.consults)s.consults=[];
+  if(!s.dailySecs)s.dailySecs=JSON.parse(JSON.stringify(DEFAULT_DAILY));
+  if(!s.weeklySecs)s.weeklySecs=JSON.parse(JSON.stringify(DEFAULT_WEEKLY));
+  if(!s.siteTpl)s.siteTpl=JSON.parse(JSON.stringify(DEFAULT_SITE));
+  if(s.dailyDate!==todayStr()){s.daily={};s.dailyDate=todayStr();}
+  return s;
+}
+function save(){localStorage.setItem(KEY,JSON.stringify(state));}
+let state=load();
+
+let dailyEdit=false, weeklyEdit=false, siteEdit=false;
+
+// 체크키 생성
+function ck(sec, si, ii){return (sec.id||String(si))+'_'+ii;}
+
+// 범용 섹션 카드 빌더
+function buildCard(sec, si, store, onToggle, editMode, tabKey){
+  const card=document.createElement('div');card.className='card';
+
+  // 카드 헤더
+  const hdr=document.createElement('div');hdr.className='card-h';
+  if(editMode){
+    const wrap=document.createElement('div');wrap.className='sec-edit-wrap';
+    const inp=document.createElement('input');inp.value=sec.title;
+    const sv=document.createElement('button');sv.textContent='저장';sv.className='btn-save';
+    sv.onclick=()=>{
+      const v=inp.value.trim();if(!v)return;
+      sec.title=v;save();rerender(tabKey);
+    };
+    const cn=document.createElement('button');cn.textContent='취소';cn.className='btn-cancel';
+    cn.onclick=()=>rerender(tabKey);
+    wrap.appendChild(inp);wrap.appendChild(sv);wrap.appendChild(cn);
+    hdr.appendChild(wrap);
+    // 섹션 삭제 버튼
+    const dl=document.createElement('button');dl.className='sec-del-btn';dl.innerHTML=TRASH_SVG;dl.title='섹션 삭제';
+    dl.onclick=()=>{
+      if(!confirm('"'+sec.title+'" 섹션 전체를 삭제할까요?'))return;
+      getSecArr(tabKey).splice(si,1);save();rerender(tabKey);
+    };
+    hdr.appendChild(dl);
+  } else {
+    const done=sec.items.filter((_,ii)=>store[ck(sec,si,ii)]).length;
+    const h2=document.createElement('h2');h2.textContent=sec.title;
+    const cnt=document.createElement('span');cnt.className='cnt';cnt.textContent=done+'/'+sec.items.length;
+    hdr.appendChild(h2);hdr.appendChild(cnt);
+  }
+  card.appendChild(hdr);
+
+  // 항목들
+  sec.items.forEach((it,ii)=>{
+    const key=ck(sec,si,ii);
+    const isDone=!!store[key];
+    const row=document.createElement('div');row.className='item'+(isDone?' done':'');
+
+    const chk=document.createElement('span');chk.className='check';chk.innerHTML=CHECK_SVG;
+    if(!editMode){
+      chk.onclick=()=>{store[key]=!store[key];onToggle();};
+    }
+    row.appendChild(chk);
+
+    if(editMode){
+      const wrap=document.createElement('div');wrap.className='item-edit-wrap';
+      const i1=document.createElement('input');i1.value=it.text;i1.placeholder='항목명';
+      const i2=document.createElement('input');i2.value=it.sub||'';i2.placeholder='보조 설명 (선택)';i2.style.fontSize='13px';
+      const hint=document.createElement('div');hint.className='sub-hint';hint.textContent='↑ 항목 아래 작은 글씨';
+      const btns=document.createElement('div');btns.className='row-btns';
+      const sv=document.createElement('button');sv.textContent='저장';sv.className='btn-save';
+      sv.onclick=()=>{
+        const v=i1.value.trim();if(!v)return;
+        it.text=v;it.sub=i2.value.trim();save();rerender(tabKey);
+      };
+      const cn=document.createElement('button');cn.textContent='취소';cn.className='btn-cancel';
+      cn.onclick=()=>rerender(tabKey);
+      const dl=document.createElement('button');dl.textContent='삭제';dl.className='btn-del';
+      dl.onclick=()=>{
+        if(!confirm('"'+it.text+'" 항목을 삭제할까요?'))return;
+        sec.items.splice(ii,1);
+        // 체크 상태 재정렬
+        const newS={};
+        Object.keys(store).forEach(k=>{
+          const parts=k.split('_');const idx=parseInt(parts[parts.length-1]);
+          const pre=parts.slice(0,-1).join('_');
+          const myPre=sec.id||String(si);
+          if(pre===myPre){if(idx<ii)newS[k]=store[k];else if(idx>ii)newS[myPre+'_'+(idx-1)]=store[k];}
+          else newS[k]=store[k];
+        });
+        if(tabKey==='daily')state.daily=newS;
+        else if(tabKey==='weekly')state.weekly=newS;
+        save();rerender(tabKey);
+      };
+      btns.appendChild(sv);btns.appendChild(cn);btns.appendChild(dl);
+      wrap.appendChild(i1);wrap.appendChild(i2);wrap.appendChild(hint);wrap.appendChild(btns);
+      row.appendChild(wrap);
+    } else {
+      const txt=document.createElement('span');txt.className='txt';
+      txt.innerHTML=it.text+(it.sub?'<span class="sub">'+it.sub+'</span>':'');
+      txt.onclick=()=>{store[key]=!store[key];onToggle();};
+      row.appendChild(txt);
+    }
+    card.appendChild(row);
+  });
+
+  // 항목 추가 행
+  if(editMode){
+    const ar=document.createElement('div');ar.className='add-item-row';
+    const inp=document.createElement('input');inp.placeholder='새 항목 입력…';inp.type='text';
+    const btn=document.createElement('button');btn.textContent='+ 추가';btn.className='add-btn';
+    btn.onclick=()=>{
+      const v=inp.value.trim();if(!v)return;
+      sec.items.push({text:v,sub:''});save();inp.value='';rerender(tabKey);
+    };
+    inp.addEventListener('keydown',e=>{if(e.key==='Enter')btn.onclick();});
+    ar.appendChild(inp);ar.appendChild(btn);
+    card.appendChild(ar);
+  }
+  return card;
+}
+
+function getSecArr(tabKey){
+  if(tabKey==='daily')return state.dailySecs;
+  if(tabKey==='weekly')return state.weeklySecs;
+  return state.siteTpl;
+}
+
+function rerender(tabKey){
+  if(tabKey==='daily')renderDaily();
+  else if(tabKey==='weekly')renderWeekly();
+  else renderSiteDetail();
+}
+
+function setToggleState(btn, active){
+  btn.classList.toggle('active', active);
+  const pencil='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>';
+  btn.innerHTML= active ? pencil+' 편집 중' : pencil+' 편집하기';
+}
+
+function addSecBtn(root, tabKey){
+  const btn=document.createElement('button');btn.className='add-sec-btn';
+  btn.innerHTML='<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg> 섹션 추가';
+  btn.onclick=()=>{
+    // 이미 폼 있으면 제거
+    const ex=root.querySelector('.add-sec-form');if(ex){ex.remove();return;}
+    const form=document.createElement('div');form.className='add-sec-form';
+    form.innerHTML='<p>새 섹션 이름</p>';
+    const inp=document.createElement('input');inp.placeholder='섹션 이름';
+    form.appendChild(inp);
+    const btns=document.createElement('div');btns.className='btns';
+    const add=document.createElement('button');add.textContent='추가';add.className='btn-save';
+    add.onclick=()=>{
+      const v=inp.value.trim();if(!v)return;
+      getSecArr(tabKey).push({id:'sec_'+Date.now(),title:v,items:[]});
+      save();rerender(tabKey);
+    };
+    const cn=document.createElement('button');cn.textContent='취소';cn.className='btn-cancel';
+    cn.onclick=()=>rerender(tabKey);
+    btns.appendChild(add);btns.appendChild(cn);form.appendChild(btns);
+    root.insertBefore(form,btn);
+    inp.focus();
+  };
+  root.appendChild(btn);
+}
+
+// ─── Daily ───
+function renderDaily(){
+  const root=document.getElementById('daily-root');root.innerHTML='';
+  state.dailySecs.forEach((sec,si)=>{
+    root.appendChild(buildCard(sec,si,state.daily,
+      ()=>{save();renderDaily();updateOverall('daily');}
+      ,dailyEdit,'daily'));
+  });
+  if(dailyEdit) addSecBtn(root,'daily');
+  setToggleState(document.getElementById('daily-edit-toggle'),dailyEdit);
+  updateOverall('daily');
+}
+
+// ─── Weekly ───
+function renderWeekly(){
+  const root=document.getElementById('weekly-root');root.innerHTML='';
+  state.weeklySecs.forEach((sec,si)=>{
+    root.appendChild(buildCard(sec,si,state.weekly,
+      ()=>{save();renderWeekly();updateOverall('weekly');}
+      ,weeklyEdit,'weekly'));
+  });
+  if(weeklyEdit) addSecBtn(root,'weekly');
+  setToggleState(document.getElementById('weekly-edit-toggle'),weeklyEdit);
+  updateOverall('weekly');
+}
+
+document.getElementById('daily-edit-toggle').onclick=()=>{dailyEdit=!dailyEdit;renderDaily();};
+document.getElementById('weekly-edit-toggle').onclick=()=>{weeklyEdit=!weeklyEdit;renderWeekly();};
+
+// ─── Sites ───
+let openSiteIdx=null;
+
+function siteProgress(site){
+  let total=0,done=0;
+  state.siteTpl.forEach((g,gi)=>g.items.forEach((_,ii)=>{total++;if(site.checks[gi+'_'+ii])done++;}));
+  return{total,done,pct:total?Math.round(done/total*100):0};
+}
+function renderSites(){
+  if(openSiteIdx!==null&&state.sites[openSiteIdx])renderSiteDetail();
+  else renderSiteList();
+}
+function renderSiteList(){
+  document.getElementById('sites-list-view').style.display='block';
+  document.getElementById('sites-detail-view').style.display='none';
+  const root=document.getElementById('sites-root');root.innerHTML='';
+  if(state.sites.length===0){
+    root.innerHTML='<div class="site-empty">진행 중인 현장이 없습니다.<br>위에 현장명을 입력해 추가하세요.</div>';return;
+  }
+  state.sites.forEach((site,si)=>{
+    const p=siteProgress(site);
+    const row=document.createElement('div');row.className='site-row';
+    row.innerHTML=
+      '<div class="rname">'+site.name+'<small>'+(site.added||'')+'</small></div>'+
+      '<div class="rbar"><i style="width:'+p.pct+'%"></i></div>'+
+      '<div class="rpct'+(p.pct===100?' rdone':'')+'">'+p.pct+'%</div>'+
+      '<button class="rdel" title="삭제">'+TRASH_SVG+'</button>'+
+      '<span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>';
+    row.onclick=(e)=>{
+      if(e.target.closest('.rdel')){
+        if(confirm('"'+state.sites[si].name+'" 현장을 삭제할까요?')){state.sites.splice(si,1);save();renderSiteList();updateOverall('sites');}
+        return;
+      }
+      openSiteIdx=si;siteEdit=false;renderSiteDetail();updateOverall('sites');
+    };
+    root.appendChild(row);
+  });
+}
+
+function renderSiteDetail(){
+  const site=state.sites[openSiteIdx];
+  if(!site){openSiteIdx=null;renderSiteList();return;}
+  document.getElementById('sites-list-view').style.display='none';
+  document.getElementById('sites-detail-view').style.display='block';
+  document.getElementById('detail-name').textContent=site.name;
+  setToggleState(document.getElementById('site-edit-toggle'),siteEdit);
+  const root=document.getElementById('detail-root');root.innerHTML='';
+  if(siteEdit){
+    const note=document.createElement('div');note.className='site-edit-note';
+    note.textContent='✏️ 여기서 수정하면 앞으로 추가되는 모든 현장 기본 체크리스트에 반영됩니다.';
+    root.appendChild(note);
+  }
+  // site 탭은 id 없이 인덱스 기반 키 사용
+  state.siteTpl.forEach((g,gi)=>{
+    const sec={id:String(gi),title:g.title,items:g.items};
+    root.appendChild(buildCard(sec,gi,site.checks,
+      ()=>{save();renderSiteDetail();updateOverall('sites');}
+      ,siteEdit,'site'));
+  });
+  if(siteEdit) addSecBtn(root,'site');
+}
+
+document.getElementById('site-edit-toggle').onclick=()=>{siteEdit=!siteEdit;renderSiteDetail();};
+document.getElementById('site-back').onclick=()=>{openSiteIdx=null;siteEdit=false;renderSiteList();updateOverall('sites');};
+document.getElementById('site-add').onclick=addSite;
+document.getElementById('site-input').addEventListener('keydown',e=>{if(e.key==='Enter')addSite();});
+function addSite(){
+  const inp=document.getElementById('site-input');const name=inp.value.trim();if(!name)return;
+  const d=new Date();
+  state.sites.unshift({name,checks:{},added:(d.getMonth()+1)+'월 '+d.getDate()+'일 추가'});
+  save();inp.value='';renderSiteList();updateOverall('sites');
+}
+
+// ─── Consult ───
+const CFIELDS=[
+  {k:'route',label:'접근 경로',type:'text',ph:'예: 네이버 검색, 지인 소개, 블로그'},
+  {k:'name',label:'성함',type:'text',ph:''},
+  {k:'phone',label:'연락처',type:'text',ph:'010-'},
+  {k:'addr',label:'주소',type:'text',ph:''},
+  {k:'area',label:'평수',type:'text',ph:'예: 32평'},
+  {k:'scope',label:'공사범위',type:'textarea',ph:'예: 전체, 욕실+주방, 도배만'},
+  {k:'measure',label:'실측 가능 여부',type:'text',ph:'예: 가능 / 입주 후 가능'},
+  {k:'budget',label:'예산',type:'text',ph:'대략적인 투자 가능 금액',hint:'실측 후가 제일 정확. 대략 투자 가능한 금액을 물어보는 게 좋다.'},
+  {k:'start',label:'공사 시작 가능일',type:'text',ph:''},
+  {k:'movein',label:'입주 예정일',type:'text',ph:''},
+  {k:'note',label:'특이사항',type:'textarea',ph:''}
+];
+let editingIdx=null,openConsultIdx=null;
+function showCV(w){
+  ['list','form','detail'].forEach(v=>document.getElementById('consult-'+v+'-view').style.display=v===w?'block':'none');
+}
+function renderConsultList(){
+  showCV('list');
+  const root=document.getElementById('consult-root');root.innerHTML='';
+  if(!state.consults.length){root.innerHTML='<div class="site-empty">저장된 상담 기록이 없습니다.<br>"새 상담 작성"을 눌러 시작하세요.</div>';return;}
+  state.consults.forEach((c,ci)=>{
+    const row=document.createElement('div');row.className='c-row';
+    const sub=[c.phone,c.area,c.scope].filter(Boolean).join(' · ');
+    row.innerHTML='<div class="cn"><b>'+(c.name||'(이름 미입력)')+'</b><small>'+(c.date||'')+(sub?' · '+sub:'')+'</small></div>'+
+      '<button class="cdel" title="삭제">'+TRASH_SVG+'</button>'+
+      '<span class="chev"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></span>';
+    row.onclick=(e)=>{
+      if(e.target.closest('.cdel')){
+        if(confirm('"'+(c.name||'이 상담')+'" 기록을 삭제할까요?')){state.consults.splice(ci,1);save();renderConsultList();}return;
+      }
+      openConsultIdx=ci;renderConsultDetail();
+    };
+    root.appendChild(row);
+  });
+}
+function renderConsultForm(){
+  showCV('form');
+  const ed=editingIdx!==null;
+  document.getElementById('consult-form-title').textContent=ed?'상담 기록 수정':'새 상담 기록';
+  const data=ed?state.consults[editingIdx]:{};
+  const card=document.getElementById('consult-form-card');card.innerHTML='';
+  CFIELDS.forEach((f,i)=>{
+    const w=document.createElement('div');w.className='field';
+    const val=(data[f.k]||'').replace(/"/g,'&quot;');
+    let inp=f.type==='textarea'?'<textarea id="cf-'+f.k+'" placeholder="'+f.ph+'">'+(data[f.k]||'')+'</textarea>':
+      '<input type="text" id="cf-'+f.k+'" placeholder="'+f.ph+'" value="'+val+'">';
+    w.innerHTML='<label><span class="num-tag">'+(i+1)+'</span>'+f.label+'</label>'+inp+(f.hint?'<div class="hint">💡 '+f.hint+'</div>':'');
+    card.appendChild(w);
+  });
+}
+function renderConsultDetail(){
+  const c=state.consults[openConsultIdx];
+  if(!c){openConsultIdx=null;renderConsultList();return;}
+  showCV('detail');
+  document.getElementById('consult-detail-name').textContent=(c.name||'(이름 미입력)')+' 상담';
+  const card=document.getElementById('consult-detail-card');card.innerHTML='';
+  const dr=document.createElement('div');dr.className='dview-row';dr.innerHTML='<span class="k">상담일</span><span class="v">'+(c.date||'-')+'</span>';card.appendChild(dr);
+  CFIELDS.forEach(f=>{
+    const r=document.createElement('div');r.className='dview-row';
+    r.innerHTML='<span class="k">'+f.label+'</span><span class="v'+(c[f.k]?'':' empty')+'">'+(c[f.k]||'—')+'</span>';
+    card.appendChild(r);
+  });
+}
+document.getElementById('consult-new').onclick=()=>{editingIdx=null;renderConsultForm();};
+document.getElementById('consult-back').onclick=()=>renderConsultList();
+document.getElementById('consult-detail-back').onclick=()=>renderConsultList();
+document.getElementById('consult-save').onclick=()=>{
+  const obj={};CFIELDS.forEach(f=>{obj[f.k]=document.getElementById('cf-'+f.k).value.trim();});
+  if(editingIdx!==null){obj.date=state.consults[editingIdx].date;state.consults[editingIdx]=obj;openConsultIdx=editingIdx;}
+  else{const d=new Date();obj.date=d.getFullYear()+'.'+(d.getMonth()+1)+'.'+d.getDate();state.consults.unshift(obj);openConsultIdx=0;}
+  editingIdx=null;save();renderConsultDetail();
+};
+document.getElementById('consult-edit').onclick=()=>{editingIdx=openConsultIdx;renderConsultForm();};
+document.getElementById('consult-copy').onclick=()=>{
+  const c=state.consults[openConsultIdx];
+  let txt='[상담 접수]\n상담일: '+(c.date||'')+'\n';
+  CFIELDS.forEach((f,i)=>{txt+=(i+1)+'. '+f.label+': '+(c[f.k]||'')+'\n';});
+  const btn=document.getElementById('consult-copy');
+  const openKakao=()=>{
+    const t=Date.now();window.location.href='kakaotalk://';
+    setTimeout(()=>{if(Date.now()-t<1600&&!document.hidden){if(confirm('카카오톡 PC앱이 열리지 않았습니다.\n설치 페이지를 열까요?'))window.open('https://www.kakaocorp.com/page/service/service/KakaoTalk','_blank');}},1500);
+  };
+  navigator.clipboard.writeText(txt).then(()=>{
+    btn.textContent='복사됨! 카톡 여는 중…';openKakao();
+    setTimeout(()=>{btn.textContent='복사 + 카카오톡 열기';alert('상담 내용이 복사되었습니다.\n\n카카오톡에서 대표님 채팅방을 연 뒤\n붙여넣기(Ctrl+V) 하면 됩니다.');},800);
+  }).catch(()=>{prompt('아래 내용을 전체 선택(Ctrl+A) 후 복사(Ctrl+C) 하세요:',txt);openKakao();});
+};
+
+// ─── overall ───
+function updateOverall(tab){
+  if(tab==='consult')return;
+  let total=0,done=0;
+  if(tab==='daily'){
+    state.dailySecs.forEach((s,si)=>s.items.forEach((_,ii)=>{total++;if(state.daily[ck(s,si,ii)])done++;}));
+  } else if(tab==='weekly'){
+    state.weeklySecs.forEach((s,si)=>s.items.forEach((_,ii)=>{total++;if(state.weekly[ck(s,si,ii)])done++;}));
+  } else {
+    if(openSiteIdx!==null&&state.sites[openSiteIdx]){const p=siteProgress(state.sites[openSiteIdx]);total=p.total;done=p.done;}
+    else{state.sites.forEach(site=>state.siteTpl.forEach((g,gi)=>g.items.forEach((_,ii)=>{total++;if(site.checks[gi+'_'+ii])done++;})));}
+  }
+  document.getElementById('ov-done').textContent=done;
+  document.getElementById('ov-total').textContent=total;
+  document.getElementById('ov-bar').style.width=(total?Math.round(done/total*100):0)+'%';
+}
+
+// ─── tabs ───
+let curTab='daily';
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+    document.querySelectorAll('.panel').forEach(x=>x.classList.remove('on'));
+    t.classList.add('on');curTab=t.dataset.tab;
+    document.getElementById('panel-'+curTab).classList.add('on');
+    if(curTab==='sites'){openSiteIdx=null;siteEdit=false;renderSiteList();}
+    if(curTab==='consult'){openConsultIdx=null;editingIdx=null;renderConsultList();}
+    document.querySelector('.overall').style.display=(curTab==='consult')?'none':'flex';
+    updateOverall(curTab);
+  };
+});
+
+document.getElementById('reset-daily').onclick=()=>{state.daily={};save();renderDaily();};
+document.getElementById('reset-weekly').onclick=()=>{if(confirm('주간·월간 체크를 모두 초기화할까요?')){state.weekly={};save();renderWeekly();}};
+
+// ─── init ───
+const days=['일','월','화','수','목','금','토'];
+const now=new Date();
+document.getElementById('today').textContent=now.getFullYear()+'년 '+(now.getMonth()+1)+'월 '+now.getDate()+'일 ('+days[now.getDay()]+')';
+renderDaily();renderWeekly();renderSites();renderConsultList();updateOverall('daily');
+</script>
+</body>
+</html>
