@@ -135,6 +135,19 @@
     .modal-bd.embed-bd{padding:0;overflow:hidden}
     .modal-bd.embed-bd>*{max-width:none}
     .embed-frame{width:100%;height:100%;border:0;display:block;background:var(--card)}
+    /* GitHub 연동 뷰어(쓰레드·노트·카드뉴스) */
+    .gh-need{padding:36px 20px;text-align:center;color:var(--muted);font-size:13.5px;line-height:1.7}
+    .gh-list{display:flex;flex-direction:column;gap:8px}
+    .gh-row{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:13px 16px;cursor:pointer;box-shadow:var(--shadow);transition:box-shadow .15s,transform .15s}
+    .gh-row:hover{box-shadow:var(--shadow-h);transform:translateY(-1px)}
+    .gh-row .gh-name{font-weight:600;font-size:14px}
+    .gh-row .gh-sub{font-size:12px;color:var(--muted);margin-left:auto}
+    .gh-back{background:none;border:none;color:var(--blue);font-size:13.5px;font-weight:600;cursor:pointer;font-family:inherit;padding:6px 0;margin-bottom:8px}
+    .gh-post{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:12px;box-shadow:var(--shadow)}
+    .gh-post h4{font-size:13px;margin-bottom:10px;color:var(--blue);font-weight:700}
+    .gh-post pre,.md-body{white-space:pre-wrap;font-family:inherit;font-size:14px;line-height:1.8;color:var(--text)}
+    .cn-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px}
+    .cn-grid img{width:100%;border-radius:12px;border:1px solid var(--border);background:var(--card);display:block}
     .row{display:flex;gap:8px;margin-bottom:10px}
     .inp{flex:1;background:#eef1f4;border:1px solid var(--border);border-radius:9px;padding:9px 13px;color:var(--text);font-size:13px;outline:none;font-family:inherit}
     .inp:focus{border-color:var(--blue)}
@@ -390,10 +403,24 @@
       </div>
       <div class="feat-card" onclick="openModal('thread-modal')">
         <div class="feat-top"><div class="feat-icon">🧵</div><div class="arr-btn">↗</div></div>
-        <div class="feat-title">쓰레드 관리</div>
-        <div class="feat-desc">쓰레드 콘텐츠 아이디어와 발행 상태를 관리합니다.</div>
-        <div class="tags"><span class="tag">Threads</span><span class="tag">SNS</span></div>
-        <div class="feat-status" id="fc-thread">—</div>
+        <div class="feat-title">쓰레드</div>
+        <div class="feat-desc">날짜별 쓰레드 글(아침·저녁)을 보고 편집합니다.</div>
+        <div class="tags"><span class="tag">Threads</span><span class="tag">hadam-thread</span></div>
+        <div class="feat-status">저장소 연동</div>
+      </div>
+      <div class="feat-card" onclick="openModal('notes-modal')">
+        <div class="feat-top"><div class="feat-icon">📝</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">업무 노트</div>
+        <div class="feat-desc">멤버별 업무일지 분석 결과를 날짜별로 확인합니다.</div>
+        <div class="tags"><span class="tag">노트</span><span class="tag">hadam-notes</span></div>
+        <div class="feat-status">저장소 연동</div>
+      </div>
+      <div class="feat-card" onclick="openModal('cardnews-modal')">
+        <div class="feat-top"><div class="feat-icon">🖼️</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">카드뉴스</div>
+        <div class="feat-desc">생성된 카드뉴스를 날짜별 갤러리로 봅니다.</div>
+        <div class="tags"><span class="tag">카드뉴스</span><span class="tag">hadam-cardnews</span></div>
+        <div class="feat-status">저장소 연동</div>
       </div>
     </div>
 
@@ -476,8 +503,18 @@
 </div>
 
 <div class="overlay" id="thread-modal">
-  <div class="modal"><div class="modal-hd"><h2>🧵 쓰레드 관리</h2><button class="close-btn" onclick="closeModal('thread-modal')">✕</button></div>
-  <div class="modal-bd"><div class="row"><input class="inp" id="thr-title" placeholder="쓰레드 아이디어..." onkeydown="if(event.key==='Enter')addThread()"><select class="inp" id="thr-cat" style="max-width:100px"><option>인테리어팁</option><option>시공후기</option><option>트렌드</option><option>일상</option><option>이벤트</option></select><button class="btn btn-g" onclick="addThread()">추가</button></div><div id="thr-list"></div></div></div>
+  <div class="modal wide"><div class="modal-hd"><h2>🧵 쓰레드</h2><button class="close-btn" onclick="closeModal('thread-modal')">✕</button></div>
+  <div class="modal-bd"><div id="thr-view"></div></div></div>
+</div>
+
+<div class="overlay" id="notes-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>📝 업무 노트</h2><button class="close-btn" onclick="closeModal('notes-modal')">✕</button></div>
+  <div class="modal-bd"><div id="notes-view"></div></div></div>
+</div>
+
+<div class="overlay" id="cardnews-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>🖼️ 카드뉴스</h2><button class="close-btn" onclick="closeModal('cardnews-modal')">✕</button></div>
+  <div class="modal-bd"><div id="cardnews-view"></div></div></div>
 </div>
 
 <div class="overlay" id="member-modal">
@@ -572,6 +609,9 @@ function openModal(id){
   if(id==='member-modal')renderMemberList();
   if(id==='settings-modal'){const s=localStorage.getItem('gh_pat');if(s)document.getElementById('gh-pat-inp').value=s;}
   if(id==='graph-modal')startGraph();
+  if(id==='thread-modal')renderThreadView();
+  if(id==='notes-modal')renderNotesView();
+  if(id==='cardnews-modal')renderCardnewsView();
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.classList.remove('open')}));
@@ -664,7 +704,7 @@ async function updThreadStatus(id,s){const a=G('thread'),i=a.findIndex(x=>x.id==
 async function delThread(id){await S('thread',G('thread').filter(x=>x.id!==id));renderThread();statThread();}
 const THR_C={'기획중':'badge-orange','작성중':'badge-blue','예약':'badge-green','발행':'badge-dim'};
 function renderThread(){const a=G('thread'),el=document.getElementById('thr-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🧵</div>등록된 쓰레드가 없습니다</div>';return;}el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span><span class="item-txt">${x.title}</span><select class="badge ${THR_C[x.status]||'badge-dim'}" onchange="updThreadStatus(${x.id},this.value)">${['기획중','작성중','예약','발행'].map(s=>`<option value="${s}" ${x.status===s?'selected':''}>${s}</option>`).join('')}</select><button class="del" onclick="delThread(${x.id})">×</button></div>`).join('')+'</div>';}
-function statThread(){const a=G('thread');document.getElementById('fc-thread').innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${a.filter(x=>x.status==='예약').length}</span>`;}
+function statThread(){const el=document.getElementById('fc-thread');if(!el)return;const a=G('thread');el.innerHTML=`전체 <span class="cnt">${a.length}건</span> 예약 <span class="cnt">${a.filter(x=>x.status==='예약').length}</span>`;}
 
 // ── Cloud site import
 async function importCloudSites(){
@@ -792,6 +832,76 @@ function showGraphDetail(node){
 function stopGraph(){if(graphAF){cancelAnimationFrame(graphAF);graphAF=null;}const tip=document.getElementById('graph-tooltip');if(tip)tip.style.display='none';}
 
 function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();}
+
+// ─── GitHub 연동 뷰어 (쓰레드 / 노트 / 카드뉴스) ───
+const GH_ORG='designhadam-commits';
+function ghHeaders(){const t=localStorage.getItem('gh_pat');const h={'Accept':'application/vnd.github.v3+json'};if(t)h['Authorization']='token '+t;return h;}
+function ghNeedPat(){return '<div class="gh-need">GitHub 토큰(PAT)이 필요합니다.<br><button class="btn btn-g" style="margin-top:12px" onclick="openModal(\'settings-modal\')">⚙️ 설정에서 토큰 입력</button></div>';}
+function ghLoading(){return '<div class="gh-need">불러오는 중…</div>';}
+function ghErr(e){return '<div class="gh-need">불러오지 못했습니다.<br><span style="font-size:12px">'+((e&&e.message)||e)+'</span></div>';}
+function ghEsc(s){return String(s).replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+async function ghContents(repo,path){const r=await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now(),{headers:ghHeaders()});if(!r.ok)throw new Error('HTTP '+r.status);return r.json();}
+async function ghText(repo,path){const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/'+repo+'/contents/'+path+'?t='+Date.now(),{headers:ghHeaders()})).json();return decodeURIComponent(escape(atob((d.content||'').replace(/\s/g,''))));}
+
+async function renderThreadView(){
+  const v=document.getElementById('thr-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  v.innerHTML=ghLoading();
+  try{const dirs=(await ghContents('hadam-thread','posts')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));
+    v.innerHTML=dirs.length?'<div class="gh-list">'+dirs.map(d=>'<div class="gh-row" onclick="threadOpen(\''+d.name+'\')"><span class="gh-name">📅 '+ghEsc(d.name)+'</span><span class="gh-sub">아침 · 저녁 ›</span></div>').join('')+'</div>':'<div class="gh-need">쓰레드 글이 없습니다.</div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function threadOpen(date){
+  const v=document.getElementById('thr-view');v.innerHTML=ghLoading();
+  try{const files=(await ghContents('hadam-thread','posts/'+date)).filter(x=>x.type==='file');
+    let html='<button class="gh-back" onclick="renderThreadView()">‹ 날짜 목록</button>';
+    for(const f of files){const txt=await ghText('hadam-thread','posts/'+date+'/'+f.name);
+      html+='<div class="gh-post"><h4>'+ghEsc(f.name.replace(/\.txt$/,''))+' — '+ghEsc(date)+'</h4><pre>'+ghEsc(txt)+'</pre></div>';}
+    v.innerHTML=html;
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+
+async function renderNotesView(){
+  const v=document.getElementById('notes-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  v.innerHTML=ghLoading();
+  try{const people=(await ghContents('hadam-notes','daily')).filter(x=>x.type==='dir');
+    v.innerHTML=people.length?'<div class="gh-list">'+people.map(p=>'<div class="gh-row" onclick="notesPerson(\''+p.name+'\')"><span class="gh-name">👤 '+ghEsc(p.name)+'</span><span class="gh-sub">일지 보기 ›</span></div>').join('')+'</div>':'<div class="gh-need">노트가 없습니다.</div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function notesPerson(name){
+  const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
+  try{const files=(await ghContents('hadam-notes','daily/'+name)).filter(x=>x.type==='file'&&x.name.endsWith('.md')).sort((a,b)=>b.name.localeCompare(a.name));
+    v.innerHTML='<button class="gh-back" onclick="renderNotesView()">‹ 멤버 목록</button>'+(files.length?'<div class="gh-list">'+files.map(f=>'<div class="gh-row" onclick="notesOpen(\''+name+'\',\''+f.name+'\')"><span class="gh-name">'+ghEsc(f.name.replace(/\.md$/,''))+'</span><span class="gh-sub">'+ghEsc(name)+' ›</span></div>').join('')+'</div>':'<div class="gh-need">일지가 없습니다.</div>');
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function notesOpen(name,file){
+  const v=document.getElementById('notes-view');v.innerHTML=ghLoading();
+  try{const txt=await ghText('hadam-notes','daily/'+name+'/'+file);
+    v.innerHTML='<button class="gh-back" onclick="notesPerson(\''+name+'\')">‹ '+ghEsc(name)+'</button><div class="gh-post"><h4>'+ghEsc(file.replace(/\.md$/,''))+' · '+ghEsc(name)+'</h4><div class="md-body">'+ghEsc(txt)+'</div></div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+
+async function renderCardnewsView(){
+  const v=document.getElementById('cardnews-view');
+  if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
+  v.innerHTML=ghLoading();
+  try{const sets=(await ghContents('hadam-cardnews','cardnews')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));
+    v.innerHTML=sets.length?'<div class="gh-list">'+sets.map(s=>'<div class="gh-row" onclick="cardnewsOpen(\''+s.name+'\')"><span class="gh-name">🖼️ '+ghEsc(s.name)+'</span><span class="gh-sub">카드 보기 ›</span></div>').join('')+'</div>':'<div class="gh-need">카드뉴스가 없습니다.</div>';
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function cardnewsOpen(name){
+  const v=document.getElementById('cardnews-view');v.innerHTML=ghLoading();
+  try{const files=(await ghContents('hadam-cardnews','cardnews/'+name)).filter(x=>x.type==='file'&&/\.(jpg|jpeg|png)$/i.test(x.name)).sort((a,b)=>a.name.localeCompare(b.name));
+    v.innerHTML='<button class="gh-back" onclick="renderCardnewsView()">‹ 날짜 목록</button><div class="cn-grid" id="cn-grid"></div>';
+    const grid=document.getElementById('cn-grid');
+    for(const f of files){
+      const d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/git/blobs/'+f.sha,{headers:ghHeaders()})).json();
+      const img=document.createElement('img');img.loading='lazy';img.alt=f.name;
+      img.src='data:image/jpeg;base64,'+(d.content||'').replace(/\s/g,'');grid.appendChild(img);
+    }
+  }catch(e){v.innerHTML=ghErr(e);}
+}
 
 (async function init(){
   document.getElementById('jnl-date')&&(document.getElementById('jnl-date').value=td());
