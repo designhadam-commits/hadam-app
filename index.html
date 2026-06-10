@@ -512,7 +512,7 @@
   <main>
     <div class="today-section">
       <div class="today-card">
-        <div class="today-hd"><span>🌅 오늘의 브리핑</span><button class="btn" id="brief-refresh" onclick="genBriefing(true)">↻ 새로고침</button></div>
+        <div class="today-hd"><span>🌅 오늘의 브리핑</span><div style="display:flex;gap:6px;align-items:center"><select class="inp" id="brief-person" onchange="setMe(this.value)" style="max-width:130px;padding:5px 8px;font-size:12px" title="누구 기준으로 볼지 선택"></select><button class="btn" id="brief-refresh" onclick="genBriefing(true)" title="새로고침">↻</button></div></div>
         <div id="brief-body" class="brief-body"><span style="color:var(--muted)">로그인 후 자동으로 생성됩니다.</span></div>
       </div>
       <div class="today-card">
@@ -1717,7 +1717,7 @@ async function kbSave(){
 
 function stopGraph(){if(graphAF){cancelAnimationFrame(graphAF);graphAF=null;}const tip=document.getElementById('graph-tooltip');if(tip)tip.style.display='none';}
 
-function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();try{statSiteInfo();}catch(e){}try{renderAlerts();}catch(e){}}
+function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();try{statSiteInfo();}catch(e){}try{renderAlerts();}catch(e){}try{renderBriefPerson();}catch(e){}}
 
 // ─── GitHub 연동 뷰어 (쓰레드 / 노트 / 카드뉴스) ───
 const GH_ORG='designhadam-commits';
@@ -2334,9 +2334,19 @@ function renderAlerts(){
   if(cnt){cnt.style.display='';cnt.textContent=items.length;}
   body.innerHTML=items.map(function(i){return '<div class="alert-item"><span class="aic">'+i.ic+'</span><span>'+ghEsc(i.t)+'</span></div>';}).join('');
 }
+function _meKey(){var u=null;try{u=firebase.auth().currentUser;}catch(e){}return 'me_name_'+((u&&u.email)||'x');}
+function meName(){try{return localStorage.getItem(_meKey())||'';}catch(e){return '';}}
+function setMe(v){try{localStorage.setItem(_meKey(),v||'');}catch(e){}genBriefing(true);}
+function renderBriefPerson(){
+  var sel=document.getElementById('brief-person');if(!sel)return;
+  var me=meName();var members=getMembers()||[];
+  sel.innerHTML='<option value="">전체(회사)</option>'+members.map(function(m){return '<option value="'+ghEsc(m)+'"'+(m===me?' selected':'')+'>'+ghEsc(m)+'</option>';}).join('');
+  sel.value=me;
+}
 async function genBriefing(force){
   var body=document.getElementById('brief-body');if(!body)return;
-  var today=td();var ckey='briefing_'+today;
+  renderBriefPerson();
+  var me=meName();var today=td();var ckey='briefing_'+today+'_'+(me||'all');
   if(!force){var cached=null;try{cached=localStorage.getItem(ckey);}catch(e){}if(cached){body.innerHTML=asstMd(cached);return;}}
   var key=localStorage.getItem('ant_key');
   if(!key){body.innerHTML='<span style="color:var(--muted)">시크릿 키에 Anthropic 키를 저장하면 자동 브리핑이 생성됩니다.</span>';return;}
@@ -2344,8 +2354,15 @@ async function genBriefing(force){
   try{
     var ctx=await buildAssistantContext('오늘');
     var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
-    var sys='너는 디자인하담 내부 비서다. 오늘은 '+today+' ('+_wd+'요일). 아래 데이터로 "오늘의 업무 브리핑"을 작성해라. 규칙: 인사말 없이 핵심만, 마크다운 불릿("- ")으로 5줄 이내, 각 줄 한 문장. 우선순위 ①오늘 작업 현장과 담당자 ②오늘 일정 ③긴급/주의(미완료 할일·종료임박 공정). 해당 없으면 생략. 데이터에 없으면 지어내지 마라.\n\n[데이터]\n'+ctx.text;
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:600,system:sys,messages:[{role:'user',content:'오늘 브리핑 작성해줘'}]})});
+    var sys,usermsg;
+    if(me){
+      sys='너는 디자인하담 내부 비서다. 오늘은 '+today+' ('+_wd+'요일). 아래 데이터로 직원 "'+me+'"의 개인 오늘 브리핑을 작성해라. 규칙: "'+me+'"의 할 일·담당(매니저) 공정·본인 일정·본인 업무일지를 최우선으로, 마크다운 불릿("- ") 6줄 이내 한 문장씩. 회사 전체 항목(오늘 시작 공정 등)은 "'+me+'"와 직접 관련된 것만 포함하고, 무관한 타인의 개인 업무는 제외. 인사말 없이 핵심만. 데이터에 없으면 지어내지 마라.\n\n[데이터]\n'+ctx.text;
+      usermsg='"'+me+'" 기준 오늘 개인 브리핑 작성해줘';
+    }else{
+      sys='너는 디자인하담 내부 비서다. 오늘은 '+today+' ('+_wd+'요일). 아래 데이터로 회사 전체 "오늘의 업무 브리핑"을 작성해라. 규칙: 인사말 없이 핵심만, 마크다운 불릿("- ")으로 6줄 이내, 각 줄 한 문장. 우선순위 ①오늘 작업 현장과 담당자 ②오늘 일정 ③긴급/주의(미완료 할일·종료임박 공정). 해당 없으면 생략. 데이터에 없으면 지어내지 마라.\n\n[데이터]\n'+ctx.text;
+      usermsg='오늘 회사 전체 브리핑 작성해줘';
+    }
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:650,system:sys,messages:[{role:'user',content:usermsg}]})});
     var d=await r.json();
     var ans=(d&&d.content&&d.content[0]&&d.content[0].text)||'(생성 실패)';
     try{localStorage.setItem(ckey,ans);}catch(e){}
