@@ -2,8 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>디자인하담 — INTERNAL PORTAL</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="하담">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css">
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
@@ -197,6 +204,19 @@
     .asst-sug{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
     .asst-sug span{background:var(--blue-dim);color:var(--blue);border-radius:16px;padding:6px 12px;font-size:12.5px;cursor:pointer;border:1px solid #cfe2fd}
     .asst-sug span:hover{background:#d6e6fd}
+    .today-section{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:24px}
+    .today-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+    .today-hd{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:12px;gap:8px}
+    .today-hd .btn{padding:5px 11px;font-size:12px}
+    .brief-body{font-size:14px;line-height:1.75;color:var(--text)}
+    .brief-body b{font-weight:700}
+    .alert-badge{background:#f04452;color:#fff;border-radius:12px;padding:1px 9px;font-size:12px;font-weight:600}
+    .alert-item{display:flex;gap:9px;padding:8px 0;border-bottom:1px solid var(--border);font-size:13.5px;line-height:1.5}
+    .alert-item:last-child{border-bottom:none}
+    .alert-item .aic{flex-shrink:0}
+    @media (max-width:768px){.today-section{grid-template-columns:1fr;gap:12px;margin-bottom:18px}}
+    .search-hit{padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13.5px;transition:border-color .12s,background .12s}
+    .search-hit:hover{border-color:var(--blue);background:var(--blue-dim)}
     .asst-imgbtn{flex-shrink:0;padding:0 12px;font-size:17px}
     .asst-attach{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:8px;background:var(--blue-dim);border-radius:10px}
     .asst-attach img{height:46px;border-radius:6px}
@@ -398,6 +418,9 @@
     <div class="sb-item" onclick="openModal('assistant-modal');setSbActive(this)">
       <div class="sb-ic">🤖</div><span class="sb-lbl">AI 비서</span>
     </div>
+    <div class="sb-item" onclick="openModal('search-modal');setSbActive(this)">
+      <div class="sb-ic">🔎</div><span class="sb-lbl">통합 검색</span>
+    </div>
 
     <div class="sb-section-label">업무</div>
     <div class="sb-item" onclick="openModal('chk-modal');setSbActive(this)">
@@ -487,6 +510,16 @@
   </header>
 
   <main>
+    <div class="today-section">
+      <div class="today-card">
+        <div class="today-hd"><span>🌅 오늘의 브리핑</span><button class="btn" id="brief-refresh" onclick="genBriefing(true)">↻ 새로고침</button></div>
+        <div id="brief-body" class="brief-body"><span style="color:var(--muted)">로그인 후 자동으로 생성됩니다.</span></div>
+      </div>
+      <div class="today-card">
+        <div class="today-hd"><span>🔔 알림 <span id="alert-count" class="alert-badge" style="display:none">0</span></span></div>
+        <div id="alert-body" class="alert-body"><span style="color:var(--muted)">불러오는 중…</span></div>
+      </div>
+    </div>
     <div class="sec-title">현황 요약</div>
     <div class="status-row">
       <div class="stat-card" onclick="openModal('chk-modal')">
@@ -771,6 +804,15 @@
   </div></div>
 </div>
 
+<div class="overlay" id="search-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>🔎 통합 검색</h2><button class="close-btn" onclick="closeModal('search-modal')">✕</button></div>
+  <div class="modal-bd">
+    <div class="row"><input class="inp" id="search-input" placeholder="현장·업무일지·자재·일정·비밀번호 등 검색..." oninput="searchAll()" onkeydown="if(event.key==='Enter')searchAll()"><button class="btn btn-g" onclick="searchAll()">검색</button></div>
+    <div style="margin:10px 0 14px"><button class="btn" onclick="searchToAsst()">🤖 이 질문을 AI 비서에게 물어보기</button></div>
+    <div id="search-results"><div class="gh-need">검색어를 입력하세요.</div></div>
+  </div></div>
+</div>
+
 <div class="overlay" id="siteinfo-modal">
   <div class="modal wide"><div class="modal-hd"><h2>🔑 현장별 정보</h2><button class="close-btn" onclick="closeModal('siteinfo-modal')">✕</button></div>
   <div class="modal-bd">
@@ -983,6 +1025,8 @@ function startListeners(){
     }, err=>{ console.warn('snapshot',k,err); setSyncStatus('err'); });
   });
   startSecrets();
+  // 데이터 로드 후 오늘의 브리핑·알림 표시
+  setTimeout(function(){try{renderAlerts();}catch(e){}try{genBriefing(false);}catch(e){}},3500);
   // 임베드 체크리스트(오늘 할일) 진행률을 홈 대시보드에 반영
   db.collection('appdata').doc('checklist_state').onSnapshot(function(snap){CHKSTATE=snap.exists?(snap.data().payload||null):null;try{statChk();}catch(e){}},function(e){});
   refreshJournalCount();
@@ -1143,6 +1187,7 @@ function openModal(id,_fromHistory){
   if(id==='mat-modal')renderMatView();
   if(id==='siteinfo-modal')renderSiteInfo();
   if(id==='assistant-modal')renderAsstChat();
+  if(id==='search-modal'){var si=document.getElementById('search-input');if(si){setTimeout(function(){si.focus();},100);}}
   // 뒤로가기(브라우저·휴대폰) 지원: 모달 열기를 히스토리에 기록
   if(!_fromHistory){try{if(_wasOpen&&history.state&&history.state.hadamModal)history.replaceState({hadamModal:id},'','#'+id);else history.pushState({hadamModal:id},'','#'+id);}catch(e){}}
 }
@@ -1672,7 +1717,7 @@ async function kbSave(){
 
 function stopGraph(){if(graphAF){cancelAnimationFrame(graphAF);graphAF=null;}const tip=document.getElementById('graph-tooltip');if(tip)tip.style.display='none';}
 
-function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();try{statSiteInfo();}catch(e){}}
+function allStats(){statChk();statJnl();statIns();statOrd();statInv();statCon();statThread();try{statSiteInfo();}catch(e){}try{renderAlerts();}catch(e){}}
 
 // ─── GitHub 연동 뷰어 (쓰레드 / 노트 / 카드뉴스) ───
 const GH_ORG='designhadam-commits';
@@ -2249,6 +2294,63 @@ async function asstSend(){
     ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:ans,sources:srcs};
     renderAsstChat();
   }catch(e){ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:'오류: '+((e&&e.message)||e)};renderAsstChat();}
+}
+
+// ===== 통합 검색 =====
+function searchAll(){
+  var el=document.getElementById('search-results');if(!el)return;
+  var q=(document.getElementById('search-input').value||'').trim().toLowerCase();
+  if(!q){el.innerHTML='<div class="gh-need">검색어를 입력하세요.</div>';return;}
+  var hit=function(s){return String(s==null?'':s).toLowerCase().indexOf(q)>-1;};
+  var groups=[];
+  function add(title,items){if(items.length)groups.push({title:title,items:items});}
+  add('업무일지', (G('jnl')||[]).filter(function(j){return hit(j.text)||hit(j.member)||hit(j.date);}).map(function(j){return {label:(j.date||'')+' '+(j.member||'')+' — '+String(j.text||'').slice(0,60), modal:'jnl-modal'};}));
+  add('시공현장', (G('sites')||[]).filter(function(s){return hit(s.name);}).map(function(s){return {label:s.name, modal:'con-modal'};}));
+  add('공정과정', (G('process')||[]).filter(function(p){return hit(p.site)||hit(p.stage)||hit(p.manager);}).map(function(p){return {label:p.site+' · '+p.stage+(p.manager?' / '+p.manager:'')+(p.date?' ('+p.date+')':''), modal:'proc-modal'};}));
+  add('현장별 정보', (G('siteinfo')||[]).filter(function(d){return hit(d.site)||(d.fields||[]).some(function(f){return hit(f.k)||hit(f.v);});}).map(function(d){return {label:d.site+' — '+(d.fields||[]).map(function(f){return f.k;}).join(', '), modal:'siteinfo-modal'};}));
+  add('할일/일정', (G('tasks')||[]).filter(function(t){return hit(t.text||t.title)||hit(t.person);}).map(function(t){return {label:(t.person?t.person+': ':'')+(t.text||t.title||''), modal:'notes-modal'};}));
+  add('일정 캘린더', (G('cal-events')||[]).filter(function(e){return hit(e.title)||hit(e.date);}).map(function(e){return {label:e.date+' — '+e.title, modal:'cal-modal'};}));
+  add('발주', (G('ord')||[]).filter(function(o){return hit(o.item)||hit(o.vendor);}).map(function(o){return {label:(o.item||'')+' '+(o.qty||'')+' ['+(o.status||'')+']', modal:'ord-modal'};}));
+  add('멤버', (getMembers()||[]).filter(function(m){return hit(m);}).map(function(m){return {label:m, modal:'member-modal'};}));
+  var total=groups.reduce(function(a,g){return a+g.items.length;},0);
+  if(!total){el.innerHTML='<div class="gh-need">"'+ghEsc(q)+'" 검색 결과가 없습니다. 🤖 위 버튼으로 AI 비서에게 물어볼 수 있어요.</div>';return;}
+  el.innerHTML='<div style="font-size:12px;color:var(--muted);margin-bottom:10px">총 '+total+'건</div>'+groups.map(function(g){
+    return '<div class="sec-label">'+g.title+' ('+g.items.length+')</div>'+g.items.slice(0,25).map(function(it){return '<div class="search-hit" onclick="closeModal(\'search-modal\');openModal(\''+it.modal+'\')">'+ghEsc(it.label)+'</div>';}).join('');
+  }).join('');
+}
+function searchToAsst(){var q=(document.getElementById('search-input').value||'').trim();closeModal('search-modal');openModal('assistant-modal');setTimeout(function(){var i=document.getElementById('asst-input');if(i){i.value=q||'';i.focus();if(q)asstSend();}},250);}
+
+// ===== 오늘의 브리핑 + 인앱 알림 =====
+function renderAlerts(){
+  var body=document.getElementById('alert-body');var cnt=document.getElementById('alert-count');if(!body)return;
+  var today=td();var items=[];
+  (G('process')||[]).forEach(function(p){
+    if(p.date===today)items.push({ic:'🏗',t:p.site+' · '+p.stage+' 오늘 시작'+(p.manager?' (담당 '+p.manager+')':'')});
+    else if(p.end&&p.end===today)items.push({ic:'🏁',t:p.site+' · '+p.stage+' 오늘 완료 예정'});
+  });
+  (G('cal-events')||[]).forEach(function(e){if(e.date===today)items.push({ic:'📅',t:e.title});});
+  (G('tasks')||[]).forEach(function(t){if(!t.done&&t.date&&t.date<=today)items.push({ic:'⏰',t:(t.person?t.person+': ':'')+(t.text||t.title||'')+' (기한 '+t.date+')'});});
+  if(!items.length){body.innerHTML='<span style="color:var(--muted)">오늘 특이사항이 없습니다 👍</span>';if(cnt)cnt.style.display='none';return;}
+  if(cnt){cnt.style.display='';cnt.textContent=items.length;}
+  body.innerHTML=items.map(function(i){return '<div class="alert-item"><span class="aic">'+i.ic+'</span><span>'+ghEsc(i.t)+'</span></div>';}).join('');
+}
+async function genBriefing(force){
+  var body=document.getElementById('brief-body');if(!body)return;
+  var today=td();var ckey='briefing_'+today;
+  if(!force){var cached=null;try{cached=localStorage.getItem(ckey);}catch(e){}if(cached){body.innerHTML=asstMd(cached);return;}}
+  var key=localStorage.getItem('ant_key');
+  if(!key){body.innerHTML='<span style="color:var(--muted)">시크릿 키에 Anthropic 키를 저장하면 자동 브리핑이 생성됩니다.</span>';return;}
+  body.innerHTML='<span style="color:var(--muted)">브리핑 생성 중…</span>';
+  try{
+    var ctx=await buildAssistantContext('오늘');
+    var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
+    var sys='너는 디자인하담 내부 비서다. 오늘은 '+today+' ('+_wd+'요일). 아래 데이터로 "오늘의 업무 브리핑"을 작성해라. 규칙: 인사말 없이 핵심만, 마크다운 불릿("- ")으로 5줄 이내, 각 줄 한 문장. 우선순위 ①오늘 작업 현장과 담당자 ②오늘 일정 ③긴급/주의(미완료 할일·종료임박 공정). 해당 없으면 생략. 데이터에 없으면 지어내지 마라.\n\n[데이터]\n'+ctx.text;
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:600,system:sys,messages:[{role:'user',content:'오늘 브리핑 작성해줘'}]})});
+    var d=await r.json();
+    var ans=(d&&d.content&&d.content[0]&&d.content[0].text)||'(생성 실패)';
+    try{localStorage.setItem(ckey,ans);}catch(e){}
+    body.innerHTML=asstMd(ans);
+  }catch(e){body.innerHTML='<span style="color:var(--red)">브리핑 생성 실패: '+ghEsc((e&&e.message)||'')+'</span>';}
 }
 
 // ===== 대시보드 카드 드래그앤드롭 (순서 저장) =====
