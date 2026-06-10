@@ -2404,7 +2404,17 @@ async function genBriefing(force){
 // ===== 대시보드 카드 드래그앤드롭 (순서 저장) =====
 function dashCardKey(c){var oc=c.getAttribute('onclick')||'';var m=oc.match(/openModal\('([^']+)'\)/);return m?m[1]:'';}
 function saveDashOrder(){try{var g=document.querySelector('.feat-grid');if(!g)return;var order=[].slice.call(g.querySelectorAll('.feat-card')).map(dashCardKey).filter(Boolean);localStorage.setItem('dash_order',JSON.stringify(order));}catch(e){}}
-function applyDashOrder(){try{var g=document.querySelector('.feat-grid');if(!g)return;var order=JSON.parse(localStorage.getItem('dash_order')||'[]');if(!order.length)return;var cards=[].slice.call(g.querySelectorAll('.feat-card')),map={};cards.forEach(function(c){map[dashCardKey(c)]=c;});var seq=[];order.forEach(function(k){if(map[k]){seq.push(map[k]);delete map[k];}});cards.forEach(function(c){var k=dashCardKey(c);if(map[k]){seq.push(c);delete map[k];}});seq.forEach(function(c){g.appendChild(c);});}catch(e){}}
+var DASH_ORDER_V='2';
+var DEFAULT_DASH=['cal-modal','proc-modal','con-modal','assistant-modal','siteinfo-modal','mat-modal'];
+function applyDashOrder(){try{var g=document.querySelector('.feat-grid');if(!g)return;
+  var order=null;
+  if(localStorage.getItem('dash_order_v')===DASH_ORDER_V){try{order=JSON.parse(localStorage.getItem('dash_order')||'null');}catch(e){}}
+  else{localStorage.removeItem('dash_order');localStorage.setItem('dash_order_v',DASH_ORDER_V);}
+  if(!order||!order.length)order=DEFAULT_DASH;
+  var cards=[].slice.call(g.querySelectorAll('.feat-card')),map={};cards.forEach(function(c){map[dashCardKey(c)]=c;});
+  var seq=[];order.forEach(function(k){if(map[k]){seq.push(map[k]);delete map[k];}});
+  cards.forEach(function(c){var k=dashCardKey(c);if(map[k]){seq.push(c);delete map[k];}});
+  seq.forEach(function(c){g.appendChild(c);});}catch(e){}}
 function initDashDnD(){
   var g=document.querySelector('.feat-grid');if(!g||g._dnd)return;g._dnd=true;
   if(!document.getElementById('dnd-style')){var st=document.createElement('style');st.id='dnd-style';st.textContent='.feat-card{cursor:grab}.feat-card.dragging{opacity:.4;outline:2px dashed #3b82f6;transform:none!important}.feat-card.drop-hint{outline:2px solid #3b82f6}';document.head.appendChild(st);}
