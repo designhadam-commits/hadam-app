@@ -187,6 +187,16 @@
     .upload-box .sec-label{margin-top:0;color:var(--green);font-weight:700}
     .ins-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
     .si-masklbl{margin-left:auto;font-size:12px;color:var(--muted);cursor:pointer;display:flex;align-items:center;gap:5px}
+    .asst-chat{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:6px 2px 14px}
+    .asst-msg{max-width:82%;padding:11px 14px;border-radius:14px;font-size:14px;line-height:1.65;white-space:normal;word-break:break-word}
+    .asst-msg.user{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+    .asst-msg.bot{align-self:flex-start;background:var(--card);border:1px solid var(--border);border-bottom-left-radius:4px}
+    .asst-msg.bot.pending{color:var(--muted)}
+    .asst-input-row{display:flex;gap:8px;padding-top:10px;border-top:1px solid var(--border);flex-shrink:0}
+    .asst-input-row .inp{flex:1}
+    .asst-sug{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+    .asst-sug span{background:var(--blue-dim);color:var(--blue);border-radius:16px;padding:6px 12px;font-size:12.5px;cursor:pointer;border:1px solid #cfe2fd}
+    .asst-sug span:hover{background:#d6e6fd}
     .site-color-dot{width:15px;height:15px;border:none;border-radius:50%;padding:0;margin-right:8px;cursor:pointer;-webkit-appearance:none;appearance:none;vertical-align:middle;background:transparent}
     .site-color-dot::-webkit-color-swatch-wrapper{padding:0}
     .site-color-dot::-webkit-color-swatch{border:none;border-radius:50%}
@@ -365,6 +375,9 @@
     <div class="sb-item active" id="sb-home" onclick="scrollToTop()">
       <div class="sb-ic">🏠</div><span class="sb-lbl">홈</span>
     </div>
+    <div class="sb-item" onclick="openModal('assistant-modal');setSbActive(this)">
+      <div class="sb-ic">🤖</div><span class="sb-lbl">AI 비서</span>
+    </div>
 
     <div class="sb-section-label">업무</div>
     <div class="sb-item" onclick="openModal('chk-modal');setSbActive(this)">
@@ -481,6 +494,13 @@
 
     <div class="sec-title" style="margin-top:24px">기능 메뉴</div>
     <div class="feat-grid">
+      <div class="feat-card" onclick="openModal('assistant-modal')">
+        <div class="feat-top"><div class="feat-icon">🤖</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">AI 비서</div>
+        <div class="feat-desc">업무일지·현장 비밀번호·일정 등을 물어보면 데이터를 찾아 답해줍니다.</div>
+        <div class="tags"><span class="tag">질문</span><span class="tag">검색</span></div>
+        <div class="feat-status">예: "5월 26일 업무내용?"</div>
+      </div>
       <div class="feat-card" onclick="openModal('chk-modal')">
         <div class="feat-top"><div class="feat-icon">📋</div><div class="arr-btn">↗</div></div>
         <div class="feat-title">업무 체크리스트</div>
@@ -715,6 +735,17 @@
 <div class="overlay" id="mat-modal">
   <div class="modal wide"><div class="modal-hd"><h2>📂 자료실</h2><button class="close-btn" onclick="closeModal('mat-modal')">✕</button></div>
   <div class="modal-bd"><div id="mat-view"></div></div></div>
+</div>
+
+<div class="overlay" id="assistant-modal">
+  <div class="modal wide"><div class="modal-hd"><h2>🤖 AI 비서</h2><button class="close-btn" onclick="closeModal('assistant-modal')">✕</button></div>
+  <div class="modal-bd" style="display:flex;flex-direction:column;height:100%;min-height:0">
+    <div id="asst-chat" class="asst-chat"></div>
+    <div class="asst-input-row">
+      <input class="inp" id="asst-input" placeholder="예: 5월 26일 업무내용 뭐였지? · 사직롯데 도어락 비밀번호?" onkeydown="if(event.key==='Enter')asstSend()">
+      <button class="btn btn-g" id="asst-send" onclick="asstSend()">전송</button>
+    </div>
+  </div></div>
 </div>
 
 <div class="overlay" id="siteinfo-modal">
@@ -1088,6 +1119,7 @@ function openModal(id,_fromHistory){
   if(id==='proc-modal')renderProc();
   if(id==='mat-modal')renderMatView();
   if(id==='siteinfo-modal')renderSiteInfo();
+  if(id==='assistant-modal')renderAsstChat();
   // 뒤로가기(브라우저·휴대폰) 지원: 모달 열기를 히스토리에 기록
   if(!_fromHistory){try{if(_wasOpen&&history.state&&history.state.hadamModal)history.replaceState({hadamModal:id},'','#'+id);else history.pushState({hadamModal:id},'','#'+id);}catch(e){}}
 }
@@ -2069,6 +2101,80 @@ function siField(id,i,which,val){var data=G('siteinfo').slice();var d=data.find(
 function siAddField(id){var data=G('siteinfo').slice();var d=data.find(function(x){return x.id===id;});if(!d)return;d.fields=d.fields||[];d.fields.push({k:'',v:''});S('siteinfo',data);renderSiteInfo();}
 function siDelField(id,i){var data=G('siteinfo').slice();var d=data.find(function(x){return x.id===id;});if(!d)return;d.fields.splice(i,1);S('siteinfo',data);renderSiteInfo();}
 function siDelSite(id){if(!confirm('이 현장 정보를 삭제할까요?'))return;S('siteinfo',G('siteinfo').filter(function(x){return x.id!==id;}));renderSiteInfo();}
+
+// ===== AI 비서 (내부 데이터 질의응답) =====
+let ASST_HISTORY=[];
+function asstEsc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
+function asstMd(s){return asstEsc(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');}
+function renderAsstChat(){
+  var el=document.getElementById('asst-chat');if(!el)return;
+  if(!ASST_HISTORY.length){
+    el.innerHTML='<div class="asst-msg bot">안녕하세요! 디자인하담 내부 비서예요. 업무일지·현장 정보·일정·공정·할일에 대해 물어보세요.<div class="asst-sug">'
+      +['오늘 진행 중인 현장 알려줘','사직롯데 도어락 비밀번호?','이번 주 일정 정리해줘','연산LG 다음 공정이 뭐야?'].map(function(q){return '<span onclick="asstFill(this)">'+asstEsc(q)+'</span>';}).join('')
+      +'</div></div>';
+    return;
+  }
+  el.innerHTML=ASST_HISTORY.map(function(m){return '<div class="asst-msg '+(m.role==='user'?'user':'bot')+(m.pending?' pending':'')+'">'+(m.role==='user'?asstEsc(m.text):asstMd(m.text))+'</div>';}).join('');
+  el.scrollTop=el.scrollHeight;
+}
+function asstFill(sp){var i=document.getElementById('asst-input');i.value=sp.textContent;i.focus();}
+function _p2(n){return String(n).padStart(2,'0');}
+function _ymd(off){var d=new Date();d.setDate(d.getDate()+(off||0));return ''+d.getFullYear()+_p2(d.getMonth()+1)+_p2(d.getDate());}
+function asstExtractDates(q){
+  var out=[],Y=new Date().getFullYear(),m;
+  var re1=/(20\d{2})[.\-\/]?(\d{1,2})[.\-\/]?(\d{1,2})/g;
+  while(m=re1.exec(q)){out.push(m[1]+_p2(m[2])+_p2(m[3]));}
+  var re2=/(\d{1,2})\s*월\s*(\d{1,2})\s*일/g;
+  while(m=re2.exec(q)){out.push(Y+_p2(m[1])+_p2(m[2]));}
+  var re3=/(?:^|[^\d])(\d{1,2})[\/\-](\d{1,2})(?![\d])/g;
+  while(m=re3.exec(q)){var mm=+m[1],dd=+m[2];if(mm>=1&&mm<=12&&dd>=1&&dd<=31)out.push(Y+_p2(mm)+_p2(dd));}
+  if(/오늘|금일/.test(q))out.push(_ymd(0));
+  if(/어제/.test(q))out.push(_ymd(-1));
+  if(/그제|그저께/.test(q))out.push(_ymd(-2));
+  return out.filter(function(v,i,a){return a.indexOf(v)===i;});
+}
+async function buildAssistantContext(q){
+  var parts=[];
+  var si=G('siteinfo');if(si.length)parts.push('## 현장별 정보(비밀번호·WiFi 등)\n'+si.map(function(d){return '- '+d.site+': '+(d.fields||[]).filter(function(f){return f.k||f.v;}).map(function(f){return f.k+'='+f.v;}).join(', ');}).join('\n'));
+  var proc=G('process');
+  if(proc.length){var bs={};proc.forEach(function(p){(bs[p.site]=bs[p.site]||[]).push(p);});
+    parts.push('## 공정과정(현장별, 날짜·담당자)\n'+Object.keys(bs).map(function(s){return '- '+s+': '+bs[s].slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');}).map(function(p){return p.stage+(p.date?'('+p.date+(p.end&&p.end!==p.date?'~'+p.end:'')+')':'')+(p.manager?'/'+p.manager:'');}).join(', ');}).join('\n'));}
+  var tasks=G('tasks');if(tasks.length)parts.push('## 할일/일정(직원별)\n'+tasks.map(function(t){return '- '+(t.person||'')+': '+(t.text||t.title||'')+(t.date?' ('+t.date+')':'')+(t.done?' [완료]':'');}).join('\n'));
+  var cal=G('cal-events');if(cal.length)parts.push('## 일정 캘린더\n'+cal.slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');}).map(function(e){return '- '+e.date+': '+e.title;}).join('\n'));
+  var ord=G('ord');if(ord.length)parts.push('## 발주\n'+ord.map(function(o){return '- '+(o.item||'')+' '+(o.qty||'')+' ['+(o.status||'')+']'+(o.vendor?' / '+o.vendor:'');}).join('\n'));
+  var jnl=G('jnl');if(jnl.length)parts.push('## 업무일지 간단메모\n'+jnl.slice(0,50).map(function(j){return '- '+(j.date||'')+' '+(j.member||'')+': '+(j.text||'');}).join('\n'));
+  var dates=asstExtractDates(q);
+  for(var i=0;i<dates.length;i++){
+    var dt=dates[i];
+    try{
+      var files=await ghContents('hadam-cloud','daily/'+dt);
+      var mds=(files||[]).filter(function(f){return f.type==='file'&&/\.md$/i.test(f.name);});
+      if(!mds.length){parts.push('## 업무일지 '+dt+'\n(기록 없음)');continue;}
+      for(var j=0;j<mds.length;j++){var txt=await ghText('hadam-cloud','daily/'+dt+'/'+mds[j].name);parts.push('## 업무일지 '+dt+' / '+mds[j].name.replace(/\.md$/,'')+'\n'+txt);}
+    }catch(e){parts.push('## 업무일지 '+dt+'\n(기록 없음)');}
+  }
+  return parts.join('\n\n');
+}
+async function asstSend(){
+  var inp=document.getElementById('asst-input');var q=(inp.value||'').trim();if(!q)return;
+  var key=localStorage.getItem('ant_key');
+  if(!key){ASST_HISTORY.push({role:'user',text:q});ASST_HISTORY.push({role:'assistant',text:'⚠️ Claude API 키가 없습니다. 시크릿 키 메뉴에서 Anthropic 키를 저장해 주세요.'});renderAsstChat();inp.value='';return;}
+  inp.value='';
+  ASST_HISTORY.push({role:'user',text:q});
+  ASST_HISTORY.push({role:'assistant',text:'데이터를 찾는 중…',pending:true});
+  renderAsstChat();
+  try{
+    var ctx=await buildAssistantContext(q);
+    var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
+    var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. 이를 기준으로 "오늘/이번주/지난/다음" 같은 상대적 표현과 진행 상황을 판단해라. 아래 [회사 데이터]만 근거로 한국어로 간결하고 정확하게 답해라. 데이터에 없는 내용은 추측하지 말고 "기록에 없습니다"라고 답해라. 비밀번호·연락처 등은 내부 직원 전용 시스템이므로 데이터에 있으면 그대로 알려줘라. 날짜·담당자·수치는 정확히 인용해라.\n\n[회사 데이터]\n'+ctx;
+    var msgs=ASST_HISTORY.filter(function(m){return !m.pending;}).map(function(m){return {role:m.role==='user'?'user':'assistant',content:m.text};});
+    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:1300,system:sys,messages:msgs})});
+    var d=await r.json();
+    var ans=(d&&d.content&&d.content[0]&&d.content[0].text)||('오류: '+JSON.stringify(d).slice(0,300));
+    ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:ans};
+    renderAsstChat();
+  }catch(e){ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:'오류: '+((e&&e.message)||e)};renderAsstChat();}
+}
 
 // ===== 대시보드 카드 드래그앤드롭 (순서 저장) =====
 function dashCardKey(c){var oc=c.getAttribute('onclick')||'';var m=oc.match(/openModal\('([^']+)'\)/);return m?m[1]:'';}
