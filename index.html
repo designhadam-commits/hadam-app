@@ -955,6 +955,16 @@
   .proc-addrow .pa-mgr{max-width:140px}
   .proc-editrow{gap:8px;flex-wrap:wrap;background:var(--blue-dim)}
   .proc-editrow .inp{flex:1;min-width:120px}
+  .mat-thumbs{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:12px}
+  .mat-thumb-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--card)}
+  .mat-thumb-ph{width:100%;aspect-ratio:1/1;background:#eef1f5 center/cover no-repeat;cursor:pointer;display:flex;align-items:center;justify-content:center;position:relative}
+  .mat-thumb-load{width:22px;height:22px;border:3px solid #dfe3e8;border-top-color:var(--blue);border-radius:50%;animation:matspin .8s linear infinite}
+  @keyframes matspin{to{transform:rotate(360deg)}}
+  .mat-thumb-bar{display:flex;align-items:center;gap:4px;padding:6px 8px}
+  .mat-thumb-name{flex:1;min-width:0;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .mat-mini{border:none;background:#eef1f5;border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:12px;flex-shrink:0;color:#555;line-height:1}
+  .mat-mini.del{color:#f04452}
+  @media(max-width:768px){.mat-thumbs{grid-template-columns:repeat(2,1fr)}}
   .mat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px;margin-bottom:6px}
   .mat-item{border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--card);display:flex;flex-direction:column;gap:8px}
   .mat-name{font-size:12.5px;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1830,12 +1840,21 @@ async function matRefreshList(){
     var html=crumb;
     var fkeys=Object.keys(folders).sort(function(a,b){return b.localeCompare(a);});
     if(fkeys.length){html+='<div class="mat-folders">'+fkeys.map(function(f){return '<div class="mat-folder" onclick="matInto(\''+encodeURIComponent(f)+'\')">📁 '+ghEsc(f)+' <span class="mat-fc">'+folders[f]+'</span></div>';}).join('')+'</div>';}
-    if(here.length){html+='<div class="mat-grid">'+here.map(function(f){
-      var img=/\.(jpe?g|png|gif|webp|heic)$/i.test(f.name);var fn=f.name.replace(/'/g,'');
-      return '<div class="mat-item"><div class="mat-name" title="'+ghEsc(f.name)+'">'+(img?'🖼️':'📄')+' '+ghEsc(f.name)+'</div><div class="mat-acts">'+(img?'<button class="btn" onclick="matViewImg(\''+f.sha+'\',\''+ghEsc(fn)+'\')">보기</button>':'')+'<button class="btn" onclick="matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">다운로드</button><button class="del" onclick="matDel(\''+encodeURIComponent(f.path)+'\')" title="삭제">×</button></div></div>';
+    var isImg=function(n){return /\.(jpe?g|png|gif|webp|heic)$/i.test(n);};
+    var imgs=here.filter(function(f){return isImg(f.name);});
+    var others=here.filter(function(f){return !isImg(f.name);});
+    if(imgs.length){html+='<div class="mat-thumbs">'+imgs.map(function(f){
+      var fn=f.name.replace(/'/g,'');
+      return '<div class="mat-thumb-card"><div class="mat-thumb-ph" data-sha="'+f.sha+'" data-name="'+ghEsc(fn)+'" onclick="matThumbOpen(this)"><div class="mat-thumb-load"></div></div>'
+        +'<div class="mat-thumb-bar"><span class="mat-thumb-name" title="'+ghEsc(f.name)+'">'+ghEsc(f.name)+'</span><button class="mat-mini" title="다운로드" onclick="event.stopPropagation();matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">⬇</button><button class="mat-mini del" title="삭제" onclick="event.stopPropagation();matDel(\''+encodeURIComponent(f.path)+'\')">×</button></div></div>';
+    }).join('')+'</div>';}
+    if(others.length){html+='<div class="mat-grid">'+others.map(function(f){
+      var fn=f.name.replace(/'/g,'');
+      return '<div class="mat-item"><div class="mat-name" title="'+ghEsc(f.name)+'">📄 '+ghEsc(f.name)+'</div><div class="mat-acts"><button class="btn" onclick="matDownload(\''+f.sha+'\',\''+ghEsc(fn)+'\')">다운로드</button><button class="del" onclick="matDel(\''+encodeURIComponent(f.path)+'\')" title="삭제">×</button></div></div>';
     }).join('')+'</div>';}
     if(!fkeys.length&&!here.length)html+='<div class="gh-need">이 폴더에 자료가 없습니다. 위에서 년도·월·현장·구분을 선택해 업로드하세요.</div>';
     el.innerHTML=html;
+    matLoadThumbs();
   }catch(e){el.innerHTML=ghErr(e);}
 }
 async function matUpload(){
@@ -1864,7 +1883,19 @@ async function matUpload(){
 }
 async function matBlob(sha){var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/git/blobs/'+sha,{headers:ghHeaders()});var d=await r.json();return (d.content||'').replace(/\s/g,'');}
 async function matDownload(sha,fname){try{var b64=await matBlob(sha);var bin=atob(b64);var arr=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);var blob=new Blob([arr]);var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=fname;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url);},3000);}catch(e){alert('다운로드 실패: '+((e&&e.message)||e));}}
-async function matViewImg(sha,fname){try{var b64=await matBlob(sha);showImagePopup(fname,'data:image/png;base64,'+b64);}catch(e){alert('불러오기 실패');}}
+async function matViewImg(sha,fname){try{var b64=await matBlob(sha);showImagePopup(fname,'data:image/jpeg;base64,'+b64);}catch(e){alert('불러오기 실패');}}
+function matThumbOpen(el){var name=el.getAttribute('data-name');if(el.dataset.full){showImagePopup(name,'data:image/jpeg;base64,'+el.dataset.full);}else{matViewImg(el.getAttribute('data-sha'),name);}}
+function matLoadThumbs(){
+  var phs=[].slice.call(document.querySelectorAll('#mat-list .mat-thumb-ph'));if(!phs.length)return;
+  function loadOne(ph){
+    if(ph.getAttribute('data-loaded'))return;ph.setAttribute('data-loaded','1');
+    matBlob(ph.getAttribute('data-sha')).then(function(b64){ph.style.backgroundImage='url("data:image/jpeg;base64,'+b64+'")';ph.classList.add('on');ph.dataset.full=b64;var l=ph.querySelector('.mat-thumb-load');if(l)l.remove();}).catch(function(){var l=ph.querySelector('.mat-thumb-load');if(l)l.outerHTML='<span style="font-size:10px;color:var(--muted)">실패</span>';});
+  }
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(ents){ents.forEach(function(en){if(en.isIntersecting){io.unobserve(en.target);loadOne(en.target);}});},{rootMargin:'400px'});
+    phs.forEach(function(ph){io.observe(ph);});
+  }else{phs.forEach(loadOne);}
+}
 async function matDel(pathEnc){var path=decodeURIComponent(pathEnc);if(!confirm('이 자료를 삭제할까요?\\n'+path.split('/').pop()))return;try{var url='https://api.github.com/repos/'+GH_ORG+'/hadam-cloud/contents/'+path.split('/').map(encodeURIComponent).join('/');var g=await fetch(url+'?ref=main',{headers:ghHeaders()});var sha=(await g.json()).sha;await fetch(url,{method:'DELETE',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'자료 삭제',sha:sha,branch:'main'})});matRefreshList();}catch(e){alert('삭제 실패');}}
 function showImagePopup(title,src){document.getElementById('cpop-title').textContent=title;document.getElementById('cpop-body').innerHTML='<img src="'+src+'" style="max-width:100%;border-radius:8px;display:block;margin:0 auto">';var e=document.getElementById('cpop-edit');if(e)e.style.display='none';document.getElementById('content-popup').style.display='flex';}
 
