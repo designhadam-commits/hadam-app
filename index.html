@@ -204,6 +204,8 @@
     .asst-sug{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
     .asst-sug span{background:var(--blue-dim);color:var(--blue);border-radius:16px;padding:6px 12px;font-size:12.5px;cursor:pointer;border:1px solid #cfe2fd}
     .asst-sug span:hover{background:#d6e6fd}
+    .cal-past-hd{cursor:pointer;font-size:13px;font-weight:600;color:var(--text);padding:9px 12px;background:#f1f3f5;border-radius:8px;margin-bottom:8px;user-select:none}
+    .cal-past-hd:hover{background:#e7ebf0}
     .today-section{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:24px}
     .today-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
     .today-hd{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px;margin-bottom:12px;gap:8px}
@@ -1342,7 +1344,8 @@ async function delInv(id){await S('inv',G('inv').filter(x=>x.id!==id));renderInv
 function renderInv(){const a=G('inv'),el=document.getElementById('inv-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🗂️</div>재고 항목이 없습니다</div>';return;}el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span><span class="item-txt">${x.name}</span><span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span><button class="del" onclick="delInv(${x.id})">×</button></div>`).join('')+'</div>';}
 function statInv(){document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${G('inv').length}건</span>`;}
 
-let calY,calM,calSelectedDate=null;
+let calY,calM,calSelectedDate=null,calPastOpen=false;
+function toggleCalPast(){calPastOpen=!calPastOpen;renderCal();}
 function calSelectDate(date){calSelectedDate=calSelectedDate===date?null:date;renderCal();}
 async function saveCalEv(){const title=document.getElementById('cal-ev-inp')?.value.trim();if(!title||!calSelectedDate)return;const a=G('cal-events');a.push({id:Date.now(),date:calSelectedDate,title});await S('cal-events',a);calSelectedDate=null;renderCal();}
 const SITE_PALETTE=['#3182f6','#15c47e','#ff9f43','#a855f7','#f04452','#06b6d4','#eab308','#ec4899'];
@@ -1378,7 +1381,19 @@ function renderCal(){
   if(calSelectedDate)html+=`<div class="cal-add-form"><div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div></div>`;
   const allEv=manual.map(e=>({date:e.date,title:e.title,id:e.id,_proc:false})).concat(proc.map(p=>({date:p.date,title:p.site+'·'+p.stage+(p.manager?' ('+p.manager+')':''),_proc:true})));
   const thisEvs=allEv.filter(e=>e.date.startsWith(ym)).sort((a,b)=>a.date.localeCompare(b.date));
-  if(thisEvs.length)html+=`<div style="margin-top:18px"><div style="font-size:11px;color:var(--muted);margin-bottom:8px">이번 달 일정</div><div class="list-wrap">${thisEvs.map(e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:62px">${e.date.slice(5)}</span><span class="item-txt">${e._proc?'🏗️ ':''}${e.title}</span>${e._proc?'<span style="font-size:10px;color:var(--blue);flex-shrink:0">공정</span>':`<button class="del" onclick="delCalEv(${e.id})">×</button>`}</div>`).join('')}</div></div>`;
+  const itemHtml=e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:62px">${e.date.slice(5)}</span><span class="item-txt">${e._proc?'🏗️ ':''}${e.title}</span>${e._proc?'<span style="font-size:10px;color:var(--blue);flex-shrink:0">공정</span>':`<button class="del" onclick="delCalEv(${e.id})">×</button>`}</div>`;
+  if(thisEvs.length){
+    const past=thisEvs.filter(e=>e.date<todayStr),tdy=thisEvs.filter(e=>e.date===todayStr),future=thisEvs.filter(e=>e.date>todayStr);
+    html+='<div style="margin-top:18px">';
+    if(past.length){
+      html+=`<div class="cal-past-hd" onclick="toggleCalPast()">${calPastOpen?'▾':'▸'} 지난 일정 <span style="color:var(--muted);font-weight:400">${past.length}건</span></div>`;
+      if(calPastOpen)html+=`<div class="list-wrap" style="margin-bottom:12px;opacity:.7">${past.map(itemHtml).join('')}</div>`;
+    }
+    html+=`<div style="font-size:11px;color:var(--muted);margin:2px 0 8px">오늘 (${todayStr.slice(5)})</div>`;
+    html+= tdy.length?`<div class="list-wrap">${tdy.map(itemHtml).join('')}</div>`:`<div style="font-size:13px;color:var(--muted);padding:7px 4px">오늘 일정이 없습니다.</div>`;
+    if(future.length)html+=`<div style="font-size:11px;color:var(--muted);margin:16px 0 8px">예정 <span style="color:var(--muted)">${future.length}건</span></div><div class="list-wrap">${future.map(itemHtml).join('')}</div>`;
+    html+='</div>';
+  }
   document.getElementById('cal-bd').innerHTML=html;const fc=document.getElementById('fc-cal');if(fc)fc.innerHTML=`이번 달 일정 <span class="cnt">${thisEvs.length}건</span>`;
 }
 function calNav(d){calM+=d;if(calM<0){calM=11;calY--;}else if(calM>11){calM=0;calY++;}renderCal();}
