@@ -753,7 +753,7 @@
     <div class="asst-input-row">
       <button class="btn asst-imgbtn" title="사진 첨부" onclick="document.getElementById('asst-file').click()">📷</button>
       <input type="file" id="asst-file" accept="image/*" style="display:none" onchange="asstOnImg(this)">
-      <input class="inp" id="asst-input" placeholder="질문하거나 사진을 첨부해 물어보세요" onkeydown="if(event.key==='Enter')asstSend()">
+      <input class="inp" id="asst-input" placeholder="질문하거나 사진을 붙여넣기(Ctrl+V)·첨부하세요" onkeydown="if(event.key==='Enter')asstSend()">
       <button class="btn btn-g" id="asst-send" onclick="asstSend()">전송</button>
     </div>
   </div></div>
@@ -2123,6 +2123,27 @@ async function asstOnImg(inp){
   inp.value='';renderAsstAttach();
 }
 function asstClearImg(){ASST_IMG=null;renderAsstAttach();}
+async function asstHandlePaste(e){
+  var items=(e.clipboardData&&e.clipboardData.items)||[];
+  for(var i=0;i<items.length;i++){
+    if(items[i].type&&items[i].type.indexOf('image')===0){
+      var file=items[i].getAsFile();
+      if(file){
+        if(e.preventDefault)e.preventDefault();
+        try{var b64=await compressImageToB64(file,1280,0.72);ASST_IMG={media_type:'image/jpeg',data:b64};}
+        catch(_){try{var raw=await fileToB64(file);ASST_IMG={media_type:file.type||'image/png',data:raw};}catch(__){return;}}
+        renderAsstAttach();
+      }
+      return true;
+    }
+  }
+  return false;
+}
+// 비서 모달이 열려 있으면 어디에 붙여넣어도 사진 캡처
+document.addEventListener('paste',function(e){
+  var m=document.getElementById('assistant-modal');
+  if(m&&m.classList.contains('open'))asstHandlePaste(e);
+});
 function renderAsstAttach(){
   var el=document.getElementById('asst-attach');if(!el)return;
   if(!ASST_IMG){el.style.display='none';el.innerHTML='';return;}
