@@ -2298,7 +2298,7 @@ async function buildAssistantContext(q){
   var proc=G('process');
   if(proc.length){var bs={};proc.forEach(function(p){(bs[p.site]=bs[p.site]||[]).push(p);});
     parts.push('## 공정과정(현장별, 날짜·담당자)\n'+Object.keys(bs).map(function(s){return '- '+s+': '+bs[s].slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');}).map(function(p){return p.stage+(p.date?'('+p.date+(p.end&&p.end!==p.date?'~'+p.end:'')+')':'')+(p.manager?'/'+p.manager:'');}).join(', ');}).join('\n'));sources.push('공정과정');}
-  var tasks=G('tasks');if(tasks.length){parts.push('## 할일/일정(직원별)\n'+tasks.map(function(t){return '- '+(t.person||'')+': '+(t.text||t.title||'')+(t.date?' ('+t.date+')':'')+(t.done?' [완료]':'');}).join('\n'));sources.push('할일/일정');}
+  var tasks=G('tasks');if(tasks.length){parts.push('## 할일/일정(직원별)\n'+tasks.map(function(t){var dd=t.due||t.date;return '- '+(t.person||'')+': '+(t.text||t.title||'')+(dd?' (마감 '+dd+')':'')+(t.done?' [완료]':'');}).join('\n'));sources.push('할일/일정');}
   var cal=G('cal-events');if(cal.length){parts.push('## 일정 캘린더\n'+cal.slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');}).map(function(e){return '- '+e.date+': '+e.title;}).join('\n'));sources.push('일정 캘린더');}
   var ord=G('ord');if(ord.length){parts.push('## 발주\n'+ord.map(function(o){return '- '+(o.item||'')+' '+(o.qty||'')+' ['+(o.status||'')+']'+(o.vendor?' / '+o.vendor:'');}).join('\n'));sources.push('발주');}
   var jnl=G('jnl');if(jnl.length){parts.push('## 업무일지 간단메모\n'+jnl.slice(0,50).map(function(j){return '- '+(j.date||'')+' '+(j.member||'')+': '+(j.text||'');}).join('\n'));sources.push('업무일지 메모');}
@@ -2314,6 +2314,24 @@ async function buildAssistantContext(q){
   }
   return {text:parts.join('\n\n'),sources:sources};
 }
+var ASST_TOOLS=[
+ {name:'add_task',description:'직원의 할 일/업무를 등록한다. person=담당 직원 이름, text=할 일 내용, due=마감일(YYYY-MM-DD, 없으면 빈값).',input_schema:{type:'object',properties:{person:{type:'string'},text:{type:'string'},due:{type:'string'}},required:['person','text']}},
+ {name:'add_schedule',description:'일정 캘린더에 일정을 등록한다. date=YYYY-MM-DD, title=일정 제목.',input_schema:{type:'object',properties:{date:{type:'string'},title:{type:'string'}},required:['date','title']}},
+ {name:'add_process',description:'현장 공정과정을 등록한다(캘린더에도 표시됨). site=현장명, stage=공정명, manager=담당자(선택), date=시작일 YYYY-MM-DD(선택), end=종료일 YYYY-MM-DD(선택).',input_schema:{type:'object',properties:{site:{type:'string'},stage:{type:'string'},manager:{type:'string'},date:{type:'string'},end:{type:'string'}},required:['site','stage']}},
+ {name:'set_site_info',description:'현장별 정보(도어락/공동현관/WiFi 비밀번호, 주차, 메모 등)를 저장/수정한다. site=현장명, field=항목명, value=값.',input_schema:{type:'object',properties:{site:{type:'string'},field:{type:'string'},value:{type:'string'}},required:['site','field','value']}},
+ {name:'add_order',description:'발주(자재/용품)를 등록한다. item=품목명, qty=수량(선택), vendor=업체(선택).',input_schema:{type:'object',properties:{item:{type:'string'},qty:{type:'string'},vendor:{type:'string'}},required:['item']}}
+];
+async function asstExecTool(name,inp){
+  inp=inp||{};
+  try{
+    if(name==='add_task'){var a=(G('tasks')||[]).slice();a.unshift({id:Date.now(),person:inp.person||'',text:inp.text||'',done:false,due:inp.due||''});await S('tasks',a);return '✅ 할 일 등록: '+(inp.person||'')+' — '+(inp.text||'')+(inp.due?' (마감 '+inp.due+')':'');}
+    if(name==='add_schedule'){var c=(G('cal-events')||[]).slice();c.push({id:Date.now(),date:inp.date,title:inp.title});await S('cal-events',c);return '✅ 일정 등록: '+inp.date+' '+inp.title;}
+    if(name==='add_process'){var p=(G('process')||[]).slice();p.push({id:Date.now(),site:inp.site,stage:inp.stage,manager:inp.manager||'',date:inp.date||'',end:inp.end||''});await S('process',p);return '✅ 공정 등록: '+inp.site+'·'+inp.stage+(inp.manager?' ('+inp.manager+')':'')+(inp.date?' '+inp.date+(inp.end&&inp.end!==inp.date?'~'+inp.end:''):'');}
+    if(name==='set_site_info'){var s=(G('siteinfo')||[]).slice();var d=s.find(function(x){return x.site===inp.site;});if(!d){d={id:Date.now(),site:inp.site,fields:[]};s.unshift(d);}d.fields=d.fields||[];var fi=d.fields.findIndex(function(f){return f.k===inp.field;});if(fi>-1)d.fields[fi].v=inp.value;else d.fields.push({k:inp.field,v:inp.value});await S('siteinfo',s);return '✅ 현장정보 저장: '+inp.site+' — '+inp.field+' = '+inp.value;}
+    if(name==='add_order'){var o=(G('ord')||[]).slice();o.unshift({id:Date.now(),item:inp.item,qty:inp.qty||'1',vendor:inp.vendor||'',status:'입고대기',date:td()});await S('ord',o);return '✅ 발주 등록: '+inp.item+' '+(inp.qty||'1')+(inp.vendor?' / '+inp.vendor:'');}
+    return '알 수 없는 도구: '+name;
+  }catch(e){return '❌ 등록 실패('+name+'): '+((e&&e.message)||e);}
+}
 async function asstSend(){
   var inp=document.getElementById('asst-input');var q=(inp.value||'').trim();
   var img=ASST_IMG;
@@ -2323,22 +2341,36 @@ async function asstSend(){
   if(!key){ASST_HISTORY.push({role:'user',text:q,img:img});ASST_HISTORY.push({role:'assistant',text:'⚠️ Claude API 키가 없습니다. 시크릿 키 메뉴에서 Anthropic 키를 저장해 주세요.'});renderAsstChat();inp.value='';asstClearImg();return;}
   inp.value='';asstClearImg();
   ASST_HISTORY.push({role:'user',text:q,img:img});
-  ASST_HISTORY.push({role:'assistant',text:'데이터를 찾는 중…',pending:true});
+  ASST_HISTORY.push({role:'assistant',text:'생각 중…',pending:true});
   renderAsstChat();
   try{
     var ctx=await buildAssistantContext(q);
     var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
-    var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. 이를 기준으로 "오늘/이번주/지난/다음" 같은 상대적 표현과 진행 상황을 판단해라. 아래 [회사 데이터]만 근거로 한국어로 간결하고 정확하게 답해라. 데이터에 없는 내용은 추측하지 말고 "기록에 없습니다"라고 답해라. 사진이 첨부되면 사진 내용을 분석해 답하고, 회사 데이터와 연관되면 함께 활용해라. 비밀번호·연락처 등은 내부 직원 전용 시스템이므로 데이터에 있으면 그대로 알려줘라. 날짜·담당자·수치는 정확히 인용해라.\n\n[회사 데이터]\n'+ctx.text;
-    var msgs=ASST_HISTORY.filter(function(m){return !m.pending;}).map(function(m){
+    var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. "오늘/내일/모레/이번주/다음" 등 상대 날짜는 오늘 기준으로 YYYY-MM-DD로 변환해라. 아래 [회사 데이터]를 근거로 한국어로 간결·정확하게 답해라. 조회 질문이면 데이터에 없는 건 "기록에 없습니다"라 답하고 지어내지 마라.\n\n[등록 기능] 사용자가 할 일·일정·공정·현장정보(비밀번호 등)·발주를 추가/등록/저장/기록해달라고 하면, 반드시 해당 도구(add_task/add_schedule/add_process/set_site_info/add_order)를 호출해 실제로 등록해라. 등록에 꼭 필요한 정보(예: 누가/무엇/언제)가 빠졌으면 등록하지 말고 한 번 되물어라. 단순 조회엔 도구를 쓰지 마라. 등록 후에는 무엇을 등록했는지 한 줄로 확인해줘라.\n\n[회사 데이터]\n'+ctx.text;
+    var messages=ASST_HISTORY.filter(function(m){return !m.pending;}).map(function(m){
       if(m.role==='user'&&m.img)return {role:'user',content:[{type:'image',source:{type:'base64',media_type:m.img.media_type,data:m.img.data}},{type:'text',text:m.text||'이 사진에 대해 알려줘'}]};
       return {role:m.role==='user'?'user':'assistant',content:m.text};
     });
-    var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:1300,system:sys,messages:msgs})});
-    var d=await r.json();
-    var ans=(d&&d.content&&d.content[0]&&d.content[0].text)||('오류: '+JSON.stringify(d).slice(0,300));
-    var srcs=ctx.sources.slice();if(img)srcs.unshift('첨부 사진');
-    ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:ans,sources:srcs};
+    var actions=[],finalText='',iter=0;
+    while(iter++<6){
+      var r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-opus-4-8',max_tokens:1300,system:sys,tools:ASST_TOOLS,messages:messages})});
+      var d=await r.json();
+      if(!d||d.type==='error'||!d.content){finalText='오류: '+JSON.stringify(d).slice(0,300);break;}
+      var textParts=d.content.filter(function(b){return b.type==='text';}).map(function(b){return b.text;});
+      if(d.stop_reason==='tool_use'){
+        messages.push({role:'assistant',content:d.content});
+        var results=[];
+        for(var i=0;i<d.content.length;i++){var b=d.content[i];if(b.type==='tool_use'){var res=await asstExecTool(b.name,b.input);actions.push(res);results.push({type:'tool_result',tool_use_id:b.id,content:res});}}
+        messages.push({role:'user',content:results});
+        continue;
+      }
+      finalText=textParts.join('\n')||(actions.length?'등록을 완료했습니다.':'(응답 없음)');
+      break;
+    }
+    var srcs=[];if(img)srcs.push('첨부 사진');srcs=srcs.concat(actions.length?actions:ctx.sources);
+    ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:finalText,sources:srcs};
     renderAsstChat();
+    if(actions.length){try{allStats();}catch(e){}}
   }catch(e){ASST_HISTORY[ASST_HISTORY.length-1]={role:'assistant',text:'오류: '+((e&&e.message)||e)};renderAsstChat();}
 }
 
@@ -2375,7 +2407,7 @@ function renderAlerts(){
     else if(p.end&&p.end===today)items.push({ic:'🏁',t:p.site+' · '+p.stage+' 오늘 완료 예정'});
   });
   (G('cal-events')||[]).forEach(function(e){if(e.date===today)items.push({ic:'📅',t:e.title});});
-  (G('tasks')||[]).forEach(function(t){if(!t.done&&t.date&&t.date<=today)items.push({ic:'⏰',t:(t.person?t.person+': ':'')+(t.text||t.title||'')+' (기한 '+t.date+')'});});
+  (G('tasks')||[]).forEach(function(t){var dd=t.due||t.date;if(!t.done&&dd&&dd<=today)items.push({ic:'⏰',t:(t.person?t.person+': ':'')+(t.text||t.title||'')+' (기한 '+dd+')'});});
   if(!items.length){body.innerHTML='<span style="color:var(--muted)">오늘 특이사항이 없습니다 👍</span>';if(cnt)cnt.style.display='none';return;}
   if(cnt){cnt.style.display='';cnt.textContent=items.length;}
   body.innerHTML=items.map(function(i){return '<div class="alert-item"><span class="aic">'+i.ic+'</span><span>'+ghEsc(i.t)+'</span></div>';}).join('');
