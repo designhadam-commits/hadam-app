@@ -1995,10 +1995,30 @@ function designGenPanel(){
 }
 async function designGenRun(){
   var style=document.getElementById('dz-style').value,room=document.getElementById('dz-room').value,count=document.getElementById('dz-count').value;
-  var st=document.getElementById('dz-genstatus');st.textContent='워크플로 실행 요청 중… (이미지 생성까지 3~6분 소요)';
+  var st=document.getElementById('dz-genstatus');if(!st)return;st.style.color='';st.textContent='⏳ 생성 요청 중…';
   try{await ghDispatch('hadam-cardnews','design-proposal.yml',{style:style,room:room,count:count});
-    st.innerHTML='✅ 실행됨! '+ghEsc(style)+' / '+ghEsc(room)+' '+ghEsc(count)+'장 생성 중. <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">진행 상황 ›</a><br><button class="btn" style="margin-top:8px" onclick="renderDesignView()">목록 새로고침</button>';
-  }catch(e){st.textContent='실패: '+((e&&e.message)||e);}
+    st.innerHTML='✅ 생성 시작! '+ghEsc(style)+' / '+ghEsc(room)+' '+ghEsc(count)+'장 — 약 3~6분 후 자동으로 목록이 갱신됩니다. <span id="dz-gen-dots" style="color:var(--muted)"></span><br><a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue);font-size:12px">진행 상황 직접 보기 ›</a>';
+    designPollAndRefresh();
+  }catch(e){st.style.color='var(--red)';st.textContent='실패: '+((e&&e.message)||e);}
+}
+async function designPollAndRefresh(){
+  var tries=0;
+  async function tick(){
+    tries++;
+    try{
+      var rj=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/actions/runs?per_page=1&t='+Date.now(),{headers:ghHeaders()})).json();
+      var run=(rj.workflow_runs||[])[0];var st=document.getElementById('dz-genstatus');
+      if(run&&run.status==='completed'){
+        if(run.conclusion==='success'){if(st){st.style.color='var(--green)';st.innerHTML='✅ 생성 완료! 목록을 갱신합니다…';}setTimeout(renderDesignView,1200);}
+        else if(st){st.style.color='var(--red)';st.innerHTML='❌ 생성 실패 (conclusion: '+ghEsc(run.conclusion||'')+'). <a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue)">로그 보기 ›</a>';}
+        return;
+      }
+      var d=document.getElementById('dz-gen-dots');if(d)d.textContent='('+(tries*15)+'초 경과)';
+    }catch(e){}
+    if(tries<40)setTimeout(tick,15000);
+    else{var s2=document.getElementById('dz-genstatus');if(s2)s2.innerHTML+='<br><button class="btn" style="margin-top:6px" onclick="renderDesignView()">수동 새로고침</button>';}
+  }
+  setTimeout(tick,15000);
 }
 async function designOpen(name){
   const v=document.getElementById('design-view');v.innerHTML=ghLoading();
