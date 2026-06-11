@@ -219,6 +219,26 @@
     @media (max-width:768px){.today-section{grid-template-columns:1fr;gap:12px;margin-bottom:18px}}
     .search-hit{padding:9px 12px;border:1px solid var(--border);border-radius:8px;margin-bottom:6px;cursor:pointer;font-size:13.5px;transition:border-color .12s,background .12s}
     .search-hit:hover{border-color:var(--blue);background:var(--blue-dim)}
+    .md-p{margin:2px 0}.md-sp{height:7px}
+    .md-h{font-weight:700;font-size:14.5px;margin:10px 0 5px}
+    .md-ul{margin:5px 0;padding-left:20px}.md-ul li{margin:2px 0}
+    .asst-msg code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;font-size:12.5px}
+    .md-tablewrap{overflow-x:auto;margin:9px 0}
+    .md-table{border-collapse:collapse;width:100%;font-size:12.5px;background:#fff}
+    .md-table th{background:#f1f3f5;font-weight:600;text-align:left;padding:7px 9px;border:1px solid var(--border);white-space:nowrap}
+    .md-table td{padding:6px 9px;border:1px solid var(--border);white-space:nowrap}
+    .md-table td.md-ok{color:#15a05a;font-weight:600}
+    .md-table td.md-go{color:#2563eb;font-weight:600}
+    .md-table td.md-wait{color:#94a3b8}
+    .g-wrap{margin:10px 0 4px;padding:12px;background:#f8fafc;border:1px solid var(--border);border-radius:10px}
+    .g-title{font-size:12.5px;font-weight:700;margin-bottom:9px;color:var(--text2,#555)}
+    .g-row{display:flex;align-items:center;gap:8px;margin:4px 0}
+    .g-lbl{flex:0 0 96px;width:96px;font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--text)}
+    .g-track{flex:1;position:relative;height:14px;background:#e9edf2;border-radius:7px}
+    .g-bar{position:absolute;top:0;height:14px;border-radius:7px;min-width:6px}
+    .g-bar.g-ok{background:#15a05a}.g-bar.g-go{background:#2563eb}.g-bar.g-wait{background:#cbd5e1}
+    .g-axis{display:flex;justify-content:space-between;font-size:10.5px;color:var(--muted);margin-top:6px;padding-left:104px}
+    @media(max-width:768px){.g-lbl{flex-basis:70px;width:70px}.g-axis{padding-left:78px}}
     .asst-imgbtn{flex-shrink:0;padding:0 12px;font-size:17px}
     .asst-attach{display:flex;align-items:center;gap:10px;padding:8px 10px;margin-bottom:8px;background:var(--blue-dim);border-radius:10px}
     .asst-attach img{height:46px;border-radius:6px}
@@ -2254,7 +2274,44 @@ function renderAsstAttach(){
   el.innerHTML='<img src="data:'+ASST_IMG.media_type+';base64,'+ASST_IMG.data+'"><span style="font-size:12.5px;color:var(--muted)">사진 1장 첨부됨 — 질문을 입력하고 전송</span><button class="rm" title="제거" onclick="asstClearImg()">×</button>';
 }
 function asstEsc(s){return String(s==null?'':s).replace(/[&<>]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;'}[c];});}
-function asstMd(s){return asstEsc(s).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/\n/g,'<br>');}
+function asstInline(t){return asstEsc(t).replace(/\*\*([^*]+)\*\*/g,'<b>$1</b>').replace(/`([^`]+)`/g,'<code>$1</code>');}
+function asstSplitRow(line){var t=line.trim().replace(/^\|/,'').replace(/\|$/,'');return t.split('|').map(function(c){return c.trim();});}
+function asstStatusClass(v){if(/완료/.test(v))return 'md-ok';if(/진행/.test(v))return 'md-go';if(/예정|대기/.test(v))return 'md-wait';return '';}
+function asstGantt(head,rows){
+  var di=-1,c;
+  for(c=0;c<head.length;c++){if(rows.some(function(r){return /\d{4}-\d{2}-\d{2}/.test(r[c]||'');})){di=c;break;}}
+  if(di<0)return '';
+  var li=di===0?1:0;if(li>=head.length)li=di;
+  var si=-1;for(c=0;c<head.length;c++){if(rows.some(function(r){return /완료|진행|예정/.test(r[c]||'');})){si=c;break;}}
+  var parsed=rows.map(function(r){var v=r[di]||'';var m=v.match(/(\d{4})-(\d{2})-(\d{2})(?:\s*[~-]\s*(\d{1,2}))?/);if(!m)return null;var y=+m[1],mo=+m[2],d1=+m[3],d2=m[4]?+m[4]:d1;return {start:Date.UTC(y,mo-1,d1),end:Date.UTC(y,mo-1,d2),label:r[li]||'',status:si>=0?(r[si]||''):''};});
+  var valid=parsed.filter(Boolean);if(valid.length<2)return '';
+  var min=Math.min.apply(null,valid.map(function(x){return x.start;}));
+  var max=Math.max.apply(null,valid.map(function(x){return x.end;}));
+  var span=Math.max(86400000,max-min);
+  var fmt=function(t){var d=new Date(t);return (d.getUTCMonth()+1)+'/'+d.getUTCDate();};
+  var bars=parsed.map(function(x){if(!x)return '';var l=(x.start-min)/span*100;var w=Math.max(3,((x.end-x.start)/span)*100);if(l+w>100)w=100-l;var cls=/완료/.test(x.status)?'g-ok':/진행/.test(x.status)?'g-go':'g-wait';return '<div class="g-row"><span class="g-lbl" title="'+asstEsc(x.label)+'">'+asstEsc(x.label)+'</span><span class="g-track"><span class="g-bar '+cls+'" style="left:'+l.toFixed(1)+'%;width:'+w.toFixed(1)+'%"></span></span></div>';}).join('');
+  return '<div class="g-wrap"><div class="g-title">📊 일정 타임라인</div>'+bars+'<div class="g-axis"><span>'+fmt(min)+'</span><span>'+fmt(max)+'</span></div></div>';
+}
+function asstMd(s){
+  s=String(s==null?'':s);var lines=s.split('\n');var html='',i=0;
+  while(i<lines.length){
+    var line=lines[i];
+    if(/^\s*\|/.test(line)&&i+1<lines.length&&/---/.test(lines[i+1])&&/^\s*\|?[\s:|\-]*$/.test(lines[i+1])){
+      var head=asstSplitRow(line);i+=2;var rows=[];
+      while(i<lines.length&&/^\s*\|/.test(lines[i])){rows.push(asstSplitRow(lines[i]));i++;}
+      var th='<div class="md-tablewrap"><table class="md-table"><thead><tr>'+head.map(function(c){return '<th>'+asstInline(c)+'</th>';}).join('')+'</tr></thead><tbody>';
+      th+=rows.map(function(r){return '<tr>'+r.map(function(c){return '<td class="'+asstStatusClass(c)+'">'+asstInline(c)+'</td>';}).join('')+'</tr>';}).join('');
+      th+='</tbody></table></div>';
+      html+=th+asstGantt(head,rows);continue;
+    }
+    var hm=line.match(/^\s*(#{1,4})\s+(.*)$/);
+    if(hm){html+='<div class="md-h">'+asstInline(hm[2])+'</div>';i++;continue;}
+    if(/^\s*[-•]\s+/.test(line)){var items=[];while(i<lines.length&&/^\s*[-•]\s+/.test(lines[i])){items.push(lines[i].replace(/^\s*[-•]\s+/,''));i++;}html+='<ul class="md-ul">'+items.map(function(it){return '<li>'+asstInline(it)+'</li>';}).join('')+'</ul>';continue;}
+    if(/^\s*$/.test(line)){html+='<div class="md-sp"></div>';i++;continue;}
+    html+='<div class="md-p">'+asstInline(line)+'</div>';i++;
+  }
+  return html;
+}
 function renderAsstChat(){
   var el=document.getElementById('asst-chat');if(!el)return;
   if(!ASST_HISTORY.length){
@@ -2359,7 +2416,7 @@ async function asstSend(){
   try{
     var ctx=await buildAssistantContext(q);
     var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
-    var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. "오늘/내일/모레/이번주/다음" 등 상대 날짜는 오늘 기준으로 YYYY-MM-DD로 변환해라. 아래 [회사 데이터]를 근거로 한국어로 간결·정확하게 답해라. 조회 질문이면 데이터에 없는 건 "기록에 없습니다"라 답하고 지어내지 마라.\n\n[등록/수정/삭제 기능] 사용자가 할 일·일정·공정·현장정보(비밀번호 등)·발주를 추가/등록/저장하면 add_task/add_schedule/add_process/set_site_info/add_order를 호출해 실제 등록해라. 완료처리는 complete_task, 삭제는 delete_task/delete_schedule/delete_process/delete_site_field, 공정 담당자·날짜 변경은 update_process를 사용해라. 도구가 "여러 개 일치"를 반환하면 사용자에게 어느 것인지 되물어라(임의로 고르지 마라). 꼭 필요한 정보가 빠졌으면 되묻고, 단순 조회엔 도구를 쓰지 마라. 작업 후 무엇을 했는지 한 줄로 확인해줘라.\n\n[회사 데이터]\n'+ctx.text;
+    var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. "오늘/내일/모레/이번주/다음" 등 상대 날짜는 오늘 기준으로 YYYY-MM-DD로 변환해라. 아래 [회사 데이터]를 근거로 한국어로 간결·정확하게 답해라. 조회 질문이면 데이터에 없는 건 "기록에 없습니다"라 답하고 지어내지 마라.\n\n[등록/수정/삭제 기능] 사용자가 할 일·일정·공정·현장정보(비밀번호 등)·발주를 추가/등록/저장하면 add_task/add_schedule/add_process/set_site_info/add_order를 호출해 실제 등록해라. 완료처리는 complete_task, 삭제는 delete_task/delete_schedule/delete_process/delete_site_field, 공정 담당자·날짜 변경은 update_process를 사용해라. 도구가 "여러 개 일치"를 반환하면 사용자에게 어느 것인지 되물어라(임의로 고르지 마라). 꼭 필요한 정보가 빠졌으면 되묻고, 단순 조회엔 도구를 쓰지 마라. 작업 후 무엇을 했는지 한 줄로 확인해줘라.\n\n[표시 형식] 일정·공정·목록처럼 여러 항목을 정리해 보여줄 땐 마크다운 표(예: | 날짜 | 공정 | 담당 | 상태 |)로 작성해라. 표는 자동으로 보기 좋은 표와 일정 타임라인 그림으로 렌더링된다. 날짜 컬럼은 YYYY-MM-DD 형식(기간은 YYYY-MM-DD~DD)으로.\n\n[회사 데이터]\n'+ctx.text;
     var messages=ASST_HISTORY.filter(function(m){return !m.pending;}).map(function(m){
       if(m.role==='user'&&m.img)return {role:'user',content:[{type:'image',source:{type:'base64',media_type:m.img.media_type,data:m.img.data}},{type:'text',text:m.text||'이 사진에 대해 알려줘'}]};
       return {role:m.role==='user'?'user':'assistant',content:m.text};
