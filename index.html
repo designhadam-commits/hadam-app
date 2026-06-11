@@ -2487,11 +2487,12 @@ function searchToAsst(){var q=(document.getElementById('search-input').value||''
 
 // ===== 홈페이지 방문자 통계 =====
 var VISIT_TOTAL={},VISIT_TODAY={};
+function visitErr(){var el=document.getElementById('sv-visit');if(el)el.textContent='-';var s=document.getElementById('sv-visit-sub');if(s)s.innerHTML='⚠ Firestore 규칙 설정 필요';}
 function startVisitStats(){
   if(!db)return;
   try{
-    db.collection('visits').doc('_total').onSnapshot(function(s){VISIT_TOTAL=(s.exists&&s.data())||{};renderVisit();},function(){});
-    db.collection('visits').doc(td()).onSnapshot(function(s){VISIT_TODAY=(s.exists&&s.data())||{};renderVisit();},function(){});
+    db.collection('visits').doc('_total').onSnapshot(function(s){VISIT_TOTAL=(s.exists&&s.data())||{};renderVisit();},function(){visitErr();});
+    db.collection('visits').doc(td()).onSnapshot(function(s){VISIT_TODAY=(s.exists&&s.data())||{};renderVisit();},function(){visitErr();});
   }catch(e){}
 }
 function renderVisit(){
