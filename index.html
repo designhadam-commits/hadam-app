@@ -204,6 +204,11 @@
     .asst-sug{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
     .asst-sug span{background:var(--blue-dim);color:var(--blue);border-radius:16px;padding:6px 12px;font-size:12.5px;cursor:pointer;border:1px solid #cfe2fd}
     .asst-sug span:hover{background:#d6e6fd}
+    .cal-sitefilter{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+    .cal-chip{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border:1px solid var(--border);border-radius:16px;font-size:12.5px;cursor:pointer;background:var(--card);color:var(--text2,#555);user-select:none;transition:all .12s}
+    .cal-chip:hover{border-color:var(--blue)}
+    .cal-chip.on{background:var(--ink,#1a1a1a);color:#fff;border-color:var(--ink,#1a1a1a);font-weight:600}
+    .cal-chipdot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
     .cal-past-hd{cursor:pointer;font-size:13px;font-weight:600;color:var(--text);padding:9px 12px;background:#f1f3f5;border-radius:8px;margin-bottom:8px;user-select:none}
     .cal-past-hd:hover{background:#e7ebf0}
     .today-section{display:grid;grid-template-columns:1.7fr 1fr;gap:16px;margin-bottom:24px}
@@ -1370,7 +1375,8 @@ async function delInv(id){await S('inv',G('inv').filter(x=>x.id!==id));renderInv
 function renderInv(){const a=G('inv'),el=document.getElementById('inv-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🗂️</div>재고 항목이 없습니다</div>';return;}el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span><span class="item-txt">${x.name}</span><span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span><button class="del" onclick="delInv(${x.id})">×</button></div>`).join('')+'</div>';}
 function statInv(){document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${G('inv').length}건</span>`;}
 
-let calY,calM,calSelectedDate=null,calPastOpen=false;
+let calY,calM,calSelectedDate=null,calPastOpen=false,calSiteFilter=null;
+function calFilterSite(enc){calSiteFilter=enc?decodeURIComponent(enc):null;calPastOpen=false;renderCal();}
 function toggleCalPast(){calPastOpen=!calPastOpen;renderCal();}
 function calSelectDate(date){calSelectedDate=calSelectedDate===date?null:date;renderCal();}
 async function saveCalEv(){const title=document.getElementById('cal-ev-inp')?.value.trim();if(!title||!calSelectedDate)return;const a=G('cal-events');a.push({id:Date.now(),date:calSelectedDate,title});await S('cal-events',a);calSelectedDate=null;renderCal();}
@@ -1385,19 +1391,24 @@ function renderCal(){
   const proc=(G('process')||[]).filter(function(p){return p.date;}),manual=G('cal-events');
   // 공정은 시작일~종료일 기간만큼 막대로 표시
   const spans=[];
-  proc.forEach(function(e){var end=(e.end&&e.end>=e.date)?e.end:e.date;spans.push({start:e.date,end:end,label:e.site+'·'+e.stage+(e.manager?' ('+e.manager+')':''),color:siteColor(e.site)});});
-  manual.forEach(e=>spans.push({start:e.date,end:e.date,label:e.title,color:'#3182f6',id:e.id}));
+  proc.forEach(function(e){var end=(e.end&&e.end>=e.date)?e.end:e.date;spans.push({start:e.date,end:end,label:e.site+'·'+e.stage+(e.manager?' ('+e.manager+')':''),color:siteColor(e.site),site:e.site});});
+  manual.forEach(e=>spans.push({start:e.date,end:e.date,label:e.title,color:'#3182f6',id:e.id,site:null}));
+  // 현장 필터: 선택된 현장이 있으면 그 현장만
+  const procSites=[...new Set(proc.map(p=>p.site).filter(Boolean))].sort();
+  if(calSiteFilter && procSites.indexOf(calSiteFilter)<0)calSiteFilter=null;
+  const viewSpans=calSiteFilter?spans.filter(s=>s.site===calSiteFilter):spans;
   // 격자
   const startDay=new Date(calY,calM,1).getDay(),daysIn=new Date(calY,calM+1,0).getDate();
   const cells=[];for(let i=0;i<startDay;i++)cells.push(null);for(let d=1;d<=daysIn;d++)cells.push({day:d,date:`${calY}-${pad(calM+1)}-${pad(d)}`});while(cells.length%7)cells.push(null);
   const weeks=[];for(let i=0;i<cells.length;i+=7)weeks.push(cells.slice(i,i+7));
   let html=`<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px"><button class="btn" onclick="calNav(-1)">←</button><span style="font-size:15px;font-weight:700">${calY}년 ${calM+1}월</span><button class="btn" onclick="calNav(1)">→</button></div>`;
+  if(procSites.length){html+='<div class="cal-sitefilter"><span class="cal-chip'+(!calSiteFilter?' on':'')+'" onclick="calFilterSite(\'\')">전체보기</span>'+procSites.map(function(s){return '<span class="cal-chip'+(calSiteFilter===s?' on':'')+'" onclick="calFilterSite(\''+encodeURIComponent(s)+'\')"><span class="cal-chipdot" style="background:'+siteColor(s)+'"></span>'+ghEsc(s)+'</span>';}).join('')+'</div>';}
   html+=`<div class="cal-grid">${['일','월','화','수','목','금','토'].map((d,i)=>`<div class="cal-day-name" style="color:${i===0?'#f87171':i===6?'#60a5fa':'var(--muted)'}">${d}</div>`).join('')}</div>`;
   const MAXLANE=4;
   weeks.forEach(week=>{
     const real=week.filter(Boolean);if(!real.length)return;
     const wStart=real[0].date,wEnd=real[real.length-1].date,firstCol=week.findIndex(Boolean),lastCol=6-[...week].reverse().findIndex(Boolean);
-    const ws=spans.filter(s=>s.end>=wStart&&s.start<=wEnd).map(s=>{let sc=week.findIndex(c=>c&&c.date===s.start),ec=week.findIndex(c=>c&&c.date===s.end);if(s.start<wStart)sc=firstCol;if(s.end>wEnd)ec=lastCol;if(sc<0)sc=firstCol;if(ec<0)ec=lastCol;return Object.assign({},s,{sc,ec});}).sort((a,b)=>a.sc-b.sc||(b.ec-b.sc)-(a.ec-a.sc));
+    const ws=viewSpans.filter(s=>s.end>=wStart&&s.start<=wEnd).map(s=>{let sc=week.findIndex(c=>c&&c.date===s.start),ec=week.findIndex(c=>c&&c.date===s.end);if(s.start<wStart)sc=firstCol;if(s.end>wEnd)ec=lastCol;if(sc<0)sc=firstCol;if(ec<0)ec=lastCol;return Object.assign({},s,{sc,ec});}).sort((a,b)=>a.sc-b.sc||(b.ec-b.sc)-(a.ec-a.sc));
     const lanes=[];ws.forEach(s=>{let L=0;while(lanes[L]&&lanes[L].some(o=>!(s.ec<o.sc||s.sc>o.ec)))L++;(lanes[L]=lanes[L]||[]).push(s);});
     html+='<div class="cal-week"><div class="cal-grid cal-dnum-row">'+week.map(c=>c?`<div class="cal-dcell ${c.date===todayStr?'today':''} ${c.date===calSelectedDate?'selected':''}" onclick="calSelectDate('${c.date}')"><span class="cal-dnum">${c.day}</span></div>`:'<div></div>').join('')+'</div>';
     for(let L=0;L<Math.min(lanes.length,MAXLANE);L++)html+='<div class="cal-grid cal-lane">'+lanes[L].map(s=>`<span class="cal-bar2" style="grid-column:${s.sc+1}/${s.ec+2};background:${s.color}" title="${ghEsc(s.label)} (${s.start.slice(5)}${s.end!==s.start?'~'+s.end.slice(5):''})">${ghEsc(s.label)}</span>`).join('')+'</div>';
@@ -1405,8 +1416,8 @@ function renderCal(){
     html+='</div>';
   });
   if(calSelectedDate)html+=`<div class="cal-add-form"><div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div></div>`;
-  const allEv=manual.map(e=>({date:e.date,title:e.title,id:e.id,_proc:false})).concat(proc.map(p=>({date:p.date,title:p.site+'·'+p.stage+(p.manager?' ('+p.manager+')':''),_proc:true})));
-  const thisEvs=allEv.filter(e=>e.date.startsWith(ym)).sort((a,b)=>a.date.localeCompare(b.date));
+  const allEv=manual.map(e=>({date:e.date,title:e.title,id:e.id,_proc:false,site:null})).concat(proc.map(p=>({date:p.date,title:p.site+'·'+p.stage+(p.manager?' ('+p.manager+')':''),_proc:true,site:p.site})));
+  const thisEvs=allEv.filter(e=>e.date.startsWith(ym)&&(!calSiteFilter||e.site===calSiteFilter)).sort((a,b)=>a.date.localeCompare(b.date));
   const itemHtml=e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:62px">${e.date.slice(5)}</span><span class="item-txt">${e._proc?'🏗️ ':''}${e.title}</span>${e._proc?'<span style="font-size:10px;color:var(--blue);flex-shrink:0">공정</span>':`<button class="del" onclick="delCalEv(${e.id})">×</button>`}</div>`;
   if(thisEvs.length){
     const past=thisEvs.filter(e=>e.date<todayStr),tdy=thisEvs.filter(e=>e.date===todayStr),future=thisEvs.filter(e=>e.date>todayStr);
