@@ -1007,7 +1007,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script>
-(function(){const d=new Date(),days=['일','월','화','수','목','금','토'];document.getElementById('hd-date').textContent=`${d.getMonth()+1}월 ${d.getDate()}일`;document.getElementById('hd-day').textContent=`${d.getFullYear()} · ${days[d.getDay()]}요일`;})();
+(function(){const d=new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'})),days=['일','월','화','수','목','금','토'];document.getElementById('hd-date').textContent=`${d.getMonth()+1}월 ${d.getDate()}일`;document.getElementById('hd-day').textContent=`${d.getFullYear()} · ${days[d.getDay()]}요일`;})();
 
 // ── Firebase 실시간 클라우드 저장 ──
 const firebaseConfig={apiKey:"AIzaSyBvzNeaUuzuvnI9pAKe4VBII56XApL2gqw",authDomain:"hadam-fa01a.firebaseapp.com",projectId:"hadam-fa01a",storageBucket:"hadam-fa01a.firebasestorage.app",messagingSenderId:"809077194187",appId:"1:809077194187:web:7c48e00620f1d29ce34a4e"};
@@ -1184,8 +1184,9 @@ async function S(k,v){
   try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}
   if(db){ try{ await db.collection('appdata').doc(k).set({items:v,updated:Date.now()}); }catch(e){ console.warn('cloud save',k,e); } }
 }
-function td(){return new Date().toISOString().slice(0,10)}
-function tdCompact(){const n=new Date();return`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`}
+function kstNow(){return new Date(new Date().toLocaleString('en-US',{timeZone:'Asia/Seoul'}));}
+function td(){const n=kstNow();return`${n.getFullYear()}-${String(n.getMonth()+1).padStart(2,'0')}-${String(n.getDate()).padStart(2,'0')}`}
+function tdCompact(){const n=kstNow();return`${n.getFullYear()}${String(n.getMonth()+1).padStart(2,'0')}${String(n.getDate()).padStart(2,'0')}`}
 
 // ── Sidebar
 let sbCollapsed=false;
@@ -1384,7 +1385,7 @@ const SITE_PALETTE=['#3182f6','#15c47e','#ff9f43','#a855f7','#f04452','#06b6d4',
 function siteColor(s){var ov=(G('sitecolors')||[]).find(function(x){return x.site===s;});if(ov&&ov.color)return ov.color;let h=0;for(let i=0;i<(s||'').length;i++)h=(h*31+s.charCodeAt(i))>>>0;return SITE_PALETTE[h%SITE_PALETTE.length];}
 async function setSiteColor(enc,color){var s=decodeURIComponent(enc);var arr=(G('sitecolors')||[]).slice();var i=arr.findIndex(function(x){return x.site===s;});if(i>-1)arr[i].color=color;else arr.push({site:s,color:color});await S('sitecolors',arr);try{renderProc();}catch(e){}try{var cm=document.getElementById('cal-modal');if(cm&&cm.classList.contains('open'))renderCal();}catch(e){}}
 function renderCal(){
-  const now=new Date();if(!calY){calY=now.getFullYear();calM=now.getMonth();}
+  const now=kstNow();if(!calY){calY=now.getFullYear();calM=now.getMonth();}
   const pad=n=>String(n).padStart(2,'0');
   const ym=`${calY}-${pad(calM+1)}`;
   const todayStr=`${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
@@ -1850,12 +1851,12 @@ async function extractTasks(nameEnc){
 const MAT_CATS=['공사전','공사후','견적서','도면','마감재','기타'];
 let matPath=[]; // 자료/ 아래 현재 탐색 경로 (년/월/현장/분류)
 function matSites(){var s=new Set(G('sites').map(x=>x.name).filter(Boolean));(G('process')||[]).forEach(p=>s.add(p.site));return [...s];}
-function matYears(){var y=new Date().getFullYear();return [y+1,y,y-1,y-2].map(String);}
+function matYears(){var y=kstNow().getFullYear();return [y+1,y,y-1,y-2].map(String);}
 function matMonths(){var a=[];for(var i=1;i<=12;i++)a.push(String(i).padStart(2,'0'));return a;}
 async function renderMatView(){
   var v=document.getElementById('mat-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
-  var sites=matSites();var now=new Date();
+  var sites=matSites();var now=kstNow();
   var dY=matPath[0]||String(now.getFullYear());
   var dM=matPath[1]||String(now.getMonth()+1).padStart(2,'0');
   var dSite=matPath[2]||'';var dCat=matPath[3]||MAT_CATS[0];
@@ -2352,9 +2353,9 @@ function renderAsstChat(){
 }
 function asstFill(sp){var i=document.getElementById('asst-input');i.value=sp.textContent;i.focus();}
 function _p2(n){return String(n).padStart(2,'0');}
-function _ymd(off){var d=new Date();d.setDate(d.getDate()+(off||0));return ''+d.getFullYear()+_p2(d.getMonth()+1)+_p2(d.getDate());}
+function _ymd(off){var d=kstNow();d.setDate(d.getDate()+(off||0));return ''+d.getFullYear()+_p2(d.getMonth()+1)+_p2(d.getDate());}
 function asstExtractDates(q){
-  var out=[],Y=new Date().getFullYear(),m;
+  var out=[],Y=kstNow().getFullYear(),m;
   var re1=/(20\d{2})[.\-\/]?(\d{1,2})[.\-\/]?(\d{1,2})/g;
   while(m=re1.exec(q)){out.push(m[1]+_p2(m[2])+_p2(m[3]));}
   var re2=/(\d{1,2})\s*월\s*(\d{1,2})\s*일/g;
@@ -2432,7 +2433,7 @@ async function asstSend(){
   renderAsstChat();
   try{
     var ctx=await buildAssistantContext(q);
-    var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
+    var _wd=['일','월','화','수','목','금','토'][kstNow().getDay()];
     var sys='너는 부산 인테리어 회사 "디자인하담"의 내부 업무 비서다. 오늘 날짜는 '+td()+' ('+_wd+'요일)이다. "오늘/내일/모레/이번주/다음" 등 상대 날짜는 오늘 기준으로 YYYY-MM-DD로 변환해라. 아래 [회사 데이터]를 근거로 한국어로 간결·정확하게 답해라. 조회 질문이면 데이터에 없는 건 "기록에 없습니다"라 답하고 지어내지 마라.\n\n[등록/수정/삭제 기능] 사용자가 할 일·일정·공정·현장정보(비밀번호 등)·발주를 추가/등록/저장하면 add_task/add_schedule/add_process/set_site_info/add_order를 호출해 실제 등록해라. 완료처리는 complete_task, 삭제는 delete_task/delete_schedule/delete_process/delete_site_field, 공정 담당자·날짜 변경은 update_process를 사용해라. 도구가 "여러 개 일치"를 반환하면 사용자에게 어느 것인지 되물어라(임의로 고르지 마라). 꼭 필요한 정보가 빠졌으면 되묻고, 단순 조회엔 도구를 쓰지 마라. 작업 후 무엇을 했는지 한 줄로 확인해줘라.\n\n[표시 형식] 일정·공정·목록처럼 여러 항목을 정리해 보여줄 땐 마크다운 표(예: | 날짜 | 공정 | 담당 | 상태 |)로 작성해라. 표는 자동으로 보기 좋은 표와 일정 타임라인 그림으로 렌더링된다. 날짜 컬럼은 YYYY-MM-DD 형식(기간은 YYYY-MM-DD~DD)으로.\n\n[회사 데이터]\n'+ctx.text;
     var messages=ASST_HISTORY.filter(function(m){return !m.pending;}).map(function(m){
       if(m.role==='user'&&m.img)return {role:'user',content:[{type:'image',source:{type:'base64',media_type:m.img.media_type,data:m.img.data}},{type:'text',text:m.text||'이 사진에 대해 알려줘'}]};
@@ -2536,7 +2537,7 @@ async function genBriefing(force){
   body.innerHTML='<span style="color:var(--muted)">브리핑 생성 중…</span>';
   try{
     var ctx=await buildAssistantContext('오늘');
-    var _wd=['일','월','화','수','목','금','토'][new Date().getDay()];
+    var _wd=['일','월','화','수','목','금','토'][kstNow().getDay()];
     var sys,usermsg;
     if(me){
       sys='너는 디자인하담 내부 비서다. 오늘은 '+today+' ('+_wd+'요일). 아래 데이터로 직원 "'+me+'"의 개인 오늘 브리핑을 작성해라. 규칙: "'+me+'"의 할 일·담당(매니저) 공정·본인 일정·본인 업무일지를 최우선으로, 마크다운 불릿("- ") 6줄 이내 한 문장씩. 회사 전체 항목(오늘 시작 공정 등)은 "'+me+'"와 직접 관련된 것만 포함하고, 무관한 타인의 개인 업무는 제외. 인사말 없이 핵심만. 데이터에 없으면 지어내지 마라.\n\n[데이터]\n'+ctx.text;
@@ -2596,7 +2597,7 @@ function initDashDnD(){
   if(!members.length)saveMembers(['나']);
   jnlActiveMember=members[0]||'나';
   allStats();
-  const ym=`${new Date().getFullYear()}-${String(new Date().getMonth()+1).padStart(2,'0')}`;
+  const ym=`${kstNow().getFullYear()}-${String(kstNow().getMonth()+1).padStart(2,'0')}`;
   document.getElementById('fc-cal').innerHTML=`이번 달 일정 <span class="cnt">${G('cal-events').filter(e=>e.date.startsWith(ym)).length}건</span>`;
   if(localStorage.getItem('gh_pat'))setSyncStatus('ok');
 })();
