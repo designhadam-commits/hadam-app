@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>자재 내역서 — 디자인하담</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#ffffff">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="자재내역서">
+<link rel="stylesheet" crossorigin="anonymous" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f2f4f6;--card:#fff;--card2:#f7f8fa;--border:#e5e8eb;
+  --text:#191f28;--muted:#6b7684;--dim:#8b95a1;
+  --blue:#3182f6;--blue-dim:#e8f1fd;--green:#15c47e;--red:#f04452;
+  --radius:14px;--radius-s:10px;
+  --shadow:0 1px 3px rgba(0,27,55,.06),0 1px 2px rgba(0,27,55,.04);
+  --shadow-h:0 6px 20px rgba(0,27,55,.10);
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Pretendard',-apple-system,BlinkMacSystemFont,sans-serif;font-size:14px;line-height:1.5;-webkit-text-size-adjust:100%}
+button{font-family:inherit;cursor:pointer;border:none;background:none}
+input,textarea,select{font-family:inherit;font-size:14px;color:var(--text)}
+img{display:block}
+
+/* ── 상단바 ── */
+.topbar{position:sticky;top:0;z-index:40;height:56px;background:var(--card);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 16px}
+.topbar .logo{font-weight:800;letter-spacing:-.02em;font-size:16px;display:flex;align-items:center;gap:8px}
+.topbar .logo .dot{width:9px;height:9px;border-radius:3px;background:var(--text)}
+.topbar .sub{color:var(--dim);font-size:12px;font-weight:500}
+.topbar .spacer{flex:1}
+.btn{height:38px;padding:0 16px;border-radius:10px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:6px;transition:.15s;white-space:nowrap}
+.btn.primary{background:var(--blue);color:#fff}
+.btn.primary:hover{background:#2b74e0}
+.btn.ghost{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn.ghost:hover{background:#eef0f3}
+.btn.sm{height:32px;padding:0 12px;font-size:12px}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── 레이아웃 ── */
+.wrap{display:flex;gap:0;height:calc(100vh - 56px);overflow:hidden}
+.pane{overflow-y:auto;height:100%}
+.editor{width:420px;flex-shrink:0;border-right:1px solid var(--border);background:var(--bg);padding:18px}
+.preview-pane{flex:1;background:#e9ebee;padding:28px;display:flex;justify-content:center;align-items:flex-start}
+
+/* ── 편집기 ── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px;margin-bottom:14px;box-shadow:var(--shadow)}
+.section-card h3{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px}
+.field{margin-bottom:10px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:12px;color:var(--dim);margin-bottom:4px;font-weight:600}
+.field input,.field textarea{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:var(--radius-s);padding:9px 11px;transition:.15s}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--blue);background:#fff}
+.field.row{display:flex;gap:8px}
+.field.row>div{flex:1}
+
+.cat{margin-bottom:10px;background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+.cat-head{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;user-select:none}
+.cat-head .ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;background:var(--blue-dim)}
+.cat-head .nm{font-weight:700;font-size:14px}
+.cat-head .cnt{font-size:11px;color:#fff;background:var(--blue);border-radius:20px;padding:1px 8px;font-weight:700;min-width:20px;text-align:center}
+.cat-head .cnt.zero{background:#cfd4da}
+.cat-head .chev{margin-left:auto;color:var(--dim);transition:.2s}
+.cat.collapsed .cat-body{display:none}
+.cat.collapsed .chev{transform:rotate(-90deg)}
+.cat-body{padding:0 14px 14px}
+
+.item{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:var(--radius-s);margin-bottom:8px;background:var(--card2)}
+.item img,.item .noimg{width:46px;height:46px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#e9ebee}
+.item .noimg{display:grid;place-items:center;color:var(--dim);font-size:18px}
+.item .meta{flex:1;min-width:0}
+.item .meta .t{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .meta .s{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .del{color:var(--dim);font-size:18px;padding:4px 6px;border-radius:6px}
+.item .del:hover{color:var(--red);background:#fde9eb}
+.add-row{display:flex;gap:8px;margin-top:4px}
+.add-btn{flex:1;border:1.5px dashed var(--border);border-radius:var(--radius-s);padding:9px;color:var(--blue);font-weight:600;font-size:13px;transition:.15s}
+.add-btn:hover{border-color:var(--blue);background:var(--blue-dim)}
+
+/* ── 미리보기(내역서) ── */
+#sheet{width:794px;background:#fff;box-shadow:var(--shadow-h);border-radius:6px}
+.sheet-pad{padding:48px 52px}
+.sheet-head{display:flex;align-items:flex-end;justify-content:space-between;border-bottom:2.5px solid var(--text);padding-bottom:18px;margin-bottom:8px}
+.sheet-head .ttl{font-size:13px;letter-spacing:.28em;color:var(--muted);font-weight:700;margin-bottom:6px}
+.sheet-head .site{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.sheet-head .brand{text-align:right;font-size:12px;color:var(--muted);line-height:1.7}
+.sheet-head .brand b{color:var(--text);font-size:15px;font-weight:800;letter-spacing:-.01em}
+.sheet-info{display:flex;flex-wrap:wrap;gap:6px 28px;font-size:12.5px;color:var(--muted);padding:14px 0 6px}
+.sheet-info span b{color:var(--text);font-weight:600;margin-left:6px}
+
+.sheet-cat{margin-top:26px;break-inside:avoid}
+.sheet-cat .cat-t{display:flex;align-items:center;gap:9px;font-size:15px;font-weight:800;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.sheet-cat .cat-t .bar{width:4px;height:16px;border-radius:2px;background:var(--blue)}
+.sheet-cat .cat-t .n{color:var(--dim);font-weight:600;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.pcard{border:1px solid var(--border);border-radius:12px;overflow:hidden;background:#fff}
+.pcard .ph{width:100%;aspect-ratio:1/1;background:#f1f5f9;object-fit:cover}
+.pcard .noimg{width:100%;aspect-ratio:1/1;background:#f1f5f9;display:grid;place-items:center;color:#cbd2d9;font-size:30px}
+.pcard .pb{padding:10px 11px}
+.pcard .pn{font-weight:700;font-size:13px;line-height:1.35;margin-bottom:2px;word-break:keep-all}
+.pcard .pmk{font-size:11px;color:var(--blue);font-weight:600;margin-bottom:5px}
+.pcard .pspec{font-size:11.5px;color:var(--muted);line-height:1.5}
+.pcard .ploc{display:inline-block;font-size:10.5px;color:var(--muted);background:var(--card2);border:1px solid var(--border);border-radius:6px;padding:1px 7px;margin-top:6px}
+.sheet-foot{margin-top:34px;padding-top:16px;border-top:1px solid var(--border);font-size:11.5px;color:var(--dim);display:flex;justify-content:space-between;align-items:flex-end}
+.sheet-foot .memo{max-width:60%;white-space:pre-wrap;line-height:1.6}
+.sheet-empty{text-align:center;color:#cbd2d9;padding:70px 0;font-size:14px}
+
+/* ── 모달(피커) ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:100;display:none;align-items:center;justify-content:center;padding:20px}
+.overlay.show{display:flex}
+.modal{background:#fff;border-radius:18px;width:min(720px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-h)}
+.modal-head{padding:18px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.modal-head .mt{font-weight:800;font-size:16px}
+.modal-head .x{margin-left:auto;color:var(--dim);font-size:22px;line-height:1;padding:4px 8px;border-radius:8px}
+.modal-head .x:hover{background:var(--card2);color:var(--text)}
+.tabs{display:flex;gap:6px;padding:12px 20px 0}
+.tab{padding:8px 14px;border-radius:10px;font-weight:700;font-size:13px;color:var(--muted);background:var(--card2)}
+.tab.active{background:var(--text);color:#fff}
+.modal-body{padding:14px 20px 20px;overflow-y:auto}
+.search-bar{display:flex;gap:8px;margin-bottom:12px}
+.search-bar input{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 13px}
+.search-bar input:focus{outline:none;border-color:var(--blue);background:#fff}
+.lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+.lib-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.12s;background:#fff}
+.lib-card:hover{border-color:var(--blue);box-shadow:var(--shadow-h);transform:translateY(-2px)}
+.lib-card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f1f5f9}
+.lib-card .lc{padding:7px 8px}
+.lib-card .lc .ln{font-size:12px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lib-card .lc .lm{font-size:10.5px;color:var(--blue);font-weight:600}
+.lib-empty{text-align:center;color:var(--dim);padding:40px 0}
+.lib-more{text-align:center;color:var(--dim);font-size:12px;padding:14px}
+.upload-drop{border:1.5px dashed var(--border);border-radius:12px;padding:22px;text-align:center;color:var(--dim);cursor:pointer;margin-bottom:12px}
+.upload-drop:hover{border-color:var(--blue);color:var(--blue)}
+.upload-drop img{max-width:140px;max-height:140px;margin:0 auto;border-radius:8px}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:11px 18px;border-radius:12px;font-size:13px;font-weight:600;z-index:200;opacity:0;transition:.25s;pointer-events:none}
+.toast.show{opacity:1}
+
+@media(max-width:860px){
+  .wrap{flex-direction:column;height:auto;overflow:visible}
+  .editor{width:100%;border-right:none;border-bottom:1px solid var(--border);height:auto}
+  .preview-pane{padding:14px}
+  #sheet{width:100%}
+  .sheet-pad{padding:24px 18px}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .pane{height:auto;overflow:visible}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <span class="logo"><span class="dot"></span>자재 내역서</span>
+  <span class="sub">디자인하담</span>
+  <span class="spacer"></span>
+  <button class="btn ghost sm" id="btnReset">초기화</button>
+  <button class="btn primary" id="btnExport">📷 이미지 저장</button>
+</div>
+
+<div class="wrap">
+  <!-- 편집기 -->
+  <div class="pane editor">
+    <div class="section-card">
+      <h3>현장 정보</h3>
+      <div class="field"><label>현장명 / 프로젝트</label><input id="f_site" placeholder="예: 래미안 강동 84A형"></div>
+      <div class="field row">
+        <div><label>고객명</label><input id="f_client" placeholder="예: 김○○ 고객님"></div>
+        <div><label>작성일</label><input id="f_date" type="date"></div>
+      </div>
+      <div class="field row">
+        <div><label>담당 디자이너</label><input id="f_designer" placeholder="예: 홍길동"></div>
+        <div><label>연락처</label><input id="f_phone" placeholder="010-0000-0000"></div>
+      </div>
+      <div class="field"><label>비고 / 안내문구</label><textarea id="f_memo" rows="2" placeholder="예: 실제 색상은 조명/모니터에 따라 다를 수 있습니다."></textarea></div>
+    </div>
+    <div id="cats"></div>
+    <button class="btn ghost" id="btnAddCat" style="width:100%">+ 카테고리 추가</button>
+  </div>
+
+  <!-- 미리보기 -->
+  <div class="pane preview-pane">
+    <div id="sheet"></div>
+  </div>
+</div>
+
+<!-- 피커 모달 -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <div class="modal-head">
+      <span class="mt" id="mTitle">자재 추가</span>
+      <button class="x" id="mClose">×</button>
+    </div>
+    <div class="tabs">
+      <button class="tab active" data-tab="lib">📚 라이브러리에서 찾기</button>
+      <button class="tab" data-tab="manual">✏️ 직접 입력</button>
+    </div>
+    <div class="modal-body">
+      <!-- 라이브러리 탭 -->
+      <div id="tabLib">
+        <div class="search-bar">
+          <input id="libSearch" placeholder="제품명·제조사·코드 검색 (예: 디아망, 화이트, FMKG)">
+        </div>
+        <div class="lib-grid" id="libGrid"></div>
+        <div class="lib-more" id="libMore"></div>
+      </div>
+      <!-- 직접 입력 탭 -->
+      <div id="tabManual" style="display:none">
+        <div class="upload-drop" id="dropZone">
+          <div id="dropText">📁 이미지 클릭 또는 드래그해서 업로드</div>
+          <input type="file" id="fileInput" accept="image/*" hidden>
+        </div>
+        <div class="field"><label>제품명 *</label><input id="m_name" placeholder="예: 아메리칸스탠다드 원피스 양변기"></div>
+        <div class="field row">
+          <div><label>제조사 / 브랜드</label><input id="m_maker" placeholder="예: 대림바스"></div>
+          <div><label>모델 / 코드</label><input id="m_code" placeholder="예: CL-2398"></div>
+        </div>
+        <div class="field"><label>규격 / 스펙</label><input id="m_spec" placeholder="예: 색상 화이트 / 사이즈 600×400"></div>
+        <div class="field"><label>적용 위치</label><input id="m_loc" placeholder="예: 안방 욕실"></div>
+        <button class="btn primary" id="m_add" style="width:100%;margin-top:6px">내역서에 추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ───────────────────────── 설정 ─────────────────────────
+const CATS_DEF = [
+  {key:'도기', ico:'🚽'}, {key:'수전', ico:'🚰'}, {key:'타일', ico:'🧱'},
+  {key:'필름', ico:'🎞️'}, {key:'장판', ico:'🟫'}, {key:'마루', ico:'🪵'},
+  {key:'벽지', ico:'🧻'}, {key:'보드', ico:'▦'}, {key:'팬', ico:'🌀'},
+  {key:'조명', ico:'💡'},
+];
+const LS_KEY = 'hadam-spec-v1';
+let LIB = {items:[]};
+let state = null;
+let picker = {cat:null, tab:'lib', img:null};
+
+// ───────────────────────── 상태 ─────────────────────────
+function blankState(){
+  const d = new Date();
+  const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  return {
+    site:{name:'',client:'',date:iso,designer:'',phone:'',memo:'실제 색상은 조명 및 모니터 환경에 따라 다르게 보일 수 있습니다.'},
+    cats: CATS_DEF.map(c=>({key:c.key,ico:c.ico,open:true,items:[]})),
+  };
+}
+function load(){
+  try{ const s=JSON.parse(localStorage.getItem(LS_KEY)); if(s&&s.cats) return s; }catch(e){}
+  return blankState();
+}
+function save(){ try{ localStorage.setItem(LS_KEY,JSON.stringify(state)); }catch(e){} }
+function icoOf(key){ const f=CATS_DEF.find(c=>c.key===key); return f?f.ico:'📦'; }
+
+// ───────────────────────── 편집기 렌더 ─────────────────────────
+const $ = s=>document.querySelector(s);
+function bindSite(){
+  const map={f_site:'name',f_client:'client',f_date:'date',f_designer:'designer',f_phone:'phone',f_memo:'memo'};
+  for(const [id,k] of Object.entries(map)){
+    const el=$('#'+id); el.value=state.site[k]||'';
+    el.oninput=()=>{ state.site[k]=el.value; save(); renderPreview(); };
+  }
+}
+function renderEditor(){
+  const box=$('#cats'); box.innerHTML='';
+  state.cats.forEach((cat,ci)=>{
+    const el=document.createElement('div');
+    el.className='cat'+(cat.open?'':' collapsed');
+    el.innerHTML=`
+      <div class="cat-head">
+        <span class="ico">${cat.ico||icoOf(cat.key)}</span>
+        <span class="nm">${esc(cat.key)}</span>
+        <span class="cnt ${cat.items.length?'':'zero'}">${cat.items.length}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="cat-body"></div>`;
+    el.querySelector('.cat-head').onclick=(e)=>{ cat.open=!cat.open; save(); renderEditor(); };
+    const body=el.querySelector('.cat-body');
+    cat.items.forEach((it,ii)=>{
+      const row=document.createElement('div'); row.className='item';
+      row.innerHTML=`${imgTag(it,'')}
+        <div class="meta"><div class="t">${esc(it.name||'(이름없음)')}</div>
+        <div class="s">${esc([it.maker,it.code,it.spec,it.size,it.loc].filter(Boolean).join(' · ')||'—')}</div></div>
+        <button class="del" title="삭제">×</button>`;
+      row.querySelector('.del').onclick=()=>{ cat.items.splice(ii,1); save(); renderEditor(); renderPreview(); };
+      body.appendChild(row);
+    });
+    const add=document.createElement('button'); add.className='add-btn'; add.textContent='+ 자재 추가';
+    add.onclick=()=>openPicker(ci);
+    body.appendChild(add);
+    box.appendChild(el);
+  });
+}
+function imgTag(it,cls){
+  if(it.img) return `<img class="${cls}" src="${it.img}" loading="lazy">`;
+  return `<div class="noimg ${cls}">▦</div>`;
+}
+
+// ───────────────────────── 미리보기 렌더 ─────────────────────────
+function fmtDate(s){ if(!s) return ''; const p=s.split('-'); return p.length===3?`${p[0]}. ${p[1]}. ${p[2]}`:s; }
+function renderPreview(){
+  const s=state.site;
+  const used=state.cats.filter(c=>c.items.length);
+  let html=`<div class="sheet-pad" id="sheetInner">
+    <div class="sheet-head">
+      <div><div class="ttl">MATERIAL LIST · 자재 내역서</div>
+        <div class="site">${esc(s.name||'현장명을 입력하세요')}</div></div>
+      <div class="brand"><b>디자인하담</b><br>DESIGN HADAM</div>
+    </div>
+    <div class="sheet-info">
+      ${s.client?`<span>고객<b>${esc(s.client)}</b></span>`:''}
+      ${s.date?`<span>작성일<b>${fmtDate(s.date)}</b></span>`:''}
+      ${s.designer?`<span>담당<b>${esc(s.designer)}</b></span>`:''}
+      ${s.phone?`<span>연락처<b>${esc(s.phone)}</b></span>`:''}
+    </div>`;
+  if(!used.length){
+    html+=`<div class="sheet-empty">왼쪽에서 자재를 추가하면<br>여기에 내역서가 만들어집니다.</div>`;
+  }else{
+    used.forEach(cat=>{
+      html+=`<div class="sheet-cat"><div class="cat-t"><span class="bar"></span>${esc(cat.key)}<span class="n">${cat.items.length}개 품목</span></div><div class="cards">`;
+      cat.items.forEach(it=>{
+        const spec=[it.maker&&`<div class="pmk">${esc(it.maker)}</div>`,
+          ''].join('');
+        html+=`<div class="pcard">
+          ${it.img?`<img class="ph" src="${it.img}">`:`<div class="noimg">▦</div>`}
+          <div class="pb">
+            ${it.maker?`<div class="pmk">${esc(it.maker)}${it.code?' · '+esc(it.code):''}</div>`:''}
+            <div class="pn">${esc(it.name||'(이름없음)')}</div>
+            ${it.spec?`<div class="pspec">${esc(it.spec)}</div>`:''}
+            ${it.size?`<div class="pspec">규격 ${esc(it.size)}</div>`:''}
+            ${it.loc?`<span class="ploc">${esc(it.loc)}</span>`:''}
+          </div></div>`;
+      });
+      html+=`</div></div>`;
+    });
+  }
+  html+=`<div class="sheet-foot"><div class="memo">${esc(s.memo||'')}</div><div>디자인하담 · DESIGN HADAM</div></div></div>`;
+  $('#sheet').innerHTML=html;
+}
+
+// ───────────────────────── 피커 모달 ─────────────────────────
+function openPicker(ci){
+  picker={cat:ci,tab:'lib',img:null};
+  const cat=state.cats[ci];
+  $('#mTitle').textContent=`${cat.key} — 자재 추가`;
+  // 라이브러리에 해당 카테고리가 있으면 라이브러리 탭, 없으면 직접입력 탭
+  const hasLib=LIB.items.some(it=>it.cat===cat.key);
+  setTab(hasLib?'lib':'manual');
+  $('#libSearch').value='';
+  // 기본 검색: 해당 카테고리 자동필터
+  renderLib(cat.key, '');
+  clearManual();
+  $('#overlay').classList.add('show');
+  if(hasLib) setTimeout(()=>$('#libSearch').focus(),50);
+}
+function closePicker(){ $('#overlay').classList.remove('show'); }
+function setTab(t){
+  picker.tab=t;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  $('#tabLib').style.display = t==='lib'?'':'none';
+  $('#tabManual').style.display = t==='manual'?'':'none';
+}
+function renderLib(catKey, q){
+  q=(q||'').trim().toLowerCase();
+  let res=LIB.items;
+  // 검색어 없으면 카테고리로 한정, 있으면 전체에서 검색(카테고리 우선 정렬)
+  if(!q){ res=res.filter(it=>it.cat===catKey); }
+  else{
+    const terms=q.split(/\s+/);
+    res=res.filter(it=>terms.every(t=>it.q.includes(t)));
+    res.sort((a,b)=>(a.cat===catKey?-1:0)-(b.cat===catKey?-1:0));
+  }
+  const grid=$('#libGrid'); const cap=80;
+  if(!res.length){ grid.innerHTML=`<div class="lib-empty">검색 결과가 없습니다.<br>‘직접 입력’ 탭을 이용하세요.</div>`; $('#libMore').textContent=''; return; }
+  grid.innerHTML=res.slice(0,cap).map(it=>`
+    <div class="lib-card" data-id="${it.id}">
+      <img src="${it.path}" loading="lazy">
+      <div class="lc"><div class="lm">${esc(it.maker)}</div><div class="ln">${esc(it.name)}${it.code?' '+esc(it.code):''}</div></div>
+    </div>`).join('');
+  $('#libMore').textContent = res.length>cap ? `상위 ${cap}개 표시 · 검색어로 좁혀보세요 (총 ${res.length}개)` : `${res.length}개`;
+  grid.querySelectorAll('.lib-card').forEach(c=>{
+    c.onclick=()=>{ const it=LIB.items.find(x=>x.id==c.dataset.id); pickLib(it); };
+  });
+}
+function pickLib(it){
+  const cat=state.cats[picker.cat];
+  cat.items.push({name:it.name, maker:it.maker, code:it.code||'', spec:it.spec||'', size:it.size||'', loc:'', img:it.path});
+  cat.open=true; save(); renderEditor(); renderPreview(); closePicker();
+  toast(`${it.name} 추가됨`);
+}
+// 직접 입력
+function clearManual(){
+  ['m_name','m_maker','m_code','m_spec','m_loc'].forEach(id=>$('#'+id).value='');
+  picker.img=null; $('#dropText').textContent='📁 이미지 클릭 또는 드래그해서 업로드';
+}
+function addManual(){
+  const name=$('#m_name').value.trim();
+  if(!name){ toast('제품명을 입력하세요'); $('#m_name').focus(); return; }
+  const cat=state.cats[picker.cat];
+  cat.items.push({name, maker:$('#m_maker').value.trim(), code:$('#m_code').value.trim(),
+    spec:$('#m_spec').value.trim(), loc:$('#m_loc').value.trim(), img:picker.img});
+  cat.open=true; save(); renderEditor(); renderPreview(); closePicker();
+  toast(`${name} 추가됨`);
+}
+function handleFile(file){
+  if(!file||!file.type.startsWith('image/')) return;
+  const r=new FileReader();
+  r.onload=e=>{ picker.img=e.target.result; $('#dropText').innerHTML=`<img src="${picker.img}">`; };
+  r.readAsDataURL(file);
+}
+
+// ───────────────────────── 카테고리 추가 ─────────────────────────
+function addCat(){
+  const name=prompt('추가할 카테고리 이름 (예: 중문, 붙박이장, 조명)');
+  if(!name) return;
+  const k=name.trim(); if(!k) return;
+  if(state.cats.some(c=>c.key===k)){ toast('이미 있는 카테고리입니다'); return; }
+  state.cats.push({key:k,ico:'📦',open:true,items:[]}); save(); renderEditor();
+}
+
+// ───────────────────────── 내보내기 ─────────────────────────
+async function exportPng(){
+  const node=$('#sheet');
+  const btn=$('#btnExport'); btn.disabled=true; const old=btn.textContent; btn.textContent='생성 중…';
+  try{
+    const dataUrl=await htmlToImage.toPng(node,{pixelRatio:2,backgroundColor:'#ffffff',cacheBust:true});
+    const a=document.createElement('a');
+    const nm=(state.site.name||'자재내역서').replace(/[\\/:*?"<>|]/g,'_');
+    a.download=`${nm}_자재내역서.png`; a.href=dataUrl; a.click();
+    toast('이미지 저장 완료');
+  }catch(e){
+    console.error(e);
+    toast('저장 실패 — 로컬 서버로 열었는지 확인하세요');
+  }finally{ btn.disabled=false; btn.textContent=old; }
+}
+
+// ───────────────────────── 유틸 ─────────────────────────
+function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+let toastT;
+function toast(msg){ const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),1800); }
+
+// ───────────────────────── 초기화 ─────────────────────────
+function bindEvents(){
+  $('#btnExport').onclick=exportPng;
+  $('#btnReset').onclick=()=>{ if(confirm('모든 내용을 지우고 새로 시작할까요?')){ state=blankState(); save(); bindSite(); renderEditor(); renderPreview(); } };
+  $('#btnAddCat').onclick=addCat;
+  $('#mClose').onclick=closePicker;
+  $('#overlay').onclick=e=>{ if(e.target.id==='overlay') closePicker(); };
+  document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
+  let st;
+  $('#libSearch').oninput=e=>{ clearTimeout(st); st=setTimeout(()=>renderLib(state.cats[picker.cat].key,e.target.value),180); };
+  $('#m_add').onclick=addManual;
+  $('#m_name').onkeydown=e=>{ if(e.key==='Enter') addManual(); };
+  const dz=$('#dropZone'), fi=$('#fileInput');
+  dz.onclick=()=>fi.click();
+  fi.onchange=e=>handleFile(e.target.files[0]);
+  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='var(--blue)';};
+  dz.ondragleave=()=>dz.style.borderColor='';
+  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor='';handleFile(e.dataTransfer.files[0]);};
+  document.onkeydown=e=>{ if(e.key==='Escape') closePicker(); };
+}
+async function init(){
+  try{ const r=await fetch('library.json'); LIB=await r.json(); }
+  catch(e){ console.warn('library.json 로드 실패',e); toast('라이브러리 로드 실패 — 직접 입력만 가능'); }
+  state=load();
+  // 구버전 호환: ico 누락 보정
+  state.cats.forEach(c=>{ if(!c.ico) c.ico=icoOf(c.key); });
+  bindSite(); renderEditor(); renderPreview(); bindEvents();
+}
+init();
+</script>
+</body>
+</html>

@@ -482,6 +482,9 @@
     <div class="sb-item" onclick="openModal('siteinfo-modal');setSbActive(this)">
       <div class="sb-ic">🔑</div><span class="sb-lbl">현장별 정보</span>
     </div>
+    <div class="sb-item" onclick="openModal('proposal-modal');setSbActive(this)">
+      <div class="sb-ic">📄</div><span class="sb-lbl">자재 내역서</span>
+    </div>
 
     <div class="sb-section-label">콘텐츠</div>
     <div class="sb-item" onclick="openModal('ins-modal');setSbActive(this)">
@@ -776,6 +779,11 @@
 <div class="overlay" id="inv-modal">
   <div class="modal embed"><div class="modal-hd"><h2>🗂️ 탕비실 재고</h2><button class="close-btn" onclick="closeModal('inv-modal')">✕</button></div>
   <div class="modal-bd embed-bd"><iframe class="embed-frame" data-src="breakroom/" title="탕비실 재고"></iframe></div></div>
+</div>
+
+<div class="overlay" id="proposal-modal">
+  <div class="modal embed"><div class="modal-hd"><h2>📄 자재 내역서<a href="proposal/" target="_blank" style="margin-left:10px;font-size:12px;font-weight:600;color:var(--blue);text-decoration:none">↗ 새 탭</a></h2><button class="close-btn" onclick="closeModal('proposal-modal')">✕</button></div>
+  <div class="modal-bd embed-bd"><iframe class="embed-frame" data-src="proposal/" title="자재 내역서"></iframe></div></div>
 </div>
 
 <div class="overlay" id="cal-modal">

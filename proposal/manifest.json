@@ -1,0 +1,9 @@
+{
+  "name": "자재 내역서 — 디자인하담",
+  "short_name": "자재내역서",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "lang": "ko"
+}
