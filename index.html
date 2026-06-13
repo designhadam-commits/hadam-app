@@ -2174,10 +2174,34 @@ async function renderDesignView(){
   const v=document.getElementById('design-view');
   if(!localStorage.getItem('gh_pat')){v.innerHTML=ghNeedPat();return;}
   v.innerHTML=ghLoading();
-  try{var sets=[];try{sets=(await ghContents('hadam-cardnews','design')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
-    let html='<div class="auto-bar"><button class="btn btn-g" onclick="designGenPanel()">⚡ 시안 생성</button><span class="auto-hint">스타일·공간 선택 → Higgsfield 콘셉트 렌더</span></div><div id="dz-genpanel"></div>';
+  try{
+    var feeds=[];try{feeds=(await ghContents('hadam-cardnews','feed')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
+    var sets=[];try{sets=(await ghContents('hadam-cardnews','design')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
+    let html='<div class="auto-bar"><button class="btn btn-g" onclick="feedGenRun()">⚡ 오늘 피드 생성</button><span class="auto-hint">매일 09시 자동 · 게시는 수동</span></div>';
+    html+='<div class="sec-label" style="margin-top:4px">📸 매일 인스타 피드</div>';
+    html+=feeds.length?'<div class="gh-list">'+feeds.map(function(s){var pid='feed:'+s.name;var on=isPosted(pid);return '<div class="gh-row"><span class="gh-name" style="flex:1;cursor:pointer" onclick="feedOpen(\''+s.name+'\')">📸 '+ghEsc(s.name)+'</span><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';}).join('')+'</div>':'<div class="gh-need">아직 자동 생성된 피드가 없습니다. 매일 09시 자동 생성되며, ⚡로 지금 만들 수도 있어요.</div>';
+    html+='<div class="divider"></div>';
+    html+='<div class="auto-bar"><button class="btn btn-g" onclick="designGenPanel()">⚡ 시안 생성</button><span class="auto-hint">스타일·공간 선택 → Higgsfield 콘셉트 렌더</span></div><div id="dz-genpanel"></div>';
+    html+='<div class="sec-label">🎨 디자인 시안</div>';
     html+=sets.length?'<div class="gh-list">'+sets.map(function(s){var pid='design:'+s.name;var on=isPosted(pid);return '<div class="gh-row"><span class="gh-name" style="flex:1;cursor:pointer" onclick="designOpen(\''+s.name+'\')">🎨 '+ghEsc(s.name)+'</span><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';}).join('')+'</div>':'<div class="gh-need">아직 생성된 시안이 없습니다. 위 ⚡ 시안 생성으로 시작하세요.</div>';
     v.innerHTML=html;
+  }catch(e){v.innerHTML=ghErr(e);}
+}
+async function feedGenRun(){try{await ghDispatch('hadam-cardnews','daily-feed.yml',{});alert('오늘 피드 생성을 시작했습니다. 3~6분 후 목록에 나타납니다(디자인 시안을 다시 열어 새로고침).');}catch(e){alert('실행 실패: '+((e&&e.message)||e));}}
+async function feedOpen(name){
+  const v=document.getElementById('design-view');v.innerHTML=ghLoading();
+  try{
+    const all=await ghContents('hadam-cardnews','feed/'+name);
+    const imgF=all.find(function(x){return /image\.jpg$/i.test(x.name);});
+    let caption='';try{caption=await ghText('hadam-cardnews','feed/'+name+'/caption.txt');}catch(e){}
+    var pid='feed:'+name,on=isPosted(pid);
+    v.innerHTML='<div class="auto-bar"><button class="gh-back" onclick="renderDesignView()" style="margin:0">‹ 목록</button><span class="post-chk'+(on?' on':'')+'" onclick="togglePosted(\''+pid+'\',this)">'+(on?'✓ 게시됨':'게시 체크')+'</span></div>';
+    if(imgF){var d=await (await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/git/blobs/'+imgF.sha,{headers:ghHeaders()})).json();var url='data:image/jpeg;base64,'+(d.content||'').replace(/\s/g,'');var a=document.createElement('a');a.href=url;a.download=name+'.jpg';a.title='클릭하면 다운로드';a.innerHTML='<img src="'+url+'" style="max-width:360px;width:100%;border-radius:12px;display:block;margin:10px 0">';v.appendChild(a);}
+    var cb=document.createElement('div');cb.className='gh-post';
+    var btn=document.createElement('button');btn.className='btn btn-g';btn.textContent='📋 캡션 복사';
+    var ta=document.createElement('textarea');ta.className='inp';ta.readOnly=true;ta.style.cssText='width:100%;min-height:220px;margin-top:8px;line-height:1.7';ta.value=caption;
+    btn.onclick=function(){navigator.clipboard.writeText(ta.value).then(function(){btn.textContent='✓ 복사됨';});};
+    cb.appendChild(btn);cb.appendChild(ta);v.appendChild(cb);
   }catch(e){v.innerHTML=ghErr(e);}
 }
 function designGenPanel(){
