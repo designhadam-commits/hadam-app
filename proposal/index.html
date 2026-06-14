@@ -96,6 +96,20 @@ img{display:block}
 .wall-dia-t span{font-size:8.5pt;color:var(--muted);font-weight:600}
 .wall-ax{display:flex;justify-content:space-between;font-size:7.5pt;color:var(--dim);margin-bottom:1.5mm}
 .wall-3d{display:block;width:100%;height:auto;max-height:42mm;margin:2mm 0 3mm}
+/* 세로 벽(자동 구성) */
+.wallv{display:flex;justify-content:center;padding:3mm 0 1mm}
+.wv-stage{width:58mm}
+.wv-wall{border:1px solid rgba(0,0,0,.22);border-right-width:2.4mm;border-right-color:rgba(0,0,0,.26);border-radius:1.5mm 1.5mm 0 0;overflow:hidden;display:flex;flex-direction:column;height:66mm;box-shadow:0 3mm 4mm rgba(0,0,0,.13)}
+.wv-seg{background-size:cover;background-position:center;position:relative}
+.wv-mold{height:9mm;box-shadow:inset 0 -1px 0 rgba(0,0,0,.18)}
+.wv-body{flex:1}
+.wv-base{height:8mm;box-shadow:inset 0 1px 0 rgba(0,0,0,.18)}
+.wv-empty{background:repeating-linear-gradient(45deg,#eef0f2,#eef0f2 3mm,#e6e8eb 3mm,#e6e8eb 6mm)}
+.wv-tag{position:absolute;left:1.5mm;top:1.2mm;font-size:6.5pt;font-weight:700;color:#fff;background:rgba(0,0,0,.5);padding:.3mm 1.6mm;border-radius:1mm}
+.wv-tag.dark{color:var(--muted);background:rgba(255,255,255,.8)}
+.wv-floor{height:15mm;background-size:cover;background-position:center;clip-path:polygon(12% 0,88% 0,100% 100%,0 100%);position:relative;margin-top:-0.3mm;border-bottom:1px solid rgba(0,0,0,.12)}
+.wv-floor .wv-tag{top:auto;bottom:1.2mm;left:50%;transform:translateX(-50%)}
+.wall-legend em{font-style:normal;color:var(--blue);font-weight:600}
 .wall-bands{display:flex;height:15mm;border-radius:2mm;overflow:hidden;border:1px solid var(--line)}
 .wband{min-width:5mm;border-right:1px solid rgba(255,255,255,.5)}
 .wband:last-child{border-right:none}
@@ -336,25 +350,6 @@ function renderEditor(){
     });
     const add=document.createElement('button');add.className='add-btn';add.textContent='+ 자재 추가';
     add.onclick=()=>openPicker(ri);body.appendChild(add);
-    // 벽 단면 구성
-    const layers=ensureLayers(room);
-    const ws=document.createElement('div');ws.className='wall-sec';
-    ws.innerHTML='<div class="wall-h">🧱 벽 단면 구성 <span>(실외/구조 → 실내 순)</span></div>';
-    const ll=document.createElement('div');ll.className='layer-list';
-    layers.forEach((L,li)=>{
-      const r=document.createElement('div');r.className='layer-row';
-      r.innerHTML=`<input type="color" value="${L.color||'#cccccc'}"><input class="ln" placeholder="레이어/자재명 (예: 단열재)" value="${esc(L.name||'')}"><input class="lt" type="number" placeholder="두께" value="${L.thick||''}"><span class="mm">mm</span><button class="del">×</button>`;
-      const ins=r.querySelectorAll('input');
-      ins[0].oninput=()=>{L.color=ins[0].value;save();renderPreview();};
-      ins[1].oninput=()=>{L.name=ins[1].value;save();renderPreview();};
-      ins[2].oninput=()=>{L.thick=ins[2].value;save();renderPreview();};
-      r.querySelector('.del').onclick=()=>{layers.splice(li,1);save();renderEditor();renderPreview();};
-      ll.appendChild(r);
-    });
-    ws.appendChild(ll);
-    const al=document.createElement('button');al.className='add-layer';al.textContent='+ 레이어';
-    al.onclick=()=>addLayer(ri);ws.appendChild(al);
-    body.appendChild(ws);
     box.appendChild(el);
   });
 }
@@ -402,7 +397,6 @@ function renderPreview(){
           ${it.spec?`<div class="rspec">${esc(it.spec)}</div>`:''}
           ${it.size?`<div class="rsize">규격 ${esc(it.size)}</div>`:''}
         </div></div>`).join('')+`</div>
-      ${wallDiagram(room)}
       <div class="pagefoot">${esc(s.name||'')} · 자재 내역서</div><div class="pagenum">${pageNo}</div>
     </div></div>`;
   });
@@ -455,26 +449,6 @@ function addRoom(){const n=prompt('추가할 공간 이름 (예: 드레스룸, �
 const LAYER_COLORS=['#cdb38b','#e0a86b','#d8c44e','#bcae8f','#cfd3d8','#ece6da','#a9b0b8','#8d9298','#b98c5a','#9fb3a0'];
 function ensureLayers(room){if(!Array.isArray(room.layers))room.layers=[];return room.layers;}
 function addLayer(ri){const room=state.rooms[ri];const ls=ensureLayers(room);ls.push({name:'',thick:'',color:LAYER_COLORS[ls.length%LAYER_COLORS.length]});save();renderEditor();renderPreview();}
-function shade(hex,amt){hex=(hex||'#cccccc').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');let r=parseInt(hex.slice(0,2),16)||204,g=parseInt(hex.slice(2,4),16)||204,b=parseInt(hex.slice(4,6),16)||204;const f=c=>Math.max(0,Math.min(255,Math.round(amt>=0?c+(255-c)*amt:c*(1+amt))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
-function wallDiagram(room){
-  const ls=(room.layers||[]).filter(L=>(L.name&&L.name.trim())||L.thick);
-  if(!ls.length)return'';
-  const total=ls.reduce((s,L)=>s+(parseFloat(L.thick)||0),0);
-  // 아이소메트릭 슬래브: 전면(front) + 윗면(top) + 우측면(side)
-  const W=560,H=66,dx=22,dy=16;
-  const raw=ls.map(L=>{const t=parseFloat(L.thick)||0;return total>0?Math.max(20,t/total*W):W/ls.length;});
-  const sc=W/raw.reduce((a,b)=>a+b,0);
-  let x=0;const segs=ls.map((L,i)=>{const w=raw[i]*sc;const s={x0:x,w,color:L.color||'#cccccc',n:i+1};x+=w;return s;});
-  const tops=segs.map(s=>`<polygon points="${s.x0},${dy} ${(s.x0+s.w).toFixed(1)},${dy} ${(s.x0+s.w+dx).toFixed(1)},0 ${(s.x0+dx).toFixed(1)},0" fill="${shade(s.color,0.24)}" stroke="#00000022" stroke-width="0.6"/>`).join('');
-  const last=segs[segs.length-1],rx=(last.x0+last.w);
-  const right=`<polygon points="${rx.toFixed(1)},${dy} ${(rx+dx).toFixed(1)},0 ${(rx+dx).toFixed(1)},${H} ${rx.toFixed(1)},${dy+H}" fill="${shade(last.color,-0.26)}" stroke="#00000022" stroke-width="0.6"/>`;
-  const fronts=segs.map(s=>`<rect x="${s.x0.toFixed(1)}" y="${dy}" width="${s.w.toFixed(1)}" height="${H}" fill="${s.color}" stroke="#00000022" stroke-width="0.6"/>`+(s.w>15?`<text x="${(s.x0+s.w/2).toFixed(1)}" y="${dy+H/2+4}" text-anchor="middle" font-size="11" font-weight="700" fill="${shade(s.color,-0.55)}">${s.n}</text>`:'')).join('');
-  const svg=`<svg class="wall-3d" viewBox="-1 -1 ${W+dx+2} ${dy+H+2}" preserveAspectRatio="xMidYMid meet">${tops}${right}${fronts}</svg>`;
-  const legend=ls.map((L,i)=>`<span class="wlg"><i style="background:${L.color||'#ccc'}"></i>${i+1}. ${esc(L.name||'-')}${L.thick?` <b>${esc(String(L.thick))}mm</b>`:''}</span>`).join('');
-  return `<div class="wall-dia"><div class="wall-dia-t">벽 단면 구성 (3D)${total?`<span>총 두께 ${total}mm</span>`:''}</div>
-    <div class="wall-ax"><span>◀ 실외 / 구조체</span><span>실내 마감 ▶</span></div>
-    ${svg}<div class="wall-legend">${legend}</div></div>`;
-}
 
 // ───────── 출력 ─────────
 function printSheet(){window.print();}
@@ -510,7 +484,7 @@ function bindEvents(){
   document.onkeydown=e=>{if(e.key==='Escape')closePicker();};
 }
 async function init(){
-  try{const r=await fetch('library.json');LIB=await r.json();}catch(e){console.warn('library.json 로드 실패',e);toast('라이브러리 로드 실패 — 직접 입력만 가능');}
+  try{const r=await fetch('library.json?t='+Date.now());LIB=await r.json();}catch(e){console.warn('library.json 로드 실패',e);toast('라이브러리 로드 실패 — 직접 입력만 가능');}
   state=load();bindSite();renderEditor();renderPreview();bindEvents();
 }
 init();
