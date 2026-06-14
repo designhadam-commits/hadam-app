@@ -78,6 +78,30 @@ img{display:block}
 .item .del:hover{color:var(--red);background:#fde9eb}
 .add-btn{width:100%;border:1.5px dashed var(--border);border-radius:var(--radius-s);padding:9px;color:var(--accent);font-weight:600;font-size:13px;transition:.15s;margin-top:2px}
 .add-btn:hover{border-color:var(--accent);background:var(--card2)}
+/* 벽 단면 편집 */
+.wall-sec{margin-top:8px;border-top:1px dashed var(--border);padding-top:8px}
+.wall-h{font-size:11px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.wall-h span{color:var(--dim);font-weight:500}
+.layer-row{display:flex;align-items:center;gap:5px;margin-bottom:5px}
+.layer-row input[type=color]{width:26px;height:28px;padding:0;border:1px solid var(--border);border-radius:6px;background:none;cursor:pointer;flex-shrink:0}
+.layer-row .ln{flex:1;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:6px 8px;min-width:0}
+.layer-row .lt{width:56px;background:var(--card2);border:1px solid var(--border);border-radius:7px;padding:6px;text-align:right}
+.layer-row .mm{font-size:11px;color:var(--dim)}
+.layer-row .del{color:var(--dim);font-size:16px;padding:2px 5px;border-radius:5px}
+.layer-row .del:hover{color:var(--red);background:#fde9eb}
+.add-layer{font-size:12px;font-weight:600;color:var(--accent);padding:5px 0}
+/* 벽 단면 다이어그램(미리보기) */
+.wall-dia{margin-top:6mm;border:1px solid var(--line);border-radius:3mm;padding:4mm;break-inside:avoid}
+.wall-dia-t{font-size:10pt;font-weight:800;margin-bottom:3mm;display:flex;justify-content:space-between;align-items:baseline}
+.wall-dia-t span{font-size:8.5pt;color:var(--muted);font-weight:600}
+.wall-ax{display:flex;justify-content:space-between;font-size:7.5pt;color:var(--dim);margin-bottom:1.5mm}
+.wall-bands{display:flex;height:15mm;border-radius:2mm;overflow:hidden;border:1px solid var(--line)}
+.wband{min-width:5mm;border-right:1px solid rgba(255,255,255,.5)}
+.wband:last-child{border-right:none}
+.wall-legend{display:flex;flex-wrap:wrap;gap:2mm 6mm;margin-top:3mm;font-size:8.5pt;color:var(--text)}
+.wall-legend .wlg{display:flex;align-items:center;gap:1.5mm}
+.wall-legend .wlg i{width:3mm;height:3mm;border-radius:1mm;display:inline-block;border:1px solid rgba(0,0,0,.12)}
+.wall-legend b{font-weight:700;color:var(--muted)}
 
 /* ════════ A4 미리보기 ════════ */
 .page{width:210mm;min-height:297mm;background:#fff;box-shadow:var(--shadow-h);position:relative;overflow:hidden;flex-shrink:0}
@@ -250,8 +274,8 @@ img{display:block}
 
 <script>
 // ───────── 설정 ─────────
-const CATS = ['도기','수전','타일','필름','장판','마루','벽지','보드','팬','조명','기타'];
-const CAT_ICO={'도기':'🚽','수전':'🚰','타일':'🧱','필름':'🎞️','장판':'🟫','마루':'🪵','벽지':'🧻','보드':'▦','팬':'🌀','조명':'💡','기타':'📦'};
+const CATS = ['도기','수전','타일','필름','장판','마루','벽지','몰딩','걸레받이','보드','팬','조명','기타'];
+const CAT_ICO={'도기':'🚽','수전':'🚰','타일':'🧱','필름':'🎞️','장판':'🟫','마루':'🪵','벽지':'🧻','몰딩':'📏','걸레받이':'📐','보드':'▦','팬':'🌀','조명':'💡','기타':'📦'};
 const ROOM_ICO={'거실':'🛋️','주방':'🍳','안방':'🛏️','침실':'🛏️','욕실':'🛁','공용욕실':'🛁','안방욕실':'🛁','드레스룸':'👗','현관':'🚪','베란다':'🪴','작은방':'🚪','서재':'📚','공용':'🏠','기타':'📦'};
 const DEFAULT_ROOMS=['거실','주방','안방','욕실','현관'];
 const LS_KEY='hadam-spec-v2';
@@ -267,7 +291,7 @@ function blankState(){
   const iso=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
   return {
     site:{name:'',client:'',date:iso,designer:'',phone:'',memo:'실제 색상은 조명 및 모니터 환경에 따라 다르게 보일 수 있습니다.'},
-    rooms:DEFAULT_ROOMS.map(k=>({key:k,open:true,items:[]})),
+    rooms:DEFAULT_ROOMS.map(k=>({key:k,open:true,items:[],layers:[]})),
   };
 }
 function load(){ try{const s=JSON.parse(localStorage.getItem(LS_KEY));if(s&&s.rooms)return s;}catch(e){}
@@ -311,6 +335,25 @@ function renderEditor(){
     });
     const add=document.createElement('button');add.className='add-btn';add.textContent='+ 자재 추가';
     add.onclick=()=>openPicker(ri);body.appendChild(add);
+    // 벽 단면 구성
+    const layers=ensureLayers(room);
+    const ws=document.createElement('div');ws.className='wall-sec';
+    ws.innerHTML='<div class="wall-h">🧱 벽 단면 구성 <span>(실외/구조 → 실내 순)</span></div>';
+    const ll=document.createElement('div');ll.className='layer-list';
+    layers.forEach((L,li)=>{
+      const r=document.createElement('div');r.className='layer-row';
+      r.innerHTML=`<input type="color" value="${L.color||'#cccccc'}"><input class="ln" placeholder="레이어/자재명 (예: 단열재)" value="${esc(L.name||'')}"><input class="lt" type="number" placeholder="두께" value="${L.thick||''}"><span class="mm">mm</span><button class="del">×</button>`;
+      const ins=r.querySelectorAll('input');
+      ins[0].oninput=()=>{L.color=ins[0].value;save();renderPreview();};
+      ins[1].oninput=()=>{L.name=ins[1].value;save();renderPreview();};
+      ins[2].oninput=()=>{L.thick=ins[2].value;save();renderPreview();};
+      r.querySelector('.del').onclick=()=>{layers.splice(li,1);save();renderEditor();renderPreview();};
+      ll.appendChild(r);
+    });
+    ws.appendChild(ll);
+    const al=document.createElement('button');al.className='add-layer';al.textContent='+ 레이어';
+    al.onclick=()=>addLayer(ri);ws.appendChild(al);
+    body.appendChild(ws);
     box.appendChild(el);
   });
 }
@@ -358,6 +401,7 @@ function renderPreview(){
           ${it.spec?`<div class="rspec">${esc(it.spec)}</div>`:''}
           ${it.size?`<div class="rsize">규격 ${esc(it.size)}</div>`:''}
         </div></div>`).join('')+`</div>
+      ${wallDiagram(room)}
       <div class="pagefoot">${esc(s.name||'')} · 자재 내역서</div><div class="pagenum">${pageNo}</div>
     </div></div>`;
   });
@@ -405,7 +449,21 @@ function addManual(){
 function handleFile(file){if(!file||!file.type.startsWith('image/'))return;const r=new FileReader();r.onload=e=>{picker.img=e.target.result;$('#dropText').innerHTML=`<img src="${picker.img}">`;};r.readAsDataURL(file);}
 
 // ───────── 공간 추가 ─────────
-function addRoom(){const n=prompt('추가할 공간 이름 (예: 드레스룸, 작은방, 공용욕실)');if(!n)return;const k=n.trim();if(!k)return;if(state.rooms.some(r=>r.key===k)){toast('이미 있는 공간입니다');return;}state.rooms.push({key:k,open:true,items:[]});save();renderEditor();}
+function addRoom(){const n=prompt('추가할 공간 이름 (예: 드레스룸, 작은방, 공용욕실)');if(!n)return;const k=n.trim();if(!k)return;if(state.rooms.some(r=>r.key===k)){toast('이미 있는 공간입니다');return;}state.rooms.push({key:k,open:true,items:[],layers:[]});save();renderEditor();}
+// ───────── 벽 단면 레이어 ─────────
+const LAYER_COLORS=['#cdb38b','#e0a86b','#d8c44e','#bcae8f','#cfd3d8','#ece6da','#a9b0b8','#8d9298','#b98c5a','#9fb3a0'];
+function ensureLayers(room){if(!Array.isArray(room.layers))room.layers=[];return room.layers;}
+function addLayer(ri){const room=state.rooms[ri];const ls=ensureLayers(room);ls.push({name:'',thick:'',color:LAYER_COLORS[ls.length%LAYER_COLORS.length]});save();renderEditor();renderPreview();}
+function wallDiagram(room){
+  const ls=(room.layers||[]).filter(L=>(L.name&&L.name.trim())||L.thick);
+  if(!ls.length)return'';
+  const total=ls.reduce((s,L)=>s+(parseFloat(L.thick)||0),0);
+  const bands=ls.map(L=>{const t=parseFloat(L.thick)||0;const w=total>0?Math.max(6,t/total*100):100/ls.length;return `<div class="wband" style="flex:${w.toFixed(2)};background:${L.color||'#ccc'}"></div>`;}).join('');
+  const legend=ls.map((L,i)=>`<span class="wlg"><i style="background:${L.color||'#ccc'}"></i>${i+1}. ${esc(L.name||'-')}${L.thick?` <b>${esc(String(L.thick))}mm</b>`:''}</span>`).join('');
+  return `<div class="wall-dia"><div class="wall-dia-t">벽 단면 구성${total?`<span>총 두께 ${total}mm</span>`:''}</div>
+    <div class="wall-ax"><span>◀ 실외 / 구조체</span><span>실내 마감 ▶</span></div>
+    <div class="wall-bands">${bands}</div><div class="wall-legend">${legend}</div></div>`;
+}
 
 // ───────── 출력 ─────────
 function printSheet(){window.print();}
