@@ -95,6 +95,7 @@ img{display:block}
 .wall-dia-t{font-size:10pt;font-weight:800;margin-bottom:3mm;display:flex;justify-content:space-between;align-items:baseline}
 .wall-dia-t span{font-size:8.5pt;color:var(--muted);font-weight:600}
 .wall-ax{display:flex;justify-content:space-between;font-size:7.5pt;color:var(--dim);margin-bottom:1.5mm}
+.wall-3d{display:block;width:100%;height:auto;max-height:42mm;margin:2mm 0 3mm}
 .wall-bands{display:flex;height:15mm;border-radius:2mm;overflow:hidden;border:1px solid var(--line)}
 .wband{min-width:5mm;border-right:1px solid rgba(255,255,255,.5)}
 .wband:last-child{border-right:none}
@@ -454,15 +455,25 @@ function addRoom(){const n=prompt('추가할 공간 이름 (예: 드레스룸, �
 const LAYER_COLORS=['#cdb38b','#e0a86b','#d8c44e','#bcae8f','#cfd3d8','#ece6da','#a9b0b8','#8d9298','#b98c5a','#9fb3a0'];
 function ensureLayers(room){if(!Array.isArray(room.layers))room.layers=[];return room.layers;}
 function addLayer(ri){const room=state.rooms[ri];const ls=ensureLayers(room);ls.push({name:'',thick:'',color:LAYER_COLORS[ls.length%LAYER_COLORS.length]});save();renderEditor();renderPreview();}
+function shade(hex,amt){hex=(hex||'#cccccc').replace('#','');if(hex.length===3)hex=hex.split('').map(c=>c+c).join('');let r=parseInt(hex.slice(0,2),16)||204,g=parseInt(hex.slice(2,4),16)||204,b=parseInt(hex.slice(4,6),16)||204;const f=c=>Math.max(0,Math.min(255,Math.round(amt>=0?c+(255-c)*amt:c*(1+amt))));return '#'+[f(r),f(g),f(b)].map(x=>x.toString(16).padStart(2,'0')).join('');}
 function wallDiagram(room){
   const ls=(room.layers||[]).filter(L=>(L.name&&L.name.trim())||L.thick);
   if(!ls.length)return'';
   const total=ls.reduce((s,L)=>s+(parseFloat(L.thick)||0),0);
-  const bands=ls.map(L=>{const t=parseFloat(L.thick)||0;const w=total>0?Math.max(6,t/total*100):100/ls.length;return `<div class="wband" style="flex:${w.toFixed(2)};background:${L.color||'#ccc'}"></div>`;}).join('');
+  // 아이소메트릭 슬래브: 전면(front) + 윗면(top) + 우측면(side)
+  const W=560,H=66,dx=22,dy=16;
+  const raw=ls.map(L=>{const t=parseFloat(L.thick)||0;return total>0?Math.max(20,t/total*W):W/ls.length;});
+  const sc=W/raw.reduce((a,b)=>a+b,0);
+  let x=0;const segs=ls.map((L,i)=>{const w=raw[i]*sc;const s={x0:x,w,color:L.color||'#cccccc',n:i+1};x+=w;return s;});
+  const tops=segs.map(s=>`<polygon points="${s.x0},${dy} ${(s.x0+s.w).toFixed(1)},${dy} ${(s.x0+s.w+dx).toFixed(1)},0 ${(s.x0+dx).toFixed(1)},0" fill="${shade(s.color,0.24)}" stroke="#00000022" stroke-width="0.6"/>`).join('');
+  const last=segs[segs.length-1],rx=(last.x0+last.w);
+  const right=`<polygon points="${rx.toFixed(1)},${dy} ${(rx+dx).toFixed(1)},0 ${(rx+dx).toFixed(1)},${H} ${rx.toFixed(1)},${dy+H}" fill="${shade(last.color,-0.26)}" stroke="#00000022" stroke-width="0.6"/>`;
+  const fronts=segs.map(s=>`<rect x="${s.x0.toFixed(1)}" y="${dy}" width="${s.w.toFixed(1)}" height="${H}" fill="${s.color}" stroke="#00000022" stroke-width="0.6"/>`+(s.w>15?`<text x="${(s.x0+s.w/2).toFixed(1)}" y="${dy+H/2+4}" text-anchor="middle" font-size="11" font-weight="700" fill="${shade(s.color,-0.55)}">${s.n}</text>`:'')).join('');
+  const svg=`<svg class="wall-3d" viewBox="-1 -1 ${W+dx+2} ${dy+H+2}" preserveAspectRatio="xMidYMid meet">${tops}${right}${fronts}</svg>`;
   const legend=ls.map((L,i)=>`<span class="wlg"><i style="background:${L.color||'#ccc'}"></i>${i+1}. ${esc(L.name||'-')}${L.thick?` <b>${esc(String(L.thick))}mm</b>`:''}</span>`).join('');
-  return `<div class="wall-dia"><div class="wall-dia-t">벽 단면 구성${total?`<span>총 두께 ${total}mm</span>`:''}</div>
+  return `<div class="wall-dia"><div class="wall-dia-t">벽 단면 구성 (3D)${total?`<span>총 두께 ${total}mm</span>`:''}</div>
     <div class="wall-ax"><span>◀ 실외 / 구조체</span><span>실내 마감 ▶</span></div>
-    <div class="wall-bands">${bands}</div><div class="wall-legend">${legend}</div></div>`;
+    ${svg}<div class="wall-legend">${legend}</div></div>`;
 }
 
 // ───────── 출력 ─────────
