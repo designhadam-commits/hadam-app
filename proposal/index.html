@@ -475,7 +475,11 @@ function matchImg(maker,code,name){
   if(mk&&mk.length>=2){const toks=(name||'').toLowerCase().split(/[\s/()[\]]+/).filter(t=>t.length>1);
     let best='',bestN=1;
     for(const it of LIB.items){if(!it.q.includes(mk))continue;const hit=toks.filter(t=>it.q.includes(t)).length;if(hit>bestN){bestN=hit;best=it.path;}}
-    return best;}
+    if(best)return best;}
+  // 제조사 없을 때: 이름(공백·기호 제거) 부분일치 (예: "발렌블랑"→"발렌 블랑")
+  const strip=s=>(s||'').toLowerCase().replace(/[\s/()\[\]_.\-]/g,'');
+  const nN=strip(name);
+  if(nN.length>=4){for(const it of LIB.items){if(strip(it.q).includes(nN))return it.path;}}
   return '';
 }
 function parseSpec(text){
