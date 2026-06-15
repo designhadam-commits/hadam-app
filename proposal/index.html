@@ -468,15 +468,27 @@ const SKIP_RE=/파티션|상부장|하부장|몸통구성|도면\s*참조|우물
 function normMaker(m){let s=(m||'').trim();s=s.replace(/에떼르노/g,'에테르노').replace(/아메리칸\s*스탠다드/g,'아메리칸스탠다드');if(/포티스/i.test(s))s='LX지인 디아망 포티스';else if(/^lx\b|^지인/i.test(s))s='LX지인';return s.trim();}
 function inferCat(key,val,secCat){const t=key+' '+val;for(const[re,c]of KEY_CAT)if(re.test(t))return c;return secCat||'기타';}
 function parseValue(val){val=val.trim();let maker='';const mi=val.indexOf(')');if(mi>0&&mi<=18&&!val.slice(0,mi).includes('(')){maker=val.slice(0,mi).trim();val=val.slice(mi+1).trim();}let code='';const cm=val.match(/\b([A-Z]{1,5}-?\d[\w.-]*|\d{3,}[A-Z]{2,}[\w-]*)\b/);if(cm)code=cm[1];return {maker,name:val.replace(/^[)\s]+/,'').trim(),code};}
+function tokenize(s){
+  return (s||'').toLowerCase()
+    .replace(/[()/\[\]_,]/g,' ')
+    .replace(/([a-z])(\d)/g,'$1 $2').replace(/(\d)([a-z])/g,'$1 $2')   // essb100nb → essb 100 nb
+    .split(/[\s.\-]+/)
+    .filter(t=>t && t.length>=2 && !/^\d+$/.test(t) && !/^\d+x\d+$/i.test(t) && t!=='mm' && t!=='x');
+}
 function matchImg(maker,code,name){
-  const codeN=(code||'').toLowerCase().replace(/[\s-]/g,'');
-  if(codeN.length>=4){for(const it of LIB.items){if(it.q.replace(/[\s-]/g,'').includes(codeN))return it.path;}}
+  const codeN=(code||'').toLowerCase().replace(/[\s\-()]/g,'');
+  if(codeN.length>=4){for(const it of LIB.items){if(it.q.replace(/[\s\-()]/g,'').includes(codeN))return it.path;}}
+  const toks=tokenize(name);
   const mk=normMaker(maker).toLowerCase().split(/\s+/)[0];
-  if(mk&&mk.length>=2){const toks=(name||'').toLowerCase().split(/[\s/()[\]]+/).filter(t=>t.length>1);
-    let best='',bestN=1;
+  // 제조사 한정 토큰 다수일치
+  if(mk&&mk.length>=2){let best='',bestN=1;
     for(const it of LIB.items){if(!it.q.includes(mk))continue;const hit=toks.filter(t=>it.q.includes(t)).length;if(hit>bestN){bestN=hit;best=it.path;}}
     if(best)return best;}
-  // 제조사 없을 때: 이름(공백·기호 제거) 부분일치 (예: "발렌블랑"→"발렌 블랑")
+  // 제조사 없음: 전체에서 토큰 2개 이상 일치
+  if(toks.length>=2){let best='',bestN=1;
+    for(const it of LIB.items){const hit=toks.filter(t=>it.q.includes(t)).length;if(hit>bestN){bestN=hit;best=it.path;}}
+    if(bestN>=2)return best;}
+  // 단일 토큰명: 공백·기호 제거 부분일치 (예: "발렌블랑"→"발렌 블랑")
   const strip=s=>(s||'').toLowerCase().replace(/[\s/()\[\]_.\-]/g,'');
   const nN=strip(name);
   if(nN.length>=4){for(const it of LIB.items){if(strip(it.q).includes(nN))return it.path;}}
