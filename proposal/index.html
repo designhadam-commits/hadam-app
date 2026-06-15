@@ -224,6 +224,7 @@ img{display:block}
   <span class="logo"><span class="dot"></span>자재 내역서</span>
   <span class="sub">디자인하담</span>
   <span class="spacer"></span>
+  <button class="btn ghost sm" id="btnImport">📋 가져오기</button>
   <button class="btn ghost sm" id="btnReset">초기화</button>
   <button class="btn ghost" id="btnPng">📷 이미지</button>
   <button class="btn primary" id="btnPrint">🖨️ A4 인쇄 / PDF</button>
@@ -285,6 +286,20 @@ img{display:block}
     </div>
   </div>
 </div>
+<!-- 가져오기 모달 -->
+<div class="overlay" id="importOverlay">
+  <div class="modal">
+    <div class="modal-head"><span class="mt">📋 마감재 상세내용 가져오기</span><button class="x" id="impClose">×</button></div>
+    <div class="modal-body">
+      <p style="font-size:12px;color:var(--muted);margin-bottom:8px;line-height:1.6">사용하시는 「마감재 상세내용」 텍스트를 그대로 붙여넣고 <b>분석</b>하세요. 번호 섹션(1.,2.…)은 <b>구획</b>으로, 각 <b>- 항목 : 값</b> 줄은 자재로 자동 입력되고, 라이브러리에서 이미지를 <b>자동 매칭</b>합니다.</p>
+      <textarea id="impText" style="width:100%;min-height:300px;background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:11px;line-height:1.6;resize:vertical" placeholder="< 마감재 상세내용 >  텍스트 전체를 붙여넣으세요"></textarea>
+      <label style="display:flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);margin-top:8px"><input type="checkbox" id="impMerge"> 기존 내용에 <b>추가</b> (체크 해제 시 전체 덮어쓰기)</label>
+      <button class="btn primary" id="impRun" style="width:100%;margin-top:10px">분석해서 채우기</button>
+      <div id="impResult" style="font-size:12.5px;color:var(--muted);margin-top:10px;line-height:1.6"></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -342,7 +357,7 @@ function renderEditor(){
     room.items.forEach((it,ii)=>{
       const row=document.createElement('div');row.className='item';
       row.innerHTML=`${it.img?`<img src="${it.img}" loading="lazy">`:'<div class="noimg">▦</div>'}
-        <div class="meta"><div class="t">${esc(it.name||'(이름없음)')}</div>
+        <div class="meta"><div class="t">${it.role?esc(it.role)+': ':''}${esc(it.name||'(이름없음)')}</div>
         <div class="s">${esc([it.maker,it.code,it.spec,it.size].filter(Boolean).join(' · ')||'—')}</div></div>
         <span class="ctag">${esc(it.cat||'')}</span><button class="del">×</button>`;
       row.querySelector('.del').onclick=()=>{room.items.splice(ii,1);save();renderEditor();renderPreview();};
@@ -391,7 +406,7 @@ function renderPreview(){
         <span class="pjt">${esc(s.name||'')}</span><span class="rn">${room.items.length}개 품목</span></div>
       <div class="rm-grid">`+room.items.map(it=>`<div class="rcard">
         ${it.img?`<img class="ph" src="${it.img}">`:'<div class="noimg">▦</div>'}
-        <div class="rb"><div class="rc">${esc(it.cat||'')}</div>
+        <div class="rb"><div class="rc">${esc(it.role||it.cat||'')}</div>
           <div class="rnm">${esc(it.name||'(이름없음)')}</div>
           ${it.maker?`<div class="rmk">${esc(it.maker)}${it.code?' · '+esc(it.code):''}</div>`:''}
           ${it.spec?`<div class="rspec">${esc(it.spec)}</div>`:''}
@@ -445,6 +460,58 @@ function handleFile(file){if(!file||!file.type.startsWith('image/'))return;const
 
 // ───────── 공간 추가 ─────────
 function addRoom(){const n=prompt('추가할 공간 이름 (예: 드레스룸, 작은방, 공용욕실)');if(!n)return;const k=n.trim();if(!k)return;if(state.rooms.some(r=>r.key===k)){toast('이미 있는 공간입니다');return;}state.rooms.push({key:k,open:true,items:[],layers:[]});save();renderEditor();}
+
+// ───────── 마감재 상세내용 텍스트 가져오기(파서) ─────────
+const SECTION_CAT={'도배':'벽지','필름':'필름','필름공사':'필름','조명':'조명','조명&콘센트':'조명','마루':'마루','타일':'타일','도장':'기타','도장공사':'기타','본주방':'기타','주방':'기타','가구':'기타','가구공사':'기타','홈도어':'필름','현관중문':'필름','목공사':'기타'};
+const KEY_CAT=[[/(양변기|변기|소변기|비데|세면대|세면기|젠다이)/,'도기'],[/(세면수전|샤워수전|주방수전|수전)/,'수전'],[/(마루|강마루|원목마루|마루수종)/,'마루'],[/(타일|바닥|벽체|아트월)/,'타일'],[/(도배|벽지|플라스터)/,'벽지'],[/(필름|샷시|새시|문선|방화문|문틀|중문|홈도어|도어)/,'필름'],[/(거실등|주방등|방등|식탁등|센서등|간접등|조명|콘센트|스위치)/,'조명'],[/(붙박이장|장식장|벤치|tv장|하부장|상부장|붙박이|가구)/i,'기타']];
+function normMaker(m){let s=(m||'').trim();s=s.replace(/에떼르노/g,'에테르노').replace(/아메리칸\s*스탠다드/g,'아메리칸스탠다드');if(/포티스/i.test(s))s='LX지인 디아망 포티스';else if(/^lx\b|^지인/i.test(s))s='LX지인';return s.trim();}
+function inferCat(key,val,secCat){const t=key+' '+val;for(const[re,c]of KEY_CAT)if(re.test(t))return c;return secCat||'기타';}
+function parseValue(val){val=val.trim();let maker='';const mi=val.indexOf(')');if(mi>0&&mi<=18&&!val.slice(0,mi).includes('(')){maker=val.slice(0,mi).trim();val=val.slice(mi+1).trim();}let code='';const cm=val.match(/\b([A-Z]{1,5}-?\d[\w.-]*)\b/);if(cm)code=cm[1];return {maker,name:val.replace(/^[)\s]+/,'').trim(),code};}
+function matchImg(maker,code,name){
+  const codeN=(code||'').toLowerCase().replace(/[\s-]/g,'');
+  if(codeN.length>=4){for(const it of LIB.items){if(it.q.replace(/[\s-]/g,'').includes(codeN))return it.path;}}
+  const mk=normMaker(maker).toLowerCase().split(/\s+/)[0];
+  if(mk&&mk.length>=2){const toks=(name||'').toLowerCase().split(/[\s/()[\]]+/).filter(t=>t.length>1);
+    let best='',bestN=1;
+    for(const it of LIB.items){if(!it.q.includes(mk))continue;const hit=toks.filter(t=>it.q.includes(t)).length;if(hit>bestN){bestN=hit;best=it.path;}}
+    return best;}
+  return '';
+}
+function parseSpec(text){
+  const rooms=[];let cur=null;
+  for(const raw of text.split(/\r?\n/)){
+    const line=raw.trim();if(!line)continue;
+    const sec=line.match(/^\d+\s*\.\s*(.+)$/);
+    if(sec){
+      let nm=sec[1].split(/[(:]/)[0].trim();
+      const secCat=SECTION_CAT[nm]||SECTION_CAT[nm.replace(/공사$/,'')]||'';
+      const after=sec[1].slice(nm.length).replace(/^[(]/,'').trim();
+      cur={key:nm,open:true,items:[],layers:[],_cat:secCat,_head:/[A-Za-z0-9가-힣]/.test(after)?after:''};
+      rooms.push(cur);continue;
+    }
+    if(!cur)continue;
+    const kv=line.match(/^[-•]\s*([^:]+?)\s*:\s*(.*)$/);
+    if(!kv)continue;
+    const key=kv[1].trim();let val=kv[2].trim();
+    if((!val||val==='X')&&cur._head)val=cur._head;
+    if(!val||val==='X')continue;
+    const pv=parseValue(val);
+    cur.items.push({cat:inferCat(key,val,cur._cat),role:key,name:pv.name,maker:normMaker(pv.maker),code:pv.code,spec:'',size:'',img:matchImg(pv.maker,pv.code,pv.name)});
+  }
+  return rooms.filter(r=>r.items.length);
+}
+function openImport(){$('#impText').value='';$('#impResult').textContent='';$('#impMerge').checked=false;$('#importOverlay').classList.add('show');setTimeout(()=>$('#impText').focus(),50);}
+function runImport(){
+  const t=$('#impText').value;if(!t.trim()){toast('텍스트를 붙여넣으세요');return;}
+  const parsed=parseSpec(t);
+  if(!parsed.length){toast('인식된 항목이 없습니다');return;}
+  if($('#impMerge').checked)state.rooms=state.rooms.concat(parsed);else state.rooms=parsed;
+  const items=parsed.reduce((n,r)=>n+r.items.length,0);
+  const matched=parsed.reduce((n,r)=>n+r.items.filter(i=>i.img).length,0);
+  save();bindSite();renderEditor();renderPreview();
+  $('#impResult').innerHTML=`✅ <b>${parsed.length}개 구획 · ${items}개 자재</b> 입력됨 (이미지 자동매칭 ${matched}개). 이미지 없는 항목은 편집기에서 라이브러리로 교체할 수 있어요.`;
+  toast(`${items}개 자재 입력됨`);
+}
 // ───────── 벽 단면 레이어 ─────────
 const LAYER_COLORS=['#cdb38b','#e0a86b','#d8c44e','#bcae8f','#cfd3d8','#ece6da','#a9b0b8','#8d9298','#b98c5a','#9fb3a0'];
 function ensureLayers(room){if(!Array.isArray(room.layers))room.layers=[];return room.layers;}
@@ -472,6 +539,10 @@ function bindEvents(){
   $('#btnPng').onclick=exportPng;
   $('#btnReset').onclick=()=>{if(confirm('모든 내용을 지우고 새로 시작할까요?')){state=blankState();save();bindSite();renderEditor();renderPreview();}};
   $('#btnAddRoom').onclick=addRoom;
+  $('#btnImport').onclick=openImport;
+  $('#impClose').onclick=()=>$('#importOverlay').classList.remove('show');
+  $('#importOverlay').onclick=e=>{if(e.target.id==='importOverlay')$('#importOverlay').classList.remove('show');};
+  $('#impRun').onclick=runImport;
   $('#mClose').onclick=closePicker;
   $('#overlay').onclick=e=>{if(e.target.id==='overlay')closePicker();};
   document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>setTab(b.dataset.tab));
