@@ -266,7 +266,7 @@
       <div class="card" id="consult-detail-card"></div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button id="consult-edit" style="flex:1;padding:11px;border:1px solid var(--line2);background:var(--surface);color:var(--ink);border-radius:10px;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit">수정</button>
-        <button id="consult-copy" style="flex:1;padding:11px;border:none;background:#fee500;color:#3c1e1e;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">복사 + 카카오톡 열기</button>
+        <button id="consult-copy" style="flex:1;padding:11px;border:none;background:#fee500;color:#3c1e1e;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit">📋 복사하기</button>
       </div>
     </div>
   </div>
@@ -714,17 +714,16 @@ document.getElementById('consult-save').onclick=()=>{
 document.getElementById('consult-edit').onclick=()=>{editingIdx=openConsultIdx;renderConsultForm();};
 document.getElementById('consult-copy').onclick=()=>{
   const c=state.consults[openConsultIdx];
-  let txt='[상담 접수]\n상담일: '+(c.date||'')+'\n';
-  CFIELDS.forEach((f,i)=>{txt+=(i+1)+'. '+f.label+': '+(c[f.k]||'')+'\n';});
+  // 읽기 쉬운 형식(빈 항목은 생략)
+  const lines=['📋 상담 접수  ('+(c.date||'')+')',''];
+  CFIELDS.forEach(f=>{const v=(c[f.k]||'').trim();if(v)lines.push('· '+f.label+' : '+v);});
+  const txt=lines.join('\n');
   const btn=document.getElementById('consult-copy');
-  const openKakao=()=>{
-    const t=Date.now();window.location.href='kakaotalk://';
-    setTimeout(()=>{if(Date.now()-t<1600&&!document.hidden){if(confirm('카카오톡 PC앱이 열리지 않았습니다.\n설치 페이지를 열까요?'))window.open('https://www.kakaocorp.com/page/service/service/KakaoTalk','_blank');}},1500);
-  };
-  navigator.clipboard.writeText(txt).then(()=>{
-    btn.textContent='복사됨! 카톡 여는 중…';openKakao();
-    setTimeout(()=>{btn.textContent='복사 + 카카오톡 열기';alert('상담 내용이 복사되었습니다.\n\n카카오톡에서 대표님 채팅방을 연 뒤\n붙여넣기(Ctrl+V) 하면 됩니다.');},800);
-  }).catch(()=>{prompt('아래 내용을 전체 선택(Ctrl+A) 후 복사(Ctrl+C) 하세요:',txt);openKakao();});
+  const done=()=>{btn.textContent='복사됨 ✓';setTimeout(()=>{btn.textContent='📋 복사하기';},1500);};
+  const fallback=()=>{const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.focus();ta.select();try{document.execCommand('copy');done();}catch(e){prompt('아래 내용을 복사하세요(Ctrl+C):',txt);}ta.remove();};
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(txt).then(done).catch(fallback);
+  }else{fallback();}
 };
 
 // ─── overall ───
