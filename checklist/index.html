@@ -715,8 +715,9 @@ document.getElementById('consult-edit').onclick=()=>{editingIdx=openConsultIdx;r
 document.getElementById('consult-copy').onclick=()=>{
   const c=state.consults[openConsultIdx];
   // 읽기 쉬운 형식(빈 항목은 생략)
+  const fmtPhone=s=>{const d=s.replace(/\D/g,'');return d.length===11?d.replace(/(\d{3})(\d{4})(\d{4})/,'$1-$2-$3'):d.length===10?d.replace(/(\d{3})(\d{3})(\d{4})/,'$1-$2-$3'):s;};
   const lines=['📋 상담 접수  ('+(c.date||'')+')',''];
-  CFIELDS.forEach(f=>{const v=(c[f.k]||'').trim();if(v)lines.push('· '+f.label+' : '+v);});
+  CFIELDS.forEach(f=>{let v=(c[f.k]||'').trim();if(!v)return;if(f.k==='phone')v=fmtPhone(v);lines.push('· '+f.label+' : '+v);});
   const txt=lines.join('\n');
   const btn=document.getElementById('consult-copy');
   const done=()=>{btn.textContent='복사됨 ✓';setTimeout(()=>{btn.textContent='📋 복사하기';},1500);};
