@@ -2219,13 +2219,59 @@ async function feedOpen(name){
 function designGenPanel(){
   var el=document.getElementById('dz-genpanel');if(!el)return;
   if(el.innerHTML){el.innerHTML='';return;}
-  el.innerHTML='<div class="gen-form"><select class="inp" id="dz-style">'+DESIGN_STYLES.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select><select class="inp" id="dz-room">'+DESIGN_ROOMS.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select><select class="inp" id="dz-count"><option>2</option><option selected>4</option><option>6</option><option>8</option></select><button class="btn btn-g" onclick="designGenRun()">생성 실행</button></div><div id="dz-genstatus" class="gen-status"></div>';
+  el.innerHTML='<div class="gen-form">'
+    +'<select class="inp" id="dz-mode" onchange="dzModeToggle()"><option value="text">텍스트 생성</option><option value="target">참고 이미지 기반</option><option value="model">러프 모델 재질적용</option></select>'
+    +'<select class="inp" id="dz-style">'+DESIGN_STYLES.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select>'
+    +'<select class="inp" id="dz-room">'+DESIGN_ROOMS.map(function(s){return '<option>'+s+'</option>';}).join('')+'</select>'
+    +'<select class="inp" id="dz-count"><option>2</option><option selected>4</option><option>6</option><option>8</option></select>'
+    +'<button class="btn btn-g" onclick="designGenRun()">생성 실행</button></div>'
+    +'<div id="dz-imgrow" style="display:none;margin-top:8px"><input type="file" id="dz-file" accept="image/*" class="inp" style="padding:7px;width:100%;box-sizing:border-box"><div class="auto-hint" id="dz-imghint" style="margin-top:4px"></div></div>'
+    +'<div id="dz-genstatus" class="gen-status"></div>';
+}
+function dzModeToggle(){
+  var m=document.getElementById('dz-mode').value;
+  var row=document.getElementById('dz-imgrow');if(row)row.style.display=(m==='text')?'none':'block';
+  var h=document.getElementById('dz-imghint');if(h)h.textContent=(m==='model')?'러프 3D 모델 캡처(앵글 고정)를 올리면 같은 구조에 재질·디자인을 입힙니다':'목표로 삼을 참고 이미지를 올리면 그 구도·무드로 생성합니다';
+}
+// 업로드 이미지를 1600px 이하로 축소 후 레포(design/_input/)에 커밋 → 경로 반환
+function dzUploadRef(file){
+  return new Promise(function(resolve,reject){
+    var img=new Image(),url=URL.createObjectURL(file);
+    img.onload=async function(){
+      try{
+        var max=1600,w=img.width,h=img.height;
+        if(Math.max(w,h)>max){var s=max/Math.max(w,h);w=Math.round(w*s);h=Math.round(h*s);}
+        var cv=document.createElement('canvas');cv.width=w;cv.height=h;cv.getContext('2d').drawImage(img,0,0,w,h);
+        URL.revokeObjectURL(url);
+        var b64=cv.toDataURL('image/jpeg',0.9).split(',')[1];
+        var d=new Date(),p=function(n){return String(n).padStart(2,'0');};
+        var name=d.getFullYear()+p(d.getMonth()+1)+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())+p(d.getSeconds())+'.jpg';
+        var path='design/_input/'+name;
+        var r=await fetch('https://api.github.com/repos/'+GH_ORG+'/hadam-cardnews/contents/'+path,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify({message:'design ref upload '+name,content:b64,branch:'main'})});
+        if(!r.ok)throw new Error('이미지 업로드 HTTP '+r.status);
+        resolve(path);
+      }catch(e){reject(e);}
+    };
+    img.onerror=function(){URL.revokeObjectURL(url);reject(new Error('이미지 로드 실패'));};
+    img.src=url;
+  });
 }
 async function designGenRun(){
+  var mode=document.getElementById('dz-mode').value;
   var style=document.getElementById('dz-style').value,room=document.getElementById('dz-room').value,count=document.getElementById('dz-count').value;
   var st=document.getElementById('dz-genstatus');if(!st)return;st.style.color='';st.textContent='⏳ 생성 요청 중…';
-  try{await ghDispatch('hadam-cardnews','design-proposal.yml',{style:style,room:room,count:count});
-    st.innerHTML='✅ 생성 시작! '+ghEsc(style)+' / '+ghEsc(room)+' '+ghEsc(count)+'장 — 약 3~6분 후 자동으로 목록이 갱신됩니다. <span id="dz-gen-dots" style="color:var(--muted)"></span><br><a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue);font-size:12px">진행 상황 직접 보기 ›</a>';
+  try{
+    var inputs={style:style,room:room,count:count};
+    if(mode!=='text'){
+      var fi=document.getElementById('dz-file');
+      if(!fi||!fi.files||!fi.files[0]){st.style.color='var(--red)';st.textContent='먼저 이미지를 선택하세요';return;}
+      st.textContent='⏳ 이미지 업로드 중…';
+      inputs.ref_image=await dzUploadRef(fi.files[0]);
+      inputs.mode=mode;
+    }
+    await ghDispatch('hadam-cardnews','design-proposal.yml',inputs);
+    var label=(mode==='model'?'러프 모델 재질적용':mode==='target'?'참고 이미지 기반':ghEsc(style)+' / '+ghEsc(room));
+    st.innerHTML='✅ 생성 시작! '+label+' '+ghEsc(count)+'장 — 약 3~6분 후 자동으로 목록이 갱신됩니다. <span id="dz-gen-dots" style="color:var(--muted)"></span><br><a href="https://github.com/'+GH_ORG+'/hadam-cardnews/actions" target="_blank" style="color:var(--blue);font-size:12px">진행 상황 직접 보기 ›</a>';
     designPollAndRefresh();
   }catch(e){st.style.color='var(--red)';st.textContent='실패: '+((e&&e.message)||e);}
 }
