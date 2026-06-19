@@ -2183,7 +2183,7 @@ async function renderDesignView(){
   v.innerHTML=ghLoading();
   try{
     var feeds=[];try{feeds=(await ghContents('hadam-cardnews','feed')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
-    var sets=[];try{sets=(await ghContents('hadam-cardnews','design')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
+    var sets=[];try{sets=(await ghContents('hadam-cardnews','design')).filter(x=>x.type==='dir'&&x.name!=='_input').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
     var nps=[];try{nps=(await ghContents('hadam-cardnews','naverplace')).filter(x=>x.type==='dir').sort((a,b)=>b.name.localeCompare(a.name));}catch(e){}
     let html='<div class="auto-bar"><button class="btn btn-g" onclick="feedGenRun()">⚡ 오늘 피드 생성</button><span class="auto-hint">매일 09시 자동 · 게시는 수동</span></div>';
     html+='<div class="sec-label" style="margin-top:4px">📸 매일 인스타 피드</div>';
