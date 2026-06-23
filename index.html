@@ -1252,9 +1252,33 @@ function openModal(id,_fromHistory){
 }
 function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));try{if(history.state&&history.state.hadamModal)history.back();}catch(e){}}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id)}));
+
+// 뒤로가기 가드 — ① 모달 열려있으면 닫고만 끝(앱 유지, 스크롤 보존) ② 모달 없을 땐 더블탭으로 종료
+(function(){try{history.pushState({hadamGuard:true},'',location.href);}catch(e){}})();
+var _hadamLastBack=0;
+function _hadamBackToast(msg){
+  var t=document.getElementById('hadam-back-toast');
+  if(!t){t=document.createElement('div');t.id='hadam-back-toast';t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(25,31,40,.92);color:#fff;padding:12px 22px;border-radius:24px;font-size:14px;z-index:99999;pointer-events:none;opacity:0;transition:opacity .25s';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';clearTimeout(t._timer);t._timer=setTimeout(function(){t.style.opacity='0';},1800);
+}
 window.addEventListener('popstate',function(ev){
   var open=document.querySelectorAll('.overlay.open');
-  if(open.length){open.forEach(function(o){o.classList.remove('open');if(o.id==='graph-modal'){try{stopGraph();}catch(e){}}});setSbActive(document.getElementById('sb-home'));document.getElementById('app-content').scrollTo({top:0});}
+  if(open.length){
+    open.forEach(function(o){o.classList.remove('open');if(o.id==='graph-modal'){try{stopGraph();}catch(e){}}});
+    setSbActive(document.getElementById('sb-home'));
+    // 스크롤 위치 보존(예전엔 scrollTo top 강제 → 보던 위치 잃음)
+    return;
+  }
+  // 모달 없음 — 더블 백 종료 패턴
+  var now=Date.now();
+  if(now-_hadamLastBack<2000){
+    try{setTimeout(function(){history.back();},0);}catch(e){}
+    return;
+  }
+  _hadamLastBack=now;
+  _hadamBackToast('한 번 더 누르면 앱이 종료됩니다');
+  // 뒤로가기 흡수용 가드 재푸시
+  try{history.pushState({hadamGuard:true},'',location.href);}catch(e){}
 });
 
 function setSyncStatus(s){const dot=document.getElementById('sync-dot'),label=document.getElementById('sync-label');dot.className='sync-dot '+s;label.textContent=s==='ok'?'연결됨':s==='syncing'?'업로드 중...':s==='err'?'오류':'설정';}
