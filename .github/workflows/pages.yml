@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main, claude/happy-cannon-q1OyL]
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          ref: claude/happy-cannon-q1OyL
+          ref: main
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
