@@ -775,6 +775,21 @@ let voice = 'manager';
 let mainKws = [], relKws = [], currentPost = null, hlOn = false;
 let saved = JSON.parse(localStorage.getItem('hd_blog_v3') || '[]');
 
+// 최근 사용한 Pexels 사진 ID (여러 글에 걸쳐 같은 사진이 반복 삽입되는 것 방지)
+const USED_PHOTOS_KEY = 'hd_blog_used_photos';
+const USED_PHOTOS_MAX = 400; // 이 개수를 넘으면 오래된 것부터 잊어버림(완전 고갈 방지)
+function getUsedPhotoIds() {
+  try { return JSON.parse(localStorage.getItem(USED_PHOTOS_KEY) || '[]'); }
+  catch { return []; }
+}
+function markPhotoUsed(id) {
+  const list = getUsedPhotoIds();
+  if (list.includes(id)) return;
+  list.push(id);
+  while (list.length > USED_PHOTOS_MAX) list.shift();
+  localStorage.setItem(USED_PHOTOS_KEY, JSON.stringify(list));
+}
+
 // ── PROMPTS ──
 const CUSTOMER_PROMPT = `당신은 부산 인테리어 업체 "디자인하담"에서 시공을 마친 매우 만족한 고객입니다.
 
@@ -1273,6 +1288,14 @@ function toEngKeyword(query) {
   return eng || 'interior design';
 }
 
+// 검색 결과 중 아직 다른 글에 안 쓴 사진을 우선으로 랜덤 선택. 전부 이미 썼으면 그냥 랜덤.
+function pickUnusedPhoto(photos) {
+  const used = new Set(getUsedPhotoIds());
+  const fresh = photos.filter(p => !used.has(p.id));
+  const pool = fresh.length ? fresh : photos;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 async function loadSectionImage(placeholderId, query) {
   const el = document.getElementById(placeholderId);
   if (!el) return;
@@ -1282,9 +1305,11 @@ async function loadSectionImage(placeholderId, query) {
     return;
   }
   const engQ = encodeURIComponent(toEngKeyword(query));
+  // 매번 같은 5장만 훑던 것을 개선: 후보 풀을 넓히고(20장) 페이지도 섞어서 검색
+  const page = 1 + Math.floor(Math.random() * 3); // 1~3페이지 중 랜덤
   try {
     const res = await fetch(
-      `https://api.pexels.com/v1/search?query=${engQ}&per_page=5&orientation=landscape`,
+      `https://api.pexels.com/v1/search?query=${engQ}&per_page=20&page=${page}&orientation=landscape`,
       { headers: { 'Authorization': key } }
     );
     if (!res.ok) { el.innerHTML=`<div class="img-error">🔑 Pexels API Key를 확인해주세요 (${res.status})</div>`; return; }
@@ -1292,9 +1317,8 @@ async function loadSectionImage(placeholderId, query) {
     const photos = data.photos || [];
 
     if (photos.length > 0) {
-      let hash = 0;
-      for (const ch of query) hash = (hash*31+ch.charCodeAt(0))&0xffff;
-      const photo = photos[hash % photos.length];
+      const photo = pickUnusedPhoto(photos);
+      markPhotoUsed(photo.id);
       el.innerHTML = `
         <div class="img-wrap">
           <img src="${photo.src.large}" alt="${query}" loading="lazy"
@@ -1303,14 +1327,15 @@ async function loadSectionImage(placeholderId, query) {
           <div class="img-caption">📸 ${query} · Photo by ${photo.photographer} on Pexels</div>
         </div>`;
     } else {
-      // 폴백: interior design 검색
+      // 폴백: interior design 검색 (역시 후보 풀을 넓혀서 중복 최소화)
       const res2 = await fetch(
-        `https://api.pexels.com/v1/search?query=interior+design&per_page=5&orientation=landscape`,
+        `https://api.pexels.com/v1/search?query=interior+design&per_page=20&page=${page}&orientation=landscape`,
         { headers: { 'Authorization': key } }
       );
       const data2 = await res2.json();
       if (data2.photos?.length) {
-        const photo = data2.photos[0];
+        const photo = pickUnusedPhoto(data2.photos);
+        markPhotoUsed(photo.id);
         el.innerHTML = `
           <div class="img-wrap">
             <img src="${photo.src.large}" alt="${query}" loading="lazy"
