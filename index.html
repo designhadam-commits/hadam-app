@@ -2544,6 +2544,12 @@ async function buildAssistantContext(q){
   var cal=G('cal-events');if(cal.length){parts.push('## 일정 캘린더\n'+cal.slice().sort(function(a,b){return (a.date||'').localeCompare(b.date||'');}).map(function(e){return '- '+e.date+': '+e.title;}).join('\n'));sources.push('일정 캘린더');}
   var ord=G('ord');if(ord.length){parts.push('## 발주\n'+ord.map(function(o){return '- '+(o.item||'')+' '+(o.qty||'')+' ['+(o.status||'')+']'+(o.vendor?' / '+o.vendor:'');}).join('\n'));sources.push('발주');}
   var jnl=G('jnl');if(jnl.length){parts.push('## 업무일지 간단메모\n'+jnl.slice(0,50).map(function(j){return '- '+(j.date||'')+' '+(j.member||'')+': '+(j.text||'');}).join('\n'));sources.push('업무일지 메모');}
+  // hadam-cloud의 _system/hot.md — 업무일지 자동분석(agent.py)이 정리해둔 직원별 긴급/당일 할일 요약.
+  // 날짜를 안 물어봐도 항상 포함해야 "오늘 할일" 같은 질문에 답할 수 있음.
+  try{
+    var hot=await ghText('hadam-cloud','_system/hot.md');
+    if(hot&&hot.trim()){parts.push('## 직원별 할일 요약(hot.md — 업무일지 자동분석 결과)\n'+hot);sources.push('할일 요약(hot.md)');}
+  }catch(e){}
   var dates=asstExtractDates(q);
   for(var i=0;i<dates.length;i++){
     var dt=dates[i];
