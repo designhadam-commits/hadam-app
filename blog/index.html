@@ -1296,6 +1296,16 @@ function pickUnusedPhoto(photos) {
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
+// Pexels 검색 1회 호출 (color 필터 유무 선택)
+async function pexelsSearch(key, query, page, color) {
+  const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=20&page=${page}&orientation=landscape`
+    + (color ? `&color=${color}` : '');
+  const res = await fetch(url, { headers: { 'Authorization': key } });
+  if (!res.ok) return { ok: false, status: res.status, photos: [] };
+  const data = await res.json();
+  return { ok: true, photos: data.photos || [] };
+}
+
 async function loadSectionImage(placeholderId, query) {
   const el = document.getElementById(placeholderId);
   if (!el) return;
@@ -1304,17 +1314,30 @@ async function loadSectionImage(placeholderId, query) {
     el.innerHTML = `<div class="img-error">🔑 Pexels API Key를 입력해주세요</div>`;
     return;
   }
-  const engQ = encodeURIComponent(toEngKeyword(query));
+  const engQ = toEngKeyword(query);
   // 매번 같은 5장만 훑던 것을 개선: 후보 풀을 넓히고(20장) 페이지도 섞어서 검색
   const page = 1 + Math.floor(Math.random() * 3); // 1~3페이지 중 랜덤
+
+  // 디자인하담 브랜드 톤(화이트·크림톤) 우선 → 결과 없으면 단계적으로 넓힘
+  const attempts = [
+    { q: engQ, color: 'white' },            // 1) 섹션 주제 + 화이트톤 우선
+    { q: engQ, color: null },               // 2) 화이트톤 결과가 없으면 주제만
+    { q: 'interior design', color: 'white' },// 3) 주제 자체가 없으면 화이트톤 인테리어
+    { q: 'interior design', color: null },  // 4) 최종 폴백
+  ];
+
   try {
-    const res = await fetch(
-      `https://api.pexels.com/v1/search?query=${engQ}&per_page=20&page=${page}&orientation=landscape`,
-      { headers: { 'Authorization': key } }
-    );
-    if (!res.ok) { el.innerHTML=`<div class="img-error">🔑 Pexels API Key를 확인해주세요 (${res.status})</div>`; return; }
-    const data = await res.json();
-    const photos = data.photos || [];
+    let photos = [], failedAuth = null;
+    for (const a of attempts) {
+      const r = await pexelsSearch(key, a.q, page, a.color);
+      if (!r.ok) { failedAuth = r.status; break; }
+      if (r.photos.length > 0) { photos = r.photos; break; }
+    }
+
+    if (failedAuth) {
+      el.innerHTML = `<div class="img-error">🔑 Pexels API Key를 확인해주세요 (${failedAuth})</div>`;
+      return;
+    }
 
     if (photos.length > 0) {
       const photo = pickUnusedPhoto(photos);
@@ -1327,24 +1350,7 @@ async function loadSectionImage(placeholderId, query) {
           <div class="img-caption">📸 ${query} · Photo by ${photo.photographer} on Pexels</div>
         </div>`;
     } else {
-      // 폴백: interior design 검색 (역시 후보 풀을 넓혀서 중복 최소화)
-      const res2 = await fetch(
-        `https://api.pexels.com/v1/search?query=interior+design&per_page=20&page=${page}&orientation=landscape`,
-        { headers: { 'Authorization': key } }
-      );
-      const data2 = await res2.json();
-      if (data2.photos?.length) {
-        const photo = pickUnusedPhoto(data2.photos);
-        markPhotoUsed(photo.id);
-        el.innerHTML = `
-          <div class="img-wrap">
-            <img src="${photo.src.large}" alt="${query}" loading="lazy"
-              onload="this.closest('.img-placeholder').classList.add('loaded')">
-            <div class="img-caption">📸 ${query} · Photo by ${photo.photographer} on Pexels</div>
-          </div>`;
-      } else {
-        el.innerHTML = `<div class="img-error">📷 관련 이미지를 찾을 수 없어요</div>`;
-      }
+      el.innerHTML = `<div class="img-error">📷 관련 이미지를 찾을 수 없어요</div>`;
     }
   } catch(e) {
     el.innerHTML = `<div class="img-error">📷 이미지 로딩 실패<br><small>${e.message}</small></div>`;
