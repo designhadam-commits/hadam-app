@@ -1311,6 +1311,13 @@ function saveGhPat(){
     if(st){st.textContent='❌ 저장 실패 — 브라우저 저장공간이 가득 찼을 수 있어요. 설정 > 개인정보 보호에서 이 사이트 캐시 삭제 후 다시 시도해주세요. ('+((e&&e.message)||e)+')';st.style.color='var(--red)';}
     return;
   }
+  // 🔑 시크릿 키(클라우드 공유 secrets 문서)도 같이 갱신.
+  // 안 하면 startSecrets()의 onSnapshot 리스너가 새로고침할 때마다
+  // 예전 클라우드 값으로 방금 저장한 토큰을 도로 덮어써버림(오늘 겪은 증상의 원인).
+  try{
+    SECRETS=Object.assign({},SECRETS,gatherLocalSecrets());
+    if(typeof db!=='undefined'&&db)db.collection('appdata').doc('secrets').set({payload:SECRETS,updated:Date.now()}).catch(function(e){console.warn('secrets sync 실패',e);});
+  }catch(e){console.warn('secrets sync 실패',e);}
   setSyncStatus('ok');
   closeModal('settings-modal');
 }
