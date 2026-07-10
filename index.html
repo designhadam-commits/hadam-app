@@ -1251,7 +1251,20 @@ function openModal(id,_fromHistory){
   // 뒤로가기(브라우저·휴대폰) 지원: 모달 열기를 히스토리에 기록
   if(!_fromHistory){try{if(_wasOpen&&history.state&&history.state.hadamModal)history.replaceState({hadamModal:id},'','#'+id);else history.pushState({hadamModal:id},'','#'+id);}catch(e){}}
 }
-function closeModal(id){document.getElementById(id).classList.remove('open');if(id==='graph-modal')stopGraph();setSbActive(document.getElementById('sb-home'));try{if(history.state&&history.state.hadamModal)history.back();}catch(e){}}
+var _hadamProgrammaticClose=false;
+function closeModal(id){
+  document.getElementById(id).classList.remove('open');
+  if(id==='graph-modal')stopGraph();
+  setSbActive(document.getElementById('sb-home'));
+  try{
+    if(history.state&&history.state.hadamModal){
+      // 이미 위에서 .open을 지웠으니, 뒤이어 발생할 popstate가 "모달 없음"으로 오판해
+      // 종료 확인 토스트를 잘못 띄우지 않도록 표시해둔다(뒤로가기 가드 참고).
+      _hadamProgrammaticClose=true;
+      history.back();
+    }
+  }catch(e){_hadamProgrammaticClose=false;}
+}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)closeModal(el.id)}));
 
 // 뒤로가기 가드 — ① 모달 열려있으면 닫고만 끝(앱 유지, 스크롤 보존) ② 모달 없을 땐 더블탭으로 종료
@@ -1263,6 +1276,7 @@ function _hadamBackToast(msg){
   t.textContent=msg;t.style.opacity='1';clearTimeout(t._timer);t._timer=setTimeout(function(){t.style.opacity='0';},1800);
 }
 window.addEventListener('popstate',function(ev){
+  if(_hadamProgrammaticClose){_hadamProgrammaticClose=false;return;} // closeModal()이 유발한 뒤로가기 — 이미 처리 끝났으니 무시
   var open=document.querySelectorAll('.overlay.open');
   if(open.length){
     open.forEach(function(o){o.classList.remove('open');if(o.id==='graph-modal'){try{stopGraph();}catch(e){}}});
