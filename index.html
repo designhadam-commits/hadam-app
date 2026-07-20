@@ -1452,11 +1452,22 @@ async function delInv(id){await S('inv',G('inv').filter(x=>x.id!==id));renderInv
 function renderInv(){const a=G('inv'),el=document.getElementById('inv-list');if(!a.length){el.innerHTML='<div class="empty"><div class="ei">🗂️</div>재고 항목이 없습니다</div>';return;}el.innerHTML='<div class="list-wrap">'+a.map(x=>`<div class="list-item"><span style="font-size:10px;background:var(--tag);border-radius:4px;padding:2px 6px;color:var(--muted)">${x.cat}</span><span class="item-txt">${x.name}</span><span style="font-size:11.5px;color:var(--muted)">${x.qty}개</span><button class="del" onclick="delInv(${x.id})">×</button></div>`).join('')+'</div>';}
 function statInv(){document.getElementById('fc-inv').innerHTML=`전체 <span class="cnt">${G('inv').length}건</span>`;}
 
-let calY,calM,calSelectedDate=null,calPastOpen=false,calSiteFilter=null;
+let calY,calM,calSelectedDate=null,calPastOpen=false,calSiteFilter=null,calAddMode='event';
 function calFilterSite(enc){calSiteFilter=enc?decodeURIComponent(enc):null;calPastOpen=false;renderCal();}
 function toggleCalPast(){calPastOpen=!calPastOpen;renderCal();}
-function calSelectDate(date){calSelectedDate=calSelectedDate===date?null:date;renderCal();}
+function calSelectDate(date){calSelectedDate=calSelectedDate===date?null:date;calAddMode='event';renderCal();}
+function calSetAddMode(m){calAddMode=m;renderCal();}
 async function saveCalEv(){const title=document.getElementById('cal-ev-inp')?.value.trim();if(!title||!calSelectedDate)return;const a=G('cal-events');a.push({id:Date.now(),date:calSelectedDate,title});await S('cal-events',a);calSelectedDate=null;renderCal();}
+async function saveCalProc(){
+  const site=document.getElementById('cal-proc-site')?.value.trim();
+  const stage=document.getElementById('cal-proc-stage')?.value.trim();
+  const mgr=document.getElementById('cal-proc-mgr')?.value.trim()||'';
+  const start=document.getElementById('cal-proc-start')?.value||calSelectedDate;
+  const end=document.getElementById('cal-proc-end')?.value||start;
+  if(!site||!stage){alert('현장명과 공정을 입력하세요');return;}
+  const a=G('process').slice();a.push({id:Date.now(),site:site,stage:stage,manager:mgr,date:start,end:end});
+  await S('process',a);calSelectedDate=null;calAddMode='event';renderCal();try{renderProc();statCon();}catch(e){}
+}
 const SITE_PALETTE=['#3182f6','#15c47e','#ff9f43','#a855f7','#f04452','#06b6d4','#eab308','#ec4899'];
 function siteColor(s){var ov=(G('sitecolors')||[]).find(function(x){return x.site===s;});if(ov&&ov.color)return ov.color;let h=0;for(let i=0;i<(s||'').length;i++)h=(h*31+s.charCodeAt(i))>>>0;return SITE_PALETTE[h%SITE_PALETTE.length];}
 async function setSiteColor(enc,color){var s=decodeURIComponent(enc);var arr=(G('sitecolors')||[]).slice();var i=arr.findIndex(function(x){return x.site===s;});if(i>-1)arr[i].color=color;else arr.push({site:s,color:color});await S('sitecolors',arr);try{renderProc();}catch(e){}try{var cm=document.getElementById('cal-modal');if(cm&&cm.classList.contains('open'))renderCal();}catch(e){}}
@@ -1492,7 +1503,21 @@ function renderCal(){
     if(lanes.length>MAXLANE){const extra={};for(let L=MAXLANE;L<lanes.length;L++)lanes[L].forEach(s=>{for(let c=s.sc;c<=s.ec;c++)extra[c]=(extra[c]||0)+1;});html+='<div class="cal-grid cal-lane">'+week.map((c,ci)=>extra[ci]?`<span class="cal-more" style="grid-column:${ci+1}/${ci+2}">+${extra[ci]}</span>`:'').join('')+'</div>';}
     html+='</div>';
   });
-  if(calSelectedDate)html+=`<div class="cal-add-form"><div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div></div>`;
+  if(calSelectedDate){
+    const siteSet=new Set(G('sites').map(s=>s.name).filter(Boolean));proc.forEach(function(p){if(p.site)siteSet.add(p.site);});
+    const siteOpts=[...siteSet];
+    html+=`<div class="cal-add-form">`
+      +`<div class="cal-sitefilter" style="margin-bottom:10px"><span class="cal-chip${calAddMode==='event'?' on':''}" onclick="calSetAddMode('event')">📝 일정</span><span class="cal-chip${calAddMode==='proc'?' on':''}" onclick="calSetAddMode('proc')">🏗️ 현장 공정</span></div>`;
+    if(calAddMode==='proc'){
+      html+=`<div class="row" style="margin-bottom:6px;flex-wrap:wrap;gap:6px"><input class="inp" id="cal-proc-site" list="cal-proc-sites" placeholder="현장명" autofocus style="min-width:110px;flex:1"><input class="inp" id="cal-proc-stage" list="cal-proc-stages" placeholder="공정 (예: 타일공사)" style="min-width:110px;flex:1"><input class="inp" id="cal-proc-mgr" placeholder="담당자" style="max-width:90px"></div>`
+        +`<div class="row" style="margin-bottom:0;gap:6px"><input class="inp" id="cal-proc-start" type="date" value="${calSelectedDate}" title="시작일" style="max-width:150px"><span style="color:var(--muted);align-self:center">~</span><input class="inp" id="cal-proc-end" type="date" value="${calSelectedDate}" title="종료일" style="max-width:150px"><button class="btn btn-g" onclick="saveCalProc()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div>`
+        +`<datalist id="cal-proc-sites">${siteOpts.map(function(s){return '<option value="'+ghEsc(s)+'">';}).join('')}</datalist>`
+        +`<datalist id="cal-proc-stages">${PROC_STAGES.map(function(s){return '<option value="'+s+'">';}).join('')}</datalist>`;
+    } else {
+      html+=`<div class="row" style="margin-bottom:0"><input class="inp" id="cal-ev-inp" placeholder="${calSelectedDate} 일정 제목" autofocus onkeydown="if(event.key==='Enter')saveCalEv()"><button class="btn btn-g" onclick="saveCalEv()">추가</button><button class="btn" onclick="calSelectedDate=null;renderCal()">✕</button></div>`;
+    }
+    html+='</div>';
+  }
   const allEv=manual.map(e=>({date:e.date,title:e.title,id:e.id,_proc:false,site:null})).concat(proc.map(p=>({date:p.date,title:p.site+'·'+p.stage+(p.manager?' ('+p.manager+')':''),_proc:true,site:p.site})));
   const thisEvs=allEv.filter(e=>e.date.startsWith(ym)&&(!calSiteFilter||e.site===calSiteFilter)).sort((a,b)=>a.date.localeCompare(b.date));
   const itemHtml=e=>`<div class="list-item"><span style="font-size:11px;color:var(--muted);min-width:62px">${e.date.slice(5)}</span><span class="item-txt">${e._proc?'🏗️ ':''}${e.title}</span>${e._proc?'<span style="font-size:10px;color:var(--blue);flex-shrink:0">공정</span>':`<button class="del" onclick="delCalEv(${e.id})">×</button>`}</div>`;
