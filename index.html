@@ -401,6 +401,73 @@
       .row{flex-wrap:wrap}
       .header-date .dm{font-size:14px}
     }
+
+    /* ── 마감재 관리 ── */
+    .mm-cat{margin-bottom:10px;background:var(--card);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);overflow:hidden}
+    .mm-cat-hd{display:flex;align-items:center;gap:8px;padding:12px 14px;cursor:pointer;user-select:none}
+    .mm-cat-hd .ico{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;font-size:14px;background:var(--blue-dim)}
+    .mm-cat-hd .nm{font-weight:700;font-size:14px}
+    .mm-cat-hd .cnt{font-size:11px;color:#fff;background:var(--blue);border-radius:20px;padding:1px 8px;font-weight:700;min-width:20px;text-align:center}
+    .mm-cat-hd .cnt.zero{background:#cfd4da}
+    .mm-cat-hd .chev{margin-left:auto;color:var(--dim);transition:.2s}
+    .mm-cat.collapsed .mm-cat-bd{display:none}
+    .mm-cat.collapsed .chev{transform:rotate(-90deg)}
+    .mm-cat-bd{padding:0 14px 14px}
+    .mm-item{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid var(--border);border-radius:9px;margin-bottom:8px;background:var(--card-hover)}
+    .mm-item img,.mm-item .noimg{width:44px;height:44px;border-radius:8px;object-fit:cover;flex-shrink:0;background:#e9ebee}
+    .mm-item .noimg{display:grid;place-items:center;color:var(--dim);font-size:17px}
+    .mm-item .meta{flex:1;min-width:0}
+    .mm-item .meta .t{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mm-item .meta .s{font-size:11px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mm-item .badge-new{font-size:10px;color:var(--blue);background:var(--blue-dim);border-radius:6px;padding:1px 6px;flex-shrink:0}
+    .mm-item .del{color:var(--dim);font-size:18px;padding:4px 6px;border-radius:6px;background:none;border:none;cursor:pointer}
+    .mm-item .del:hover{color:var(--red);background:#fde9eb}
+    .mm-add-btn{width:100%;border:1.5px dashed var(--border);border-radius:9px;padding:9px;color:var(--blue);font-weight:600;font-size:13px;background:none;cursor:pointer}
+    .mm-add-btn:hover{border-color:var(--blue);background:var(--blue-dim)}
+
+    .mm-thumb-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px;margin-bottom:12px}
+    .mm-thumb-row img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex-shrink:0;cursor:pointer;border:2px solid transparent;opacity:.7}
+    .mm-thumb-row img:hover{opacity:1}
+    .mm-thumb-row img.active{border-color:var(--blue);opacity:1}
+    .mm-stage{position:relative;display:inline-block;max-width:100%;border-radius:10px;overflow:hidden;cursor:crosshair}
+    .mm-stage img{max-width:100%;max-height:480px;display:block}
+    .mm-pin{position:absolute;width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;
+      border:2px solid #fff;transform:translate(-50%,-50%);display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.35);cursor:pointer}
+    .mm-pin-list{display:flex;flex-direction:column;gap:6px;margin-top:10px}
+    .mm-pin-item{display:flex;align-items:center;gap:10px;padding:6px 8px;border:1px solid var(--border);border-radius:8px;background:var(--card-hover)}
+    .mm-pin-item img{width:32px;height:32px;border-radius:6px;object-fit:cover}
+    .mm-pin-item .t{flex:1;font-size:12.5px;font-weight:600}
+    .mm-pin-item .del{color:var(--dim);font-size:16px;padding:2px 6px;background:none;border:none;cursor:pointer}
+    .mm-pin-item .del:hover{color:var(--red)}
+
+    /* 마감재 관리 안의 작은 팝업(추가 피커/마커 연결) — 페이지형 .overlay와 별개 */
+    .mm-popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:300;display:none;align-items:center;justify-content:center;padding:20px}
+    .mm-popup-overlay.show{display:flex}
+    .mm-popup{background:var(--card);border-radius:16px;width:min(720px,100%);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:var(--shadow-h)}
+    .mm-popup-hd{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px}
+    .mm-popup-hd .close-btn{margin-left:auto}
+    .mm-tabs{display:flex;gap:6px;padding:12px 20px 0}
+    .mm-tab{padding:8px 14px;border-radius:10px;font-weight:700;font-size:13px;color:var(--muted);background:var(--card-hover);border:none;cursor:pointer}
+    .mm-tab.active{background:var(--text);color:#fff}
+    .mm-popup-bd{padding:14px 20px 20px;overflow-y:auto}
+    .mm-lib-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px}
+    .mm-lib-card{border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:.12s;background:var(--card)}
+    .mm-lib-card:hover{border-color:var(--blue);box-shadow:var(--shadow-h);transform:translateY(-2px)}
+    .mm-lib-card img{width:100%;aspect-ratio:1/1;object-fit:cover;background:#f1f5f9}
+    .mm-lib-card .lc{padding:7px 8px}
+    .mm-lib-card .lc .ln{font-size:12px;font-weight:600;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .mm-lib-card .lc .lm{font-size:10.5px;color:var(--blue);font-weight:600}
+    .mm-lib-empty{text-align:center;color:var(--dim);padding:40px 0}
+    .mm-lib-more{text-align:center;color:var(--dim);font-size:12px;padding:14px}
+    .mm-upload-drop{border:1.5px dashed var(--border);border-radius:12px;padding:22px;text-align:center;color:var(--dim);cursor:pointer;margin-bottom:12px}
+    .mm-upload-drop:hover{border-color:var(--blue);color:var(--blue)}
+    .mm-upload-drop img{max-width:140px;max-height:140px;margin:0 auto;border-radius:8px}
+    .mm-pick-row{display:flex;align-items:center;gap:10px;padding:9px 8px;border:1px solid var(--border);border-radius:10px;margin-bottom:8px;cursor:pointer}
+    .mm-pick-row:hover{border-color:var(--blue);background:var(--blue-dim)}
+    .mm-pick-row img,.mm-pick-row .noimg{width:36px;height:36px;border-radius:8px;object-fit:cover;background:#e9ebee;flex-shrink:0}
+    .mm-pick-row .t{font-size:13px;font-weight:600}
+    .mm-pick-row .s{font-size:11px;color:var(--dim)}
   </style>
 </head>
 <body>
@@ -490,6 +557,9 @@
     <div class="sb-section-label">콘텐츠</div>
     <div class="sb-item" onclick="openModal('ins-modal');setSbActive(this)">
       <div class="sb-ic">📸</div><span class="sb-lbl">인스타그램</span>
+    </div>
+    <div class="sb-item" onclick="openModal('mm-modal');setSbActive(this)">
+      <div class="sb-ic">🎨</div><span class="sb-lbl">마감재 관리</span>
     </div>
     <div class="sb-item" onclick="openModal('thread-modal');setSbActive(this)">
       <div class="sb-ic">🧵</div><span class="sb-lbl">쓰레드</span>
@@ -610,6 +680,13 @@
         <div class="feat-desc">카드뉴스 생성·포스팅 일정을 관리합니다.</div>
         <div class="tags"><span class="tag">SNS</span><span class="tag">스케줄</span></div>
         <div class="feat-status" id="fc-ins">—</div>
+      </div>
+      <div class="feat-card" onclick="openModal('mm-modal')">
+        <div class="feat-top"><div class="feat-icon">🎨</div><div class="arr-btn">↗</div></div>
+        <div class="feat-title">마감재 관리</div>
+        <div class="feat-desc">홈페이지 포트폴리오 시공사례별 마감재를 등록하고 사진에 위치를 표시합니다.</div>
+        <div class="tags"><span class="tag">포트폴리오</span><span class="tag">홈페이지</span></div>
+        <div class="feat-status" id="fc-mm">—</div>
       </div>
       <div class="feat-card" onclick="openModal('ord-modal')">
         <div class="feat-top"><div class="feat-icon">📦</div><div class="arr-btn">↗</div></div>
@@ -775,6 +852,65 @@
       <div class="divider"></div>
       <div id="ins-list"></div>
     </div>
+  </div>
+</div>
+
+<div class="overlay" id="mm-modal">
+  <div class="modal wide">
+    <div class="modal-hd"><h2>🎨 마감재 관리</h2><button class="close-btn" onclick="closeModal('mm-modal')">✕</button></div>
+    <div class="modal-bd">
+      <div class="sec-label" style="margin-top:0">대상 프로젝트 (홈페이지 포트폴리오)</div>
+      <select class="inp" id="mm-proj" style="width:100%;margin-bottom:14px"><option>불러오는 중…</option></select>
+      <div id="mm-cats"></div>
+      <div class="divider"></div>
+      <div class="sec-label">🖼️ 이미지에 마감재 표시 (선택, 사진당 최대 5개)</div>
+      <p style="font-size:12px;color:var(--dim);margin:0 0 10px;line-height:1.6">사진을 클릭해서 고른 다음, 마감재가 있는 위치를 클릭하면 핀이 찍힙니다. 먼저 위에서 마감재를 추가해둬야 지정할 수 있어요.</p>
+      <div class="mm-thumb-row" id="mm-thumbs"></div>
+      <div class="mm-stage" id="mm-stage" style="display:none">
+        <img id="mm-stage-img">
+        <div id="mm-pins"></div>
+      </div>
+      <div class="mm-pin-list" id="mm-pin-list"></div>
+      <div class="divider"></div>
+      <button class="btn btn-g" id="mm-save-btn" style="width:100%;height:46px" onclick="mmSave()">💾 이 프로젝트에 마감재 저장</button>
+      <div id="mm-status" style="font-size:12px;margin-top:8px;min-height:16px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 자재 추가 피커 -->
+<div class="mm-popup-overlay" id="mm-picker-overlay">
+  <div class="mm-popup">
+    <div class="mm-popup-hd"><span id="mm-picker-title">자재 추가</span><button class="close-btn" onclick="mmClosePicker()">✕</button></div>
+    <div class="mm-tabs">
+      <button class="mm-tab active" data-tab="lib" onclick="mmSetTab('lib')">📚 라이브러리에서 찾기</button>
+      <button class="mm-tab" data-tab="manual" onclick="mmSetTab('manual')">✏️ 직접 입력</button>
+    </div>
+    <div class="mm-popup-bd">
+      <div id="mm-tab-lib">
+        <input class="inp" id="mm-lib-search" placeholder="제품명·제조사·코드 검색" style="width:100%;margin-bottom:10px">
+        <div class="mm-lib-grid" id="mm-lib-grid"></div>
+        <div class="mm-lib-more" id="mm-lib-more"></div>
+      </div>
+      <div id="mm-tab-manual" style="display:none">
+        <div class="mm-upload-drop" id="mm-dropzone">
+          <div id="mm-drop-text">📁 이미지 클릭 또는 드래그해서 업로드</div>
+          <input type="file" id="mm-file-input" accept="image/*" hidden>
+        </div>
+        <div class="row"><input class="inp" id="mm-m-name" placeholder="제품명 *"></div>
+        <div class="row"><input class="inp" id="mm-m-maker" placeholder="제조사/브랜드"><input class="inp" id="mm-m-code" placeholder="모델/코드"></div>
+        <div class="row"><input class="inp" id="mm-m-spec" placeholder="규격/스펙"></div>
+        <button class="btn btn-g" style="width:100%" onclick="mmAddManual()">추가</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 마커에 연결할 마감재 선택 -->
+<div class="mm-popup-overlay" id="mm-matpick-overlay">
+  <div class="mm-popup" style="width:min(420px,92vw)">
+    <div class="mm-popup-hd"><span>이 위치에 표시할 마감재</span><button class="close-btn" onclick="mmCloseMatPicker()">✕</button></div>
+    <div class="mm-popup-bd" id="mm-matpick-list"></div>
   </div>
 </div>
 
@@ -1232,6 +1368,7 @@ function openModal(id,_fromHistory){
   }
   if(id==='jnl-modal'){renderJnlMemberChips();renderJnl();loadJnlFull();var _td=document.getElementById('jnl-target-date');if(_td&&!_td.value)_td.value=td();renderJnlUploaded();}
   if(id==='ins-modal'){renderCardnewsView();renderIns();renderInsGrid();}
+  if(id==='mm-modal')mmOpen();
   if(id==='ord-modal')renderOrd();
   if(id==='cal-modal')renderCal();
   if(id==='con-modal')renderCon();
@@ -2822,6 +2959,357 @@ function initDashDnD(){
       saveDashOrder();
     });
   });
+}
+
+// ══════════════ 마감재 관리 (hadam-homepage 포트폴리오 연동) ══════════════
+const MM_REPO='hadam-homepage';
+const MM_CATS_DEF=[
+  {key:'도기',ico:'🚽'},{key:'수전',ico:'🚰'},{key:'타일',ico:'🧱'},
+  {key:'필름',ico:'🎞️'},{key:'장판',ico:'🟫'},{key:'마루',ico:'🪵'},
+  {key:'벽지',ico:'🧻'},{key:'보드',ico:'▦'},{key:'조명',ico:'💡'},
+];
+let mmLib={items:[]}, mmLibLoaded=false;
+let mmPortfolio=null, mmPortfolioSha=null;
+let mmProjIdx=-1, mmCats=[], mmMarkers=[], mmActiveImgIdx=-1, mmPendingPos=null;
+let mmPicker={cat:null,tab:'lib'};
+let mmManualB64=null, mmUidCounter=0, mmBound=false;
+const mmImgCache={};
+
+function mmNewUid(){return 'new'+(mmUidCounter++);}
+function mmStatus(msg,ok){
+  const st=document.getElementById('mm-status'); if(!st)return;
+  st.textContent=msg; st.style.color= ok===true?'var(--green)':ok===false?'var(--red)':'var(--dim)';
+}
+
+// hadam-homepage 레포(비공개)에 있는 이미지를 raw.githubusercontent.com + 토큰 인증으로 가져옴
+async function mmLoadImg(path){
+  if(!path)return null;
+  if(mmImgCache[path])return mmImgCache[path];
+  const url='https://raw.githubusercontent.com/'+GH_ORG+'/'+MM_REPO+'/main/'+path.split('/').map(encodeURIComponent).join('/');
+  const res=await fetch(url,{headers:ghHeaders()});
+  if(!res.ok)throw new Error('HTTP '+res.status);
+  const blob=await res.blob();
+  const objUrl=URL.createObjectURL(blob);
+  mmImgCache[path]=objUrl;
+  return objUrl;
+}
+async function mmFetchB64(path){
+  const url='https://raw.githubusercontent.com/'+GH_ORG+'/'+MM_REPO+'/main/'+path.split('/').map(encodeURIComponent).join('/');
+  const res=await fetch(url,{headers:ghHeaders()});
+  if(!res.ok)throw new Error(`이미지(${path})를 못 읽었습니다 (HTTP ${res.status})`);
+  const blob=await res.blob();
+  return await new Promise((resv,rej)=>{const r=new FileReader();r.onload=()=>resv(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob);});
+}
+async function mmPutBinary(path,base64,message){
+  const body={message,content:base64,branch:'main'};
+  const r=await fetch(`https://api.github.com/repos/${GH_ORG}/${MM_REPO}/contents/${path}`,{method:'PUT',headers:Object.assign({'Content-Type':'application/json'},ghHeaders()),body:JSON.stringify(body)});
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||('HTTP '+r.status));}
+  return r.json();
+}
+async function mmTreeSet(prefix){
+  const r=await fetch(`https://api.github.com/repos/${GH_ORG}/${MM_REPO}/git/trees/main?recursive=1&t=${Date.now()}`,{headers:ghHeaders()});
+  if(!r.ok)return new Set();
+  const j=await r.json();
+  return new Set((j.tree||[]).filter(x=>x.type==='blob'&&x.path.indexOf(prefix)===0).map(x=>x.path));
+}
+
+async function mmOpen(){
+  mmBindOnce();
+  mmStatus('');
+  if(!localStorage.getItem('gh_pat')){
+    document.getElementById('mm-proj').innerHTML='<option>⚙️ 클라우드 설정에서 GitHub 토큰을 먼저 저장하세요</option>';
+    return;
+  }
+  if(!mmLibLoaded){
+    mmLibLoaded=true;
+    try{ mmLib=JSON.parse(await ghText(MM_REPO,'assets/data/materials-library.json')); }
+    catch(e){ console.warn('마감재 라이브러리 로드 실패',e); }
+  }
+  await mmLoadPortfolio();
+}
+async function mmLoadPortfolio(){
+  const sel=document.getElementById('mm-proj');
+  sel.innerHTML='<option>불러오는 중…</option>';
+  try{
+    const {text,sha}=await ghGetRaw(MM_REPO,'assets/data/portfolio.json');
+    mmPortfolio=JSON.parse(text); mmPortfolioSha=sha;
+    const list=mmPortfolio.portfolio.slice().sort((a,b)=>b.id-a.id);
+    sel.innerHTML=list.map(p=>`<option value="${p.id}">#${p.id} · ${ghEsc(p.title)}${p.materials&&p.materials.length?` (마감재 ${p.materials.length})`:''}</option>`).join('');
+    sel.onchange=()=>{ const id=parseInt(sel.value,10); mmSelectProject(mmPortfolio.portfolio.findIndex(x=>x.id===id)); };
+    if(list.length) mmSelectProject(mmPortfolio.portfolio.findIndex(x=>x.id===list[0].id));
+  }catch(e){
+    console.error(e); sel.innerHTML='<option>불러오기 실패</option>';
+    mmStatus('포트폴리오 로드 실패: '+((e&&e.message)||e), false);
+  }
+}
+
+function mmMaterialsToCats(materials){
+  const byKey={}; MM_CATS_DEF.forEach(c=>byKey[c.key]={key:c.key,ico:c.ico,open:false,items:[]});
+  (materials||[]).forEach((m,i)=>{
+    const k=byKey[m.cat]?m.cat:'보드';
+    byKey[k].items.push({...m,_existing:true,_uid:'u'+i});
+  });
+  return MM_CATS_DEF.map(c=>byKey[c.key]);
+}
+function mmFindItemByUid(uid){ for(const c of mmCats){const it=c.items.find(x=>x._uid===uid);if(it)return it;} return null; }
+function mmFlattenItems(){ const out=[]; mmCats.forEach(c=>c.items.forEach(it=>out.push({...it,_cat:c.key}))); return out; }
+
+function mmSelectProject(idx){
+  mmProjIdx=idx;
+  const p=mmPortfolio.portfolio[idx];
+  mmCats=mmMaterialsToCats(p.materials);
+  mmRenderEditor();
+  mmMarkers=(p.markers||[]).map(m=>({imgIdx:m.imgIdx,x:m.x,y:m.y,matUid:'u'+m.matIdx}));
+  mmActiveImgIdx=-1;
+  document.getElementById('mm-stage').style.display='none';
+  document.getElementById('mm-pin-list').innerHTML='';
+  mmRenderThumbs();
+}
+
+function mmRenderEditor(){
+  const box=document.getElementById('mm-cats'); box.innerHTML='';
+  mmCats.forEach((cat,ci)=>{
+    const el=document.createElement('div');
+    el.className='mm-cat'+(cat.open?'':' collapsed');
+    el.innerHTML=`
+      <div class="mm-cat-hd">
+        <span class="ico">${cat.ico}</span><span class="nm">${ghEsc(cat.key)}</span>
+        <span class="cnt ${cat.items.length?'':'zero'}">${cat.items.length}</span>
+        <span class="chev">▾</span>
+      </div>
+      <div class="mm-cat-bd"></div>`;
+    el.querySelector('.mm-cat-hd').onclick=()=>{cat.open=!cat.open;mmRenderEditor();};
+    const body=el.querySelector('.mm-cat-bd');
+    cat.items.forEach((it,ii)=>{
+      const row=document.createElement('div'); row.className='mm-item';
+      row.innerHTML=`<div class="noimg">▦</div>
+        <div class="meta"><div class="t">${ghEsc(it.name||'(이름없음)')}</div>
+        <div class="s">${ghEsc([it.maker,it.code,it.spec].filter(Boolean).join(' · ')||'—')}</div></div>
+        ${it._existing?'':'<span class="badge-new">신규</span>'}
+        <button class="del" title="삭제">×</button>`;
+      const imgHolder=row.querySelector('.noimg');
+      if(it._manualB64){ imgHolder.outerHTML=`<img src="${it._manualB64}">`; }
+      else if(it.img){ mmLoadImg(it.img).then(url=>{ if(url)imgHolder.outerHTML=`<img src="${url}">`; }).catch(()=>{}); }
+      row.querySelector('.del').onclick=()=>{
+        mmMarkers=mmMarkers.filter(m=>m.matUid!==it._uid);
+        cat.items.splice(ii,1); mmRenderEditor();
+        if(mmActiveImgIdx>=0) mmRenderPins();
+      };
+      body.appendChild(row);
+    });
+    const add=document.createElement('button'); add.className='mm-add-btn'; add.textContent='+ 자재 추가';
+    add.onclick=()=>mmOpenPicker(ci);
+    body.appendChild(add);
+    box.appendChild(el);
+  });
+}
+
+// ── 이미지 마킹 ──
+function mmRenderThumbs(){
+  const p=mmPortfolio.portfolio[mmProjIdx];
+  const box=document.getElementById('mm-thumbs');
+  box.innerHTML=(p.images||[]).map((src,i)=>`<img data-i="${i}" class="${i===mmActiveImgIdx?'active':''}">`).join('');
+  box.querySelectorAll('img').forEach((img,i)=>{
+    img.onclick=()=>mmSelectImg(i);
+    mmLoadImg(p.images[i]).then(url=>{ if(url)img.src=url; }).catch(()=>{});
+  });
+}
+function mmSelectImg(i){
+  mmActiveImgIdx=i; mmRenderThumbs();
+  const p=mmPortfolio.portfolio[mmProjIdx];
+  document.getElementById('mm-stage').style.display='inline-block';
+  mmLoadImg(p.images[i]).then(url=>{ if(url)document.getElementById('mm-stage-img').src=url; }).catch(()=>{});
+  mmRenderPins();
+}
+function mmRenderPins(){
+  const stage=document.getElementById('mm-pins');
+  const list=mmMarkers.filter(m=>m.imgIdx===mmActiveImgIdx);
+  stage.innerHTML=list.map(m=>{
+    const mi=mmMarkers.indexOf(m);
+    return `<div class="mm-pin" style="left:${m.x}%;top:${m.y}%" data-mi="${mi}" title="클릭해서 삭제">×</div>`;
+  }).join('');
+  stage.querySelectorAll('.mm-pin').forEach(el=>{
+    el.onclick=(e)=>{
+      e.stopPropagation();
+      const mi=+el.dataset.mi;
+      if(confirm('이 마커를 삭제할까요?')){ mmMarkers.splice(mi,1); mmRenderPins(); }
+    };
+  });
+  mmRenderPinList();
+}
+function mmRenderPinList(){
+  const list=mmMarkers.filter(m=>m.imgIdx===mmActiveImgIdx);
+  const box=document.getElementById('mm-pin-list');
+  if(!list.length){ box.innerHTML=''; return; }
+  box.innerHTML=list.map(m=>{
+    const mi=mmMarkers.indexOf(m);
+    const it=mmFindItemByUid(m.matUid);
+    return `<div class="mm-pin-item"><div class="noimg" style="width:32px;height:32px;border-radius:6px;background:#e9ebee"></div>
+      <div class="t">${ghEsc(it?it.name:'(삭제된 자재)')}</div>
+      <button class="del" data-mi="${mi}" title="삭제">×</button></div>`;
+  }).join('');
+  box.querySelectorAll('.mm-pin-item').forEach((row,i)=>{
+    const it=mmFindItemByUid(list[i].matUid);
+    if(it&&it.img){ const holder=row.querySelector('.noimg'); mmLoadImg(it.img).then(url=>{ if(url&&holder)holder.outerHTML=`<img src="${url}">`; }).catch(()=>{}); }
+  });
+  box.querySelectorAll('.del').forEach(b=>b.onclick=()=>{ mmMarkers.splice(+b.dataset.mi,1); mmRenderPins(); });
+}
+function mmStageClick(e){
+  if(mmActiveImgIdx<0)return;
+  if(e.target.classList.contains('mm-pin'))return;
+  const count=mmMarkers.filter(m=>m.imgIdx===mmActiveImgIdx).length;
+  if(count>=5){ alert('사진 한 장에는 최대 5개까지 표시할 수 있어요'); return; }
+  const flat=mmFlattenItems();
+  if(!flat.length){ alert('먼저 위에서 마감재를 추가해주세요'); return; }
+  const rect=document.getElementById('mm-stage-img').getBoundingClientRect();
+  const x=+(((e.clientX-rect.left)/rect.width)*100).toFixed(1);
+  const y=+(((e.clientY-rect.top)/rect.height)*100).toFixed(1);
+  mmPendingPos={x,y};
+  mmOpenMatPicker(flat);
+}
+function mmOpenMatPicker(flat){
+  const box=document.getElementById('mm-matpick-list');
+  box.innerHTML=flat.map(it=>`<div class="mm-pick-row" data-uid="${it._uid}">
+      <div class="noimg"></div>
+      <div><div class="t">${ghEsc(it.name||'(이름없음)')}</div><div class="s">${ghEsc(it._cat)}${it.maker?' · '+ghEsc(it.maker):''}</div></div>
+    </div>`).join('');
+  box.querySelectorAll('.mm-pick-row').forEach((row,i)=>{
+    const it=flat[i];
+    if(it._manualB64){ row.querySelector('.noimg').outerHTML=`<img src="${it._manualB64}">`; }
+    else if(it.img){ mmLoadImg(it.img).then(url=>{ if(url){const h=row.querySelector('.noimg');if(h)h.outerHTML=`<img src="${url}">`;} }).catch(()=>{}); }
+    row.onclick=()=>{
+      mmMarkers.push({imgIdx:mmActiveImgIdx,x:mmPendingPos.x,y:mmPendingPos.y,matUid:row.dataset.uid});
+      mmCloseMatPicker(); mmRenderPins();
+    };
+  });
+  document.getElementById('mm-matpick-overlay').classList.add('show');
+}
+function mmCloseMatPicker(){ document.getElementById('mm-matpick-overlay').classList.remove('show'); mmPendingPos=null; }
+
+// ── 자재 추가 피커 ──
+function mmOpenPicker(ci){
+  mmPicker={cat:ci,tab:'lib'};
+  document.getElementById('mm-picker-title').textContent=`${mmCats[ci].key} — 자재 추가`;
+  const hasLib=mmLib.items.some(it=>it.cat===mmCats[ci].key);
+  mmSetTab(hasLib?'lib':'manual');
+  document.getElementById('mm-lib-search').value='';
+  mmRenderLib(mmCats[ci].key,'');
+  mmClearManual();
+  document.getElementById('mm-picker-overlay').classList.add('show');
+}
+function mmClosePicker(){ document.getElementById('mm-picker-overlay').classList.remove('show'); }
+function mmSetTab(t){
+  mmPicker.tab=t;
+  document.querySelectorAll('#mm-picker-overlay .mm-tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t));
+  document.getElementById('mm-tab-lib').style.display=t==='lib'?'':'none';
+  document.getElementById('mm-tab-manual').style.display=t==='manual'?'':'none';
+}
+function mmRenderLib(catKey,q){
+  q=(q||'').trim().toLowerCase();
+  let res=mmLib.items||[];
+  if(!q){ res=res.filter(it=>it.cat===catKey); }
+  else{
+    const terms=q.split(/\s+/);
+    res=res.filter(it=>terms.every(t=>it.q.includes(t)));
+    res.sort((a,b)=>(a.cat===catKey?-1:0)-(b.cat===catKey?-1:0));
+  }
+  const grid=document.getElementById('mm-lib-grid'); const cap=60;
+  if(!res.length){ grid.innerHTML='<div class="mm-lib-empty">검색 결과가 없습니다.<br>‘직접 입력’ 탭을 이용하세요.</div>'; document.getElementById('mm-lib-more').textContent=''; return; }
+  grid.innerHTML=res.slice(0,cap).map(it=>`
+    <div class="mm-lib-card" data-id="${it.id}">
+      <div class="noimg" style="aspect-ratio:1/1;background:#f1f5f9"></div>
+      <div class="lc"><div class="lm">${ghEsc(it.maker)}</div><div class="ln">${ghEsc(it.name)}${it.code?' '+ghEsc(it.code):''}</div></div>
+    </div>`).join('');
+  document.getElementById('mm-lib-more').textContent=res.length>cap?`상위 ${cap}개 표시 · 검색어로 좁혀보세요 (총 ${res.length}개)`:`${res.length}개`;
+  grid.querySelectorAll('.mm-lib-card').forEach(c=>{
+    const it=mmLib.items.find(x=>x.id==c.dataset.id);
+    mmLoadImg(it.path).then(url=>{ if(url){const ph=c.querySelector('.noimg');if(ph)ph.outerHTML=`<img src="${url}" loading="lazy">`;} }).catch(()=>{});
+    c.onclick=()=>mmPickLib(it);
+  });
+}
+function mmPickLib(it){
+  const cat=mmCats[mmPicker.cat];
+  if(cat.items.some(x=>x.libId===it.id)){ mmClosePicker(); return; }
+  cat.items.push({libId:it.id,name:it.name,maker:it.maker,code:it.code||'',spec:it.spec||'',
+    img:it.path, _existing:false, _uid:mmNewUid()});
+  cat.open=true; mmRenderEditor(); mmClosePicker();
+}
+function mmClearManual(){
+  ['mm-m-name','mm-m-maker','mm-m-code','mm-m-spec'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  mmManualB64=null;
+  const dt=document.getElementById('mm-drop-text'); if(dt)dt.textContent='📁 이미지 클릭 또는 드래그해서 업로드';
+}
+function mmAddManual(){
+  const name=document.getElementById('mm-m-name').value.trim();
+  if(!name){ alert('제품명을 입력하세요'); document.getElementById('mm-m-name').focus(); return; }
+  const cat=mmCats[mmPicker.cat];
+  cat.items.push({libId:null,name,maker:document.getElementById('mm-m-maker').value.trim(),
+    code:document.getElementById('mm-m-code').value.trim(), spec:document.getElementById('mm-m-spec').value.trim(),
+    img: mmManualB64?'__PENDING_UPLOAD__':'', _manualB64:mmManualB64, _existing:false, _uid:mmNewUid()});
+  cat.open=true; mmRenderEditor(); mmClosePicker();
+}
+function mmHandleFile(file){
+  if(!file||!file.type.startsWith('image/'))return;
+  const r=new FileReader();
+  r.onload=e=>{ mmManualB64=e.target.result; document.getElementById('mm-drop-text').innerHTML=`<img src="${mmManualB64}">`; };
+  r.readAsDataURL(file);
+}
+
+function mmBindOnce(){
+  if(mmBound)return; mmBound=true;
+  let st; document.getElementById('mm-lib-search').oninput=e=>{clearTimeout(st);st=setTimeout(()=>mmRenderLib(mmCats[mmPicker.cat].key,e.target.value),180);};
+  document.getElementById('mm-stage').onclick=mmStageClick;
+  document.getElementById('mm-picker-overlay').onclick=e=>{if(e.target.id==='mm-picker-overlay')mmClosePicker();};
+  document.getElementById('mm-matpick-overlay').onclick=e=>{if(e.target.id==='mm-matpick-overlay')mmCloseMatPicker();};
+  const dz=document.getElementById('mm-dropzone'), fi=document.getElementById('mm-file-input');
+  dz.onclick=()=>fi.click();
+  fi.onchange=e=>mmHandleFile(e.target.files[0]);
+  dz.ondragover=e=>{e.preventDefault();dz.style.borderColor='var(--blue)';};
+  dz.ondragleave=()=>dz.style.borderColor='';
+  dz.ondrop=e=>{e.preventDefault();dz.style.borderColor='';mmHandleFile(e.dataTransfer.files[0]);};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){mmClosePicker();mmCloseMatPicker();}});
+}
+
+// ── 저장 ──
+async function mmSave(){
+  if(mmProjIdx<0){ alert('프로젝트를 먼저 선택하세요'); return; }
+  if(!localStorage.getItem('gh_pat')){ alert('GitHub 토큰을 먼저 저장하세요 (⚙️ 클라우드 설정)'); return; }
+  const btn=document.getElementById('mm-save-btn'); btn.disabled=true; const old=btn.textContent; btn.textContent='저장 중…'; mmStatus('');
+  try{
+    const existing=await mmTreeSet('assets/materials/');
+    const materials=[]; const uidToIdx={};
+    for(const cat of mmCats){
+      for(const it of cat.items){
+        uidToIdx[it._uid]=materials.length;
+        let img=it.img;
+        if(it.libId!=null && !existing.has(`assets/materials/${it.libId}.jpg`)){
+          const raw=await mmFetchB64(img);
+          await mmPutBinary(`assets/materials/${it.libId}.jpg`, raw, `자재 이미지 추가: ${it.name}`);
+          existing.add(`assets/materials/${it.libId}.jpg`);
+          img=`assets/materials/${it.libId}.jpg`;
+        }else if(it.libId!=null){
+          img=`assets/materials/${it.libId}.jpg`;
+        }else if(it._manualB64){
+          const idx=materials.length;
+          const path=`assets/materials/manual_${mmPortfolio.portfolio[mmProjIdx].id}_${idx}.jpg`;
+          await mmPutBinary(path, it._manualB64.split(',')[1], `자재 이미지 추가(직접입력): ${it.name}`);
+          img=path;
+        }
+        materials.push({libId: it.libId!=null?it.libId:null, cat:cat.key, maker:it.maker||'',
+          name:it.name||'', code:it.code||'', spec:it.spec||'', img: img||''});
+      }
+    }
+    mmPortfolio.portfolio[mmProjIdx].materials=materials;
+    mmPortfolio.portfolio[mmProjIdx].markers=mmMarkers
+      .map(m=>({imgIdx:m.imgIdx,x:m.x,y:m.y,matIdx:uidToIdx[m.matUid]}))
+      .filter(m=>m.matIdx!=null);
+    const putRes=await ghPutFile(MM_REPO,'assets/data/portfolio.json', JSON.stringify(mmPortfolio,null,2)+'\n',
+      `마감재 갱신: ${mmPortfolio.portfolio[mmProjIdx].title}`, mmPortfolioSha);
+    mmPortfolioSha=putRes.content.sha;
+    mmStatus('✅ 저장 완료 — 홈페이지 레포에 반영됐습니다 (카페24엔 별도 업로드 필요)', true);
+  }catch(e){
+    console.error(e); mmStatus('❌ 저장 실패: '+((e&&e.message)||e), false);
+  }finally{ btn.disabled=false; btn.textContent=old; }
 }
 
 (async function init(){
