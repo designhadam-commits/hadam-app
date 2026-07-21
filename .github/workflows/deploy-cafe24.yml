@@ -16,17 +16,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: lftp 설치
+        run: sudo apt-get update -qq && sudo apt-get install -yqq lftp
+
       - name: FTP 업로드 (카페24 /www/app/)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: www.designhadam.com
-          username: designhadam
-          password: ${{ secrets.CAFE24_FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          server-dir: /www/app/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            README.md
+        env:
+          FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
+        run: |
+          lftp -u "designhadam,$FTP_PASS" www.designhadam.com <<'EOF'
+          set ftp:ssl-allow no
+          set mirror:parallel-transfer-count 3
+          mirror --reverse --verbose --only-newer \
+            --exclude-glob .git* \
+            --exclude .github/ \
+            --exclude-glob README.md \
+            ./ /www/app/
+          bye
+          EOF
