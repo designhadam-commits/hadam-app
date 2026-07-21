@@ -2981,24 +2981,27 @@ function mmStatus(msg,ok){
   st.textContent=msg; st.style.color= ok===true?'var(--green)':ok===false?'var(--red)':'var(--dim)';
 }
 
-// hadam-homepage 레포(비공개)에 있는 이미지를 raw.githubusercontent.com + 토큰 인증으로 가져옴
+// hadam-homepage 레포(비공개)에 있는 이미지를 가져옴.
+// raw.githubusercontent.com은 인증 요청의 CORS 사전확인(OPTIONS)을 403으로 거부해서 브라우저에서 못 씀 —
+// 앱 다른 곳(카드뉴스 미리보기 등)과 동일하게 Contents API로 sha 조회 후 git/blobs API로 base64를 받아온다.
+async function mmBlobB64(path){
+  const c=await ghContents(MM_REPO, path);
+  const sha=(c&&!Array.isArray(c))?c.sha:null;
+  if(!sha) throw new Error(`이미지(${path})를 찾을 수 없습니다`);
+  const d=await (await fetch(`https://api.github.com/repos/${GH_ORG}/${MM_REPO}/git/blobs/${sha}`,{headers:ghHeaders()})).json();
+  if(!d.content) throw new Error(`이미지(${path}) 내용을 읽지 못했습니다`);
+  return d.content.replace(/\s/g,'');
+}
 async function mmLoadImg(path){
   if(!path)return null;
   if(mmImgCache[path])return mmImgCache[path];
-  const url='https://raw.githubusercontent.com/'+GH_ORG+'/'+MM_REPO+'/main/'+path.split('/').map(encodeURIComponent).join('/');
-  const res=await fetch(url,{headers:ghHeaders()});
-  if(!res.ok)throw new Error('HTTP '+res.status);
-  const blob=await res.blob();
-  const objUrl=URL.createObjectURL(blob);
-  mmImgCache[path]=objUrl;
-  return objUrl;
+  const b64=await mmBlobB64(path);
+  const url='data:image/jpeg;base64,'+b64;
+  mmImgCache[path]=url;
+  return url;
 }
 async function mmFetchB64(path){
-  const url='https://raw.githubusercontent.com/'+GH_ORG+'/'+MM_REPO+'/main/'+path.split('/').map(encodeURIComponent).join('/');
-  const res=await fetch(url,{headers:ghHeaders()});
-  if(!res.ok)throw new Error(`이미지(${path})를 못 읽었습니다 (HTTP ${res.status})`);
-  const blob=await res.blob();
-  return await new Promise((resv,rej)=>{const r=new FileReader();r.onload=()=>resv(r.result.split(',')[1]);r.onerror=rej;r.readAsDataURL(blob);});
+  return await mmBlobB64(path);
 }
 async function mmPutBinary(path,base64,message){
   const body={message,content:base64,branch:'main'};
