@@ -22,7 +22,7 @@ jobs:
           server: www.designhadam.com
           username: designhadam
           password: ${{ secrets.CAFE24_FTP_PASSWORD }}
-          protocol: ftps
+          protocol: ftp
           port: 21
           server-dir: /www/app/
           exclude: |
