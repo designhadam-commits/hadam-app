@@ -16,23 +16,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 진단 (curl, 임시)
+      - name: 테스트로 생성됐던 파일 정리 (임시)
         env:
           FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
         run: |
           set +e +x
-          {
-            echo "== /www/app/ 목록 =="
-            curl -s --disable-epsv -u "designhadam:$FTP_PASS" "ftp://www.designhadam.com/www/app/"
-            echo "exit=$?"
-            echo "== 새 폴더+새 파일 업로드 시도 (testdir/hello.txt) =="
-            echo "hello" > /tmp/hello.txt
-            curl -sv --disable-epsv --ftp-create-dirs -u "designhadam:$FTP_PASS" -T /tmp/hello.txt "ftp://www.designhadam.com/www/app/testdir/hello.txt" 2>&1
-            echo "exit=$?"
-            echo "== 기존 파일에 덮어쓰기 시도 (index.html은 안 건드리고 별도 테스트 파일) =="
-            curl -sv --disable-epsv -u "designhadam:$FTP_PASS" -T /tmp/hello.txt "ftp://www.designhadam.com/www/app/hello.txt" 2>&1
-            echo "exit=$?"
-          } > /tmp/ftpdebug.txt 2>&1
-          echo "----- 결과 (비밀번호 마스킹됨) -----"
-          sed "s/$FTP_PASS/[PASSWORD]/g" /tmp/ftpdebug.txt
-          exit 0
+          curl -s --disable-epsv -u "designhadam:$FTP_PASS" -Q "RMD www/www/app/testdir" -Q "RMD www/www/app" -Q "RMD www/www" -Q "DELE app/hello.txt" "ftp://www.designhadam.com/" > /dev/null 2>&1
+          echo "정리 시도 완료 (일부 실패는 정상 — 이미 없는 경로일 수 있음)"
+
+      - name: FTP 업로드 (카페24 계정 루트 = /www, 실제 목적지는 /app/)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: www.designhadam.com
+          username: designhadam
+          password: ${{ secrets.CAFE24_FTP_PASSWORD }}
+          protocol: ftp
+          port: 21
+          server-dir: /app/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
