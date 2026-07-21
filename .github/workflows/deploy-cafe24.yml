@@ -1,0 +1,32 @@
+name: 카페24 자동 배포
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: cafe24-deploy
+  cancel-in-progress: true
+
+jobs:
+  ftp-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: FTP 업로드 (카페24 /www/app/)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: www.designhadam.com
+          username: designhadam
+          password: ${{ secrets.CAFE24_FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          server-dir: /www/app/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .github/**
+            README.md
