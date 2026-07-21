@@ -20,15 +20,19 @@ jobs:
         env:
           FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
         run: |
-          set +x
+          set +e +x
           {
             echo "== /www/app/ 목록 =="
             curl -s --disable-epsv -u "designhadam:$FTP_PASS" "ftp://www.designhadam.com/www/app/"
+            echo "exit=$?"
             echo "== 새 폴더+새 파일 업로드 시도 (testdir/hello.txt) =="
             echo "hello" > /tmp/hello.txt
             curl -sv --disable-epsv --ftp-create-dirs -u "designhadam:$FTP_PASS" -T /tmp/hello.txt "ftp://www.designhadam.com/www/app/testdir/hello.txt" 2>&1
+            echo "exit=$?"
             echo "== 기존 파일에 덮어쓰기 시도 (index.html은 안 건드리고 별도 테스트 파일) =="
             curl -sv --disable-epsv -u "designhadam:$FTP_PASS" -T /tmp/hello.txt "ftp://www.designhadam.com/www/app/hello.txt" 2>&1
+            echo "exit=$?"
           } > /tmp/ftpdebug.txt 2>&1
           echo "----- 결과 (비밀번호 마스킹됨) -----"
           sed "s/$FTP_PASS/[PASSWORD]/g" /tmp/ftpdebug.txt
+          exit 0
