@@ -23,12 +23,22 @@ jobs:
         env:
           FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
         run: |
-          lftp -u "designhadam,$FTP_PASS" www.designhadam.com <<'EOF'
+          set +x
+          lftp -u "designhadam,$FTP_PASS" www.designhadam.com > /tmp/ftpdebug.txt 2>&1 <<'EOF' || true
           set ftp:ssl-allow no
+          set ftp:passive-mode true
+          echo "== pwd =="
           pwd
-          ls -a
+          echo "== cd / =="
+          cd /
+          pwd
+          echo "== cd www =="
+          cd www
+          pwd
+          echo "== cd app (relative to www) =="
           cd app
           pwd
-          ls -a
           bye
           EOF
+          echo "----- 결과 (비밀번호는 마스킹됨) -----"
+          sed "s/$FTP_PASS/[PASSWORD]/g" /tmp/ftpdebug.txt
