@@ -19,17 +19,16 @@ jobs:
       - name: lftp 설치
         run: sudo apt-get update -qq && sudo apt-get install -yqq lftp
 
-      - name: FTP 업로드 (카페24 /www/app/)
+      - name: 경로 진단 (임시)
         env:
           FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
         run: |
           lftp -u "designhadam,$FTP_PASS" www.designhadam.com <<'EOF'
           set ftp:ssl-allow no
-          set mirror:parallel-transfer-count 3
-          mirror --reverse --verbose --only-newer \
-            --exclude-glob .git* \
-            --exclude .github/ \
-            --exclude-glob README.md \
-            ./ /www/app/
+          pwd
+          ls -a
+          cd app
+          pwd
+          ls -a
           bye
           EOF
