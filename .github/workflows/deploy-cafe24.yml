@@ -16,25 +16,21 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: 테스트로 생성됐던 파일 정리 (임시)
+      - name: lftp 설치
+        run: sudo apt-get update -qq && sudo apt-get install -yqq lftp
+
+      - name: FTP 업로드 (카페24 계정 루트 = /www, 실제 목적지는 /app/)
         env:
           FTP_PASS: ${{ secrets.CAFE24_FTP_PASSWORD }}
         run: |
-          set +e +x
-          curl -s --disable-epsv -u "designhadam:$FTP_PASS" -Q "RMD www/www/app/testdir" -Q "RMD www/www/app" -Q "RMD www/www" -Q "DELE app/hello.txt" "ftp://www.designhadam.com/" > /dev/null 2>&1
-          echo "정리 시도 완료 (일부 실패는 정상 — 이미 없는 경로일 수 있음)"
-
-      - name: FTP 업로드 (카페24 계정 루트 = /www, 실제 목적지는 /app/)
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: www.designhadam.com
-          username: designhadam
-          password: ${{ secrets.CAFE24_FTP_PASSWORD }}
-          protocol: ftp
-          port: 21
-          server-dir: /app/
-          exclude: |
-            **/.git*
-            **/.git*/**
-            .github/**
-            README.md
+          lftp -u "designhadam,$FTP_PASS" www.designhadam.com <<'EOF'
+          set ftp:ssl-allow no
+          set mirror:parallel-transfer-count 3
+          set net:max-retries 3
+          mirror --reverse --verbose --delete --use-cache=no \
+            --exclude-glob .git* \
+            --exclude .github/ \
+            --exclude-glob README.md \
+            ./ /app/
+          bye
+          EOF
